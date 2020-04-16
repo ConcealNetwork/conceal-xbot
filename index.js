@@ -1,9 +1,9 @@
 const fs = require('fs');
+const Numeral = require('numeral');
 const Discord = require("discord.js");
 const Handlebars = require("handlebars");
 const markets = require("./modules/markets.js");
 const blockchain = require("./modules/blockchain.js");
-
 
 // This is your client. Some people call it `bot`, some people call it `self`, 
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
@@ -118,13 +118,21 @@ client.on("message", async message => {
   }
 
   if (command === "blockchain") {
-    if (length(args) == 0) {
+    if (args.length == 0) {
       return message.reply("You need to specify a blockchain command!");
+    }
+
+    if (args[0] == "supply") {
+      blockchain.getLastHeaderInfo(function (data) {
+        let Supply = Numeral(data.result.block.alreadyGeneratedCoins / config.metrics.coinUnits);
+        message.channel.send(`***Current supply is is***: ${Supply.format('0,0')} CCX`);
+        console.log(data);
+      });
     }
 
     if (args[0] == "height") {
       blockchain.getInfo(function (data) {
-        message.channel.send(`Blockchain height is: ${data.height}`);
+        message.channel.send(`***Blockchain height is***: ${data.height}`);
       });
     }
   }

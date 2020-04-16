@@ -15,5 +15,39 @@ module.exports = {
         resultCallback(data);
       }
     });
+  },
+  getLastHeaderInfo: function (resultCallback) {
+    var packetData = {
+      uri: `${config.daemon.api}/json_rpc`,
+      strictSSL: false,
+      method: "POST",
+      json: true,
+      json: {
+        "jsonrpc": "2.0",
+        "id": "concealBot",
+        "method": "getlastblockheader"
+      }
+    };
+
+    request(packetData, function (err, res, header) {
+      if (!err) {
+        packetData.json = {
+          "jsonrpc": "2.0",
+          "id": "concealBot",
+          "method": "f_block_json",
+          "params": {
+            "hash": header.result.block_header.hash
+          }
+
+        }
+
+        request(packetData, function (err, res, data) {
+          if (!err) {
+            resultCallback(data);
+          }
+        });
+      }
+    });
+
   }
 };
