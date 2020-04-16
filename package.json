@@ -1,0 +1,16 @@
+{
+  "name": "conceal-xbot",
+  "version": "1.0.0",
+  "description": "Conceal new generation Discord Bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Taegus",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "handlebars": "^4.7.3",
+    "request": "^2.88.2"
+  }
+}
