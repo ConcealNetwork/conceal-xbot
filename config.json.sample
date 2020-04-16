@@ -1,0 +1,7 @@
+{
+  "token": "here_you_put_your_token",
+  "prefix": ".",
+  "daemon": {
+    "api": "https://explorer.conceal.network/daemon"
+  }
+}

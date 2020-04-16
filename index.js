@@ -2,6 +2,7 @@ const fs = require('fs');
 const Discord = require("discord.js");
 const Handlebars = require("handlebars");
 const markets = require("./modules/markets.js");
+const blockchain = require("./modules/blockchain.js");
 
 
 // This is your client. Some people call it `bot`, some people call it `self`, 
@@ -114,6 +115,18 @@ client.on("message", async message => {
         message.channel.send({ embed: marketsEmbed });
       });
     });
+  }
+
+  if (command === "blockchain") {
+    if (length(args) == 0) {
+      return message.reply("You need to specify a blockchain command!");
+    }
+
+    if (args[0] == "height") {
+      blockchain.getInfo(function (data) {
+        message.channel.send(`Blockchain height is: ${data.height}`);
+      });
+    }
   }
 
   if (command === "say") {
