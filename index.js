@@ -2,6 +2,7 @@ const fs = require('fs');
 const Numeral = require('numeral');
 const Discord = require("discord.js");
 const Handlebars = require("handlebars");
+const wallets = require("./modules/wallets.js");
 const markets = require("./modules/markets.js");
 const blockchain = require("./modules/blockchain.js");
 
@@ -135,6 +136,12 @@ client.on("message", async message => {
         message.channel.send(`***Blockchain height is***: ${data.height}`);
       });
     }
+  }
+
+  if (command === "paymentid") {
+    wallets.generatePaymentId(function (data) {
+      message.channel.send(data);
+    });
   }
 
   if (command === "say") {
