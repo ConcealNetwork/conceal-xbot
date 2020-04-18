@@ -3,5 +3,11 @@
   "prefix": ".",
   "daemon": {
     "api": "https://explorer.conceal.network/daemon"
+  },
+  "metrics": {
+    "coinUnits": 1000000
+  },
+  "wallet": {
+    "address": "your_wallet_address"
   }
 }

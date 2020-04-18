@@ -152,13 +152,28 @@ client.on("message", async message => {
 
     if (args[0] == "show") {
       tipBotStorage.showWalletInfo(message.member.user.id, function (data) {
-        return message.reply(`***Address***: ${data.address}, ***Payment Id***: ${data.payment_id}`);
+        if (data.success) {
+          return message.reply(`***Address***: ${data.address}, ***Payment Id***: ${data.payment_id}`);
+        } else {
+          return message.reply('Could not find any info about your wallet. Did you register one yet?');
+        }
+
+      });
+    }
+
+    if (args[0] == "deposit") {
+      tipBotStorage.showWalletInfo(message.member.user.id, function (data) {
+        if (data.success) {
+          return message.reply(`Please deposit your CCX to ***Address***: ${config.wallet.address}, ***Payment Id***: ${data.payment_id}. Its mandatory to include payment Id or your funds will be lost!`);
+        } else {
+          return message.reply('Could not find any info about your wallet. Did you register one yet?');
+        }
       });
     }
   }
 
   if (command === "paymentid") {
-    wallets.generatePaymentId(function (data) {
+    tipBotStorage.generatePaymentId(function (data) {
       message.channel.send(data);
     });
   }
