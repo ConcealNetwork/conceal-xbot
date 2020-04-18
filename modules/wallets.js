@@ -36,6 +36,17 @@ class TipBotStorage {
       }
     });
   }
+
+  showWalletInfo = (userId, resultCallback) => {
+    this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
+      if (row) {
+        resultCallback({ success: true, address: row.address, payment_id: row.payment_id });
+      } else {
+        resultCallback({ success: false, reason: "User already has a registered wallet!" });
+      }
+    });
+  }
+
 }
 
 module.exports = TipBotStorage;

@@ -149,6 +149,12 @@ client.on("message", async message => {
         return message.reply(data.reason);
       });
     }
+
+    if (args[0] == "show") {
+      tipBotStorage.showWalletInfo(message.member.user.id, function (data) {
+        return message.reply(`***Address***: ${data.address}, ***Payment Id***: ${data.payment_id}`);
+      });
+    }
   }
 
   if (command === "paymentid") {
