@@ -2,14 +2,15 @@ const fs = require('fs');
 const Numeral = require('numeral');
 const Discord = require("discord.js");
 const Handlebars = require("handlebars");
-const wallets = require("./modules/wallets.js");
 const markets = require("./modules/markets.js");
 const blockchain = require("./modules/blockchain.js");
+const TipBotStorage = require("./modules/wallets.js");
 
 // This is your client. Some people call it `bot`, some people call it `self`, 
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
 // this is what we're refering to. Your client.
 const client = new Discord.Client();
+const tipBotStorage = new TipBotStorage();
 
 // Here we load the config.json file that contains our token and our prefix values. 
 const config = require("./config.json");
@@ -134,6 +135,18 @@ client.on("message", async message => {
     if (args[0] == "height") {
       blockchain.getInfo(function (data) {
         message.channel.send(`***Blockchain height is***: ${data.height}`);
+      });
+    }
+  }
+
+  if (command === "wallet") {
+    if (args.length == 0) {
+      return message.reply("You need to specify a wallet command!");
+    }
+
+    if (args[0] == "register") {
+      tipBotStorage.registerWallet(message.member.user.id, message.member.user.username, args[1], function (data) {
+        return message.reply(data.reason);
       });
     }
   }

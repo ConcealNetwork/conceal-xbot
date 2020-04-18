@@ -1,7 +1,7 @@
-const request = require("request");
+const appRoot = require('app-root-path');
 const sqlite3 = require('sqlite3');
 const crypto = require("crypto");
-
+const path = require('path');
 
 class TipBotStorage {
   constructor() {
@@ -18,20 +18,24 @@ class TipBotStorage {
     });
   }
 
-  registerWallet = (userId, address, resultCallback) => {
-    this.db.get('SELECT * FROM wallets WHERE userId = ?', [userId], (err, row) => {
+  registerWallet = (userId, userName, address, resultCallback) => {
+    this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
       if (row) {
         resultCallback({ success: false, reason: "User already has a registered wallet!" });
       } else {
+        var localDB = this.db;
         this.generatePaymentId(function (payment_id) {
-          db.run(`INSERT INTO wallets(address, user_id, payment_id) VALUES(?,?,?)`, [userId, address, payment_id], function (err) {
-            // 
+          localDB.run('INSERT INTO wallets(address, user_id, user_name, payment_id) VALUES(?,?,?,?)', [address, userId, userName, payment_id], function (err) {
+            if (err) {
+              resultCallback({ success: false, reason: err.message });
+            } else {
+              resultCallback({ success: true, reason: "Successfully registered wallet" });
+            }
           });
         });
       }
     });
-  };
+  }
 }
 
-const tipBotStorage = new TipBotStorage();
-export default tipBotStorage;
+module.exports = TipBotStorage;
