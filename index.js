@@ -170,6 +170,12 @@ client.on("message", async message => {
         }
       });
     }
+    if (args[0] == "balance") {
+      tipBotStorage.getPayments("a09fc9e4797450bdeac8cfdd1080216799c49eab89aae7d5cdb4935e441e185a", function (data) {
+      });
+    }
+
+
   }
 
   if (command === "paymentid") {

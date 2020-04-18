@@ -2,12 +2,15 @@
   "token": "here_you_put_your_token",
   "prefix": ".",
   "daemon": {
-    "api": "https://explorer.conceal.network/daemon"
+    "api": "https://explorer.conceal.network/daemon",
+    "port": 6060
   },
   "metrics": {
     "coinUnits": 1000000
   },
   "wallet": {
-    "address": "your_wallet_address"
+    "address": "your_wallet_address",
+    "rfcTimeout": 5,
+    "port": 6061
   }
 }

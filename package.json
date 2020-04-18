@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "app-root-path": "^3.0.0",
+    "conceal-api": "^0.7.5",
     "discord.js": "^11.5.1",
     "handlebars": "^4.7.6",
     "numeral": "^2.0.6",

@@ -1,10 +1,14 @@
 const appRoot = require('app-root-path');
+const config = require("../config.json");
 const sqlite3 = require('sqlite3');
+const CCXApi = require("conceal-api");
 const crypto = require("crypto");
 const path = require('path');
 
+
 class TipBotStorage {
   constructor() {
+    this.CCXWallet = new CCXApi("http://127.0.0.1", config.wallet.port, config.daemon.port, (config.wallet.rfcTimeout || 5) * 1000);
     this.db = new sqlite3.Database(path.join(appRoot.path, "tipbot.db"), sqlite3.OPEN_READWRITE, (err) => {
       if (err) {
         console.log('Could not connect to database', err);
@@ -44,6 +48,14 @@ class TipBotStorage {
       } else {
         resultCallback({ success: false, reason: "User already has a registered wallet!" });
       }
+    });
+  }
+
+  getPayments = (paymentId, resultCallback) => {
+    this.CCXWallet.payments(paymentId).then(data => {
+      console.log(data);
+    }).catch(err => {
+      console.log(err);
     });
   }
 }
