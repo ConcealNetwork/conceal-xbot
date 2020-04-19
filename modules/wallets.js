@@ -83,34 +83,56 @@ class TipBotStorage {
     });
   }
 
+  /************************************************************
+   *  Function to send the payment to specified user from DB. *
+   *  Checks the available balance first to see if there is   *
+   *  enough found to be able to send out the tip.            *
+   ***********************************************************/
   sendPayment = (userId, targetUser, amount, resultCallback) => {
+
+    // write transaction to the sqlite database
+    function doWriteTransaction(address, payment_id, txdata) {
+      localDB.run('INSERT INTO transactions(user_id, target_user, target_address, payment_id, amount, tx_hash) VALUES(?,?,?,?,?)', [userId, targetUser, address, payment_id, amount, txdata.hash], function (err) {
+        if (err) {
+          resultCallback({ success: true, reason: err });
+        } else {
+          resultCallback({ success: true, data: txdata });
+        }
+      });
+    }
+
+    // call the wallet RFC to send the transaction
+    function doSendPayment(address, payment_id) {
+      const opts = {
+        transfers: [{ address: address, amount: amount * config.metrics.coinUnits }],
+        fee: 0.001 * config.metrics.coinUnits,
+        anonimity: 4,
+        paymentId: payment_id
+      }
+
+      this.CCXWallet.send(opts).then(txdata => {
+        doWriteTransaction(address, payment_id, txdata);
+      }).catch(err => {
+        resultCallback({ success: false, reason: err });
+      });
+    }
+
+    // get target user data from sqlite DB
+    function doGetTargetUserData(payment_id) {
+      this.db.get('SELECT * FROM wallets WHERE user_id = ?', [targetUser], (err, row) => {
+        if (!err && row) {
+          doSendPayment(row.address, amount, payment_id)
+        } else {
+          resultCallback({ success: false, reason: "failed to get target user info" });
+        }
+      });
+    }
+
+    // get balance first and check if its enough
     this.getBalance(userId, function (balanceData) {
       if (data.success) {
         if (balanceData.balance > amount * config.metrics.coinUnits) {
-          this.db.get('SELECT * FROM wallets WHERE user_id = ?', [targetUser], (err, target_row) => {
-            if (!err && target_row) {
-              const opts = {
-                transfers: [{ address: target_row.address, amount: amount * config.metrics.coinUnits }],
-                fee: 0.001 * config.metrics.coinUnits,
-                anonimity: 4,
-                paymentId: target_row.payment_id
-              }
-
-              this.CCXWallet.send(opts).then(txdata => {
-                localDB.run('INSERT INTO transactions(user_id, target_user, target_address, payment_id, amount, tx_hash) VALUES(?,?,?,?,?)', [userId, targetUser, target_row.address, balanceData.payment_id, amount, txdata.hash], function (err) {
-                  if (err) {
-                    resultCallback({ success: true, reason: err });
-                  } else {
-                    resultCallback({ success: true, data: txdata });
-                  }
-                });
-              }).catch(err => {
-                resultCallback({ success: false, reason: err });
-              });
-            } else {
-              resultCallback({ success: false, reason: "failed to get target user info" });
-            }
-          });
+          doGetTargetUserData(balanceData.payment_id);
         } else {
           resultCallback({ success: false, reason: "insuficient balance" });
         }
