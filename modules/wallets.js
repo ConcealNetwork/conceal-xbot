@@ -14,6 +14,81 @@ class TipBotStorage {
         console.log('Could not connect to database', err);
       }
     });
+
+    this.lastProcessedBlock = 1;
+    // periodically sync transactions
+    this._synchronizeTransactions(true);
+  }
+
+  _SyncBlockArray = (txdata, callback) => {
+    let blockCount = txdata.items.length;
+    let localDB = this.db;
+
+    if (blockCount == 0) {
+      callback();
+    } else {
+      txdata.items.forEach(function (valueBlock, idxBlock) {
+        let txCount = valueBlock.transactions.length;
+
+        if ((txCount == 0) && (idxBlock == blockCount - 1)) {
+          callback();
+        } else {
+          valueBlock.transactions.forEach(function (valueTx, idxTx) {
+            localDB.run('INSERT INTO transactions(block, payment_id, timestamp, amount, tx_hash) VALUES(?,?,?,?,?)', [valueTx.blockIndex, valueTx.paymentId, valueTx.timestamp, valueTx.amount, valueTx.transactionHash], function (err) {
+              if (err) {
+                console.log(error);
+              } else {
+                if ((idxBlock == blockCount - 1) && (idxTx == txCount - 1)) {
+                  callback();
+                }
+              }
+            });
+          });
+        }
+      });
+    }
+  }
+
+  _fetchNextBlockArray = (startIndex, currentHeight, finishedCallback) => {
+    let fetchNextBlockArray = this._fetchNextBlockArray;
+
+    if (startIndex < currentHeight) {
+      const opts = {
+        firstBlockIndex: startIndex,
+        blockCount: 1000,
+      }
+
+      this.CCXWallet.getTransactions(opts).then(txdata => {
+        this._SyncBlockArray(txdata, function () {
+          fetchNextBlockArray(Math.min(startIndex + 1000, currentHeight), currentHeight, finishedCallback);
+        });
+      });
+    } else {
+      finishedCallback();
+    }
+  }
+
+  /************************************************************
+   *  Internal function that synchronizes local SQLite DB     *
+   *  with the blockchain data. It periodically checks for    *
+   *  new transaction and looks at payment_id for matching.   *
+   ***********************************************************/
+  _synchronizeTransactions = (periodic, finishedCallback) => {
+    this.CCXWallet.info().then(data => {
+      this._fetchNextBlockArray(this.lastProcessedBlock, data.height, function () {
+        if (finishedCallback) {
+          finishedCallback();
+        }
+
+        if (periodic) {
+          setTimeout(function () {
+            this._synchronizeTransactions(periodic, finishedCallback);
+          }, 300000);
+        }
+      });
+    }).catch(err => {
+      console.log(err);
+    });
   }
 
   generatePaymentId = (resultCallback) => {
@@ -46,40 +121,28 @@ class TipBotStorage {
       if (row) {
         resultCallback({ success: true, address: row.address, payment_id: row.payment_id });
       } else {
-        resultCallback({ success: false, reason: "User already has a registered wallet!" });
+        resultCallback({ success: false, reason: "Failed to find info for the user" });
       }
     });
   }
 
   getBalance = (userId, resultCallback) => {
-    let balance = 0;
+    let localDB = this.db;
 
-    this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, source_row) => {
-      if (!err && source_row) {
-        this.CCXWallet.payments(source_row.payment_id).then(data => {
-          data.payments.forEach(function (value, index, array) {
-            balance = balance + value.amount;
-          });
-
-          this.db.all("SELECT amount FROM transactions where user_id = ?", [userId], function (err, rows) {
-            if (err) {
-              resultCallback({ success: false, reason: err });
+    this._synchronizeTransactions(false, function () {
+      localDB.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, user_row) => {
+        if (!err && user_row) {
+          localDB.get('SELECT SUM(amount) as "balance" FROM transactions WHERE payment_id = ?', [user_row.payment_id], (err, balance_row) => {
+            if (!err && balance_row) {
+              resultCallback({ success: true, balance: balance_row.balance, payment_id: user_row.payment_id });
             } else {
-              rows.forEach(function (row) {
-                balance = balance - row.amount;
-              });
-
-              // return the balance for the current user
-              resultCallback({ success: false, balance: balance, payment_id: source_row.payment_id });
+              resultCallback({ success: false, reason: "Failed to get balance for the user" });
             }
-
           });
-        }).catch(err => {
-          resultCallback({ success: false, reason: err });
-        });
-      } else {
-        resultCallback({ success: false, reason: "failed to get user info" });
-      }
+        } else {
+          resultCallback({ success: false, reason: "Failed to find info for the user" });
+        }
+      });
     });
   }
 

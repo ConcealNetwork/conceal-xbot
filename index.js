@@ -104,6 +104,18 @@ client.on("message", async message => {
     wallets.executeCommand(tipBotStorage, message, command, args);
   }
 
+  if (command === "tip") {
+    if (args.length == 0) {
+      return message.reply("You need to specify a ammount and recipient.");
+    }
+
+    //message.mentions
+    // execute the blockchain commands
+    tipBotStorage.sendPayment("ccx7ZuCP9NA2KmnxbyBn9QgeLSATHXHRAXVpxgiaNxsH4GwMvQ92SeYhEeF2tJHADHbW4bZMFHvFf8GpucLrRyw49q4Gkc3AXM", 1, "a09fc9e4797450bdeac8cfdd1080216799c49eab89aae7d5cdb4935e441e185a", function (data) {
+      console.log(data);
+    });
+  }
+
   if (command === "say") {
     // makes the bot say something and delete the message. As an example, it's open to anyone to use. 
     // To get the "message" itself we join the `args` back into a string with spaces: 
