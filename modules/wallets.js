@@ -1,6 +1,7 @@
 const appRoot = require('app-root-path');
 const config = require("../config.json");
 const sqlite3 = require('sqlite3');
+const jsonfile = require('jsonfile');
 const CCXApi = require("conceal-api");
 const crypto = require("crypto");
 const path = require('path');
@@ -15,7 +16,13 @@ class TipBotStorage {
       }
     });
 
-    this.lastProcessedBlock = 1;
+    // load the data file
+    if (fs.existsSync(path.join(appRoot.path, "data.json"))) {
+      this.dataFile = jsonfile.readFileSync(path.join(appRoot.path, "data.json"));
+    } else {
+      this.dataFile = { lastBlock: 1 };
+    }
+
     // periodically sync transactions
     this._synchronizeTransactions(true);
   }
@@ -75,7 +82,9 @@ class TipBotStorage {
    ***********************************************************/
   _synchronizeTransactions = (periodic, finishedCallback) => {
     this.CCXWallet.info().then(data => {
-      this._fetchNextBlockArray(this.lastProcessedBlock, data.height, function () {
+      this._fetchNextBlockArray(this.dataFile.lastBlock, data.height, function () {
+        jsonfile.writeFileSync(path.join(appRoot.path, "data.json"), this.dataFile, { spaces: 2 })
+
         if (finishedCallback) {
           finishedCallback();
         }
