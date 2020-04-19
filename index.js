@@ -2,8 +2,10 @@ const fs = require('fs');
 const Numeral = require('numeral');
 const Discord = require("discord.js");
 const Handlebars = require("handlebars");
-const markets = require("./modules/markets.js");
-const blockchain = require("./modules/blockchain.js");
+const markets = require("./handlers/markets.js");
+const wallets = require("./handlers/wallets.js");
+const exchanges = require("./handlers/exchanges.js");
+const blockchain = require("./handlers/blockchain.js");
 const TipBotStorage = require("./modules/wallets.js");
 
 // This is your client. Some people call it `bot`, some people call it `self`, 
@@ -66,122 +68,40 @@ client.on("message", async message => {
   const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
 
-  if (command === "ping") {
-    // Calculates ping between sending a message and editing it, giving a nice round-trip latency.
-    // The second ping is an average latency between the bot and the websocket server (one-way, not round-trip)
-    const m = await message.channel.send("Ping?");
-    m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
-  }
-
   if (command === "exchanges") {
-    // get the basic data for the exchanges we support
-    markets.getExchanges(function (data) {
-      fs.readFile('./templates/exchanges.msg', 'utf8', function (err, source) {
-        if (err) throw err;
+    if (args.length == 0) {
+      return message.reply(`You need to specify a exchanges command! Type: ***${config.prefix}exchanges help*** for list of commands`);
+    }
 
-        var template = Handlebars.compile(source);
-        message.channel.send(template(data));
-      });
-    });
+    // execute the exchanges commands
+    exchanges.executeCommand(message, command, args);
   }
 
-  if (command === "market") {
-    // get the basic markets info
-    markets.getMarketInfo(function (data) {
-      fs.readFile('./templates/market.msg', 'utf8', function (err, source) {
-        if (err) throw err;
+  if (command === "markets") {
+    if (args.length == 0) {
+      return message.reply(`You need to specify a markets command! Type: ***${config.prefix}markets help*** for list of commands`);
+    }
 
-        var template = Handlebars.compile(source);
-        marketsEmbed = {
-          color: 0x0099ff,
-          title: 'Conceal | CCX',
-          url: 'https://conceal.network',
-          author: {
-            name: 'Conceal Network',
-            icon_url: 'https://conceal.network/images/branding/logo.png',
-            url: 'https://discord.gg/YbpHVSd'
-          },
-          fields: [
-            {
-              name: 'Market prices and data',
-              value: template(data)
-            },
-          ],
-          timestamp: new Date(),
-          footer: {
-            text: 'Privacy by default',
-            icon_url: 'https://conceal.network/images/branding/logo.png'
-          },
-        };
-
-        message.channel.send({ embed: marketsEmbed });
-      });
-    });
+    // execute the markets commands
+    markets.executeCommand(message, command, args);
   }
 
   if (command === "blockchain") {
     if (args.length == 0) {
-      return message.reply("You need to specify a blockchain command!");
+      return message.reply(`You need to specify a blockchain command! Type: ***${config.prefix}blockchain help*** for list of commands`);
     }
 
-    if (args[0] == "supply") {
-      blockchain.getLastHeaderInfo(function (data) {
-        let Supply = Numeral(data.result.block.alreadyGeneratedCoins / config.metrics.coinUnits);
-        message.channel.send(`***Current supply is is***: ${Supply.format('0,0')} CCX`);
-        console.log(data);
-      });
-    }
-
-    if (args[0] == "height") {
-      blockchain.getInfo(function (data) {
-        message.channel.send(`***Blockchain height is***: ${data.height}`);
-      });
-    }
+    // execute the blockchain commands
+    blockchain.executeCommand(message, command, args);
   }
 
   if (command === "wallet") {
     if (args.length == 0) {
-      return message.reply("You need to specify a wallet command!");
+      return message.reply(`You need to specify a wallet command! Type: ***${config.prefix}wallet help*** for list of commands`);
     }
 
-    if (args[0] == "register") {
-      tipBotStorage.registerWallet(message.member.user.id, message.member.user.username, args[1], function (data) {
-        return message.reply(data.reason);
-      });
-    }
-
-    if (args[0] == "show") {
-      tipBotStorage.showWalletInfo(message.member.user.id, function (data) {
-        if (data.success) {
-          return message.reply(`***Address***: ${data.address}, ***Payment Id***: ${data.payment_id}`);
-        } else {
-          return message.reply('Could not find any info about your wallet. Did you register one yet?');
-        }
-
-      });
-    }
-
-    if (args[0] == "deposit") {
-      tipBotStorage.showWalletInfo(message.member.user.id, function (data) {
-        if (data.success) {
-          return message.reply(`Please deposit your CCX to ***Address***: ${config.wallet.address}, ***Payment Id***: ${data.payment_id}. Its mandatory to include payment Id or your funds will be lost!`);
-        } else {
-          return message.reply('Could not find any info about your wallet. Did you register one yet?');
-        }
-      });
-    }
-    if (args[0] == "balance") {
-      tipBotStorage.getPayments("a09fc9e4797450bdeac8cfdd1080216799c49eab89aae7d5cdb4935e441e185a", function (data) {
-      });
-    }
-
-
-  }
-
-  if (command === "paymentid") {
-    tipBotStorage.generatePaymentId(function (data) {
-      message.channel.send(data);
-    });
+    // execute the blockchain commands
+    wallets.executeCommand(tipBotStorage, message, command, args);
   }
 
   if (command === "say") {
