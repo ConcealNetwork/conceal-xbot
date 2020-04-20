@@ -61,23 +61,25 @@ class TipBotStorage {
   /************************************************************
    *  Internal function that fetches the next blocks array.   *
    ***********************************************************/
-  _fetchNextBlockArray = (startIndex, currentHeight, finishedCallback) => {
-    if (startIndex < currentHeight) {
-      const opts = {
-        firstBlockIndex: startIndex,
-        blockCount: 1000,
-      }
+  _fetchNextBlockArray = (startIndex, currentHeight) => {
+    return new Promise(async resolve => {
+      if (startIndex < currentHeight) {
+        const opts = {
+          firstBlockIndex: startIndex,
+          blockCount: 1000,
+        }
 
-      this.CCXWallet.getTransactions(opts).then(txdata => {
-        this._SyncBlockArray(txdata).then(data => {
-          this._fetchNextBlockArray(Math.min(startIndex + 1000, currentHeight), currentHeight, finishedCallback);
-        }).catch(err => {
-          process.exit(-1);
+        this.CCXWallet.getTransactions(opts).then(txdata => {
+          this._SyncBlockArray(txdata).then(data => {
+            resolve(this._fetchNextBlockArray(Math.min(startIndex + 1000, currentHeight), currentHeight));
+          }).catch(err => {
+            reject(err);
+          });
         });
-      });
-    } else {
-      finishedCallback(currentHeight);
-    }
+      } else {
+        resolve(currentHeight);
+      }
+    });
   }
 
   /************************************************************
@@ -85,26 +87,26 @@ class TipBotStorage {
    *  with the blockchain data. It periodically checks for    *
    *  new transaction and looks at payment_id for matching.   *
    ***********************************************************/
-  _synchronizeTransactions = (periodic, finishedCallback) => {
-    let dataFile = this.dataFile;
+  _synchronizeTransactions = (periodic) => {
+    return new Promise(async resolve => {
+      this.CCXWallet.info().then(data => {
+        this._fetchNextBlockArray(this.dataFile.lastBlock, data.height).then(lastHeight => {
+          this.dataFile.lastBlock = lastHeight;
+          jsonfile.writeFileSync(path.join(appRoot.path, "data.json"), this.dataFile, { spaces: 2 });
 
-    this.CCXWallet.info().then(data => {
-      this._fetchNextBlockArray(this.dataFile.lastBlock, data.height, function (lastHeight) {
-        dataFile.lastBlock = lastHeight;
-        jsonfile.writeFileSync(path.join(appRoot.path, "data.json"), dataFile, { spaces: 2 });
-
-        if (finishedCallback) {
-          finishedCallback(lastHeight);
-        }
-
-        if (periodic) {
-          setTimeout(function () {
-            this._synchronizeTransactions(periodic, finishedCallback);
-          }, 300000);
-        }
+          if (periodic) {
+            setTimeout(function () {
+              resolve(this._synchronizeTransactions(periodic));
+            }, 300000);
+          } else {
+            resolve(lastHeight);
+          }
+        }).catch(err => {
+          reject(err);
+        });
+      }).catch(err => {
+        reject(err);
       });
-    }).catch(err => {
-      console.log(err);
     });
   }
 
@@ -117,21 +119,22 @@ class TipBotStorage {
   }
 
   registerWallet = (userId, userName, address, resultCallback) => {
-    this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
-      if (row) {
-        resultCallback({ success: false, reason: "User already has a registered wallet!" });
-      } else {
-        var localDB = this.db;
-        this.generatePaymentId().then(payment_id => {
-          localDB.run('INSERT INTO wallets(address, user_id, user_name, payment_id) VALUES(?,?,?,?)', [address, userId, userName, payment_id], function (err) {
-            if (err) {
-              resultCallback({ success: false, reason: err.message });
-            } else {
-              resultCallback({ success: true, reason: "Successfully registered wallet" });
-            }
+    return new Promise((resolve, reject) => {
+      this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
+        if (row) {
+          reject("User already has a registered wallet!");
+        } else {
+          this.generatePaymentId().then(payment_id => {
+            this.db.run('INSERT INTO wallets(address, user_id, user_name, payment_id) VALUES(?,?,?,?)', [address, userId, userName, payment_id], function (err) {
+              if (err) {
+                reject(err);
+              } else {
+                resolve("Successfully registered wallet");
+              }
+            });
           });
-        });
-      }
+        }
+      });
     });
   }
 
@@ -148,21 +151,23 @@ class TipBotStorage {
   }
 
   getBalance = (userId, resultCallback) => {
-    let localDB = this.db;
-
-    this._synchronizeTransactions(false, function (lastHeight) {
-      localDB.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, user_row) => {
-        if (!err && user_row) {
-          localDB.get('SELECT SUM(amount) as "balance" FROM transactions WHERE payment_id = ?', [user_row.payment_id], (err, balance_row) => {
-            if (!err && balance_row) {
-              resultCallback({ success: true, balance: balance_row.balance, payment_id: user_row.payment_id });
-            } else {
-              resultCallback({ success: false, reason: "Failed to get balance for the user" });
-            }
-          });
-        } else {
-          resultCallback({ success: false, reason: "Failed to find info for the user" });
-        }
+    return new Promise((resolve, reject) => {
+      this._synchronizeTransactions(false).then(lastHeight => {
+        this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, user_row) => {
+          if (!err && user_row) {
+            this.db.get('SELECT SUM(amount) as "balance" FROM transactions WHERE payment_id = ?', [user_row.payment_id], (err, balance_row) => {
+              if (!err && balance_row) {
+                resolve({ balance: balance_row.balance, payment_id: user_row.payment_id });
+              } else {
+                reject("Failed to get balance for the user");
+              }
+            });
+          } else {
+            reject("Failed to find info for the user");
+          }
+        });
+      }).catch(err => {
+        reject(err);
       });
     });
   }

@@ -5,19 +5,18 @@ const Handlebars = require("handlebars");
 module.exports = {
   executeCommand: function (tipBotStorage, message, command, args) {
     if (args[0] == "register") {
-      tipBotStorage.registerWallet(message.member.user.id, message.member.user.username, args[1], function (data) {
+      tipBotStorage.registerWallet(message.member.user.id, message.member.user.username, args[1]).then(data => {
         return message.reply(data.reason);
+      }).catch(err => {
+        return message.reply(`Error trying to register wallet: ${err}`);
       });
     }
 
     if (args[0] == "show") {
-      tipBotStorage.showWalletInfo(message.member.user.id, function (data) {
-        if (data.success) {
-          return message.reply(`***Address***: ${data.address}, ***Payment Id***: ${data.payment_id}`);
-        } else {
-          return message.reply('Could not find any info about your wallet. Did you register one yet?');
-        }
-
+      tipBotStorage.showWalletInfo(message.member.user.id).then(data => {
+        return message.reply(`***Address***: ${data.address}, ***Payment Id***: ${data.payment_id}`);
+      }).catch(err => {
+        return message.reply(`Error trying to get wallet info: ${err}`);
       });
     }
 
@@ -30,8 +29,10 @@ module.exports = {
     }
 
     if (args[0] == "balance") {
-      tipBotStorage.getBalance(message.member.user.id, function (data) {
+      tipBotStorage.getBalance(message.member.user.id).then(data => {
         return message.reply(`***Balance***: ${data.balance}, ***Payment Id***: ${data.payment_id}`);
+      }).catch(err => {
+        return message.reply(`Error trying to get balance: ${err}`);
       });
     }
 
