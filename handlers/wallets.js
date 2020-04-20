@@ -1,4 +1,5 @@
 const fs = require('fs');
+const config = require("../config.json");
 const Handlebars = require("handlebars");
 
 module.exports = {
@@ -21,12 +22,10 @@ module.exports = {
     }
 
     if (args[0] == "deposit") {
-      tipBotStorage.showWalletInfo(message.member.user.id, function (data) {
-        if (data.success) {
-          return message.reply(`Please deposit your CCX to ***Address***: ${config.wallet.address}, ***Payment Id***: ${data.payment_id}. Its mandatory to include payment Id or your funds will be lost!`);
-        } else {
-          return message.reply('Could not find any info about your wallet. Did you register one yet?');
-        }
+      tipBotStorage.showWalletInfo(message.member.user.id).then(data => {
+        return message.reply(`Please deposit your CCX to ***Address***: ${config.wallet.address}, ***Payment Id***: ${data.payment_id}. Its mandatory to include payment Id or your funds will be lost!`);
+      }).catch(err => {
+        return message.reply(err);
       });
     }
 
@@ -37,8 +36,8 @@ module.exports = {
     }
 
     if (command === "paymentid") {
-      tipBotStorage.generatePaymentId(function (data) {
-        message.channel.send(data);
+      tipBotStorage.generatePaymentId().then(payment_id => {
+        message.channel.send(payment_id);
       });
     }
   }
