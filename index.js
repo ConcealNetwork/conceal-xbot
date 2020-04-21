@@ -109,10 +109,15 @@ client.on("message", async message => {
       return message.reply("You need to specify a ammount and recipient.");
     }
 
-    //message.mentions
+    if (!message.mentions.users.first()) {
+      return message.reply("You need to specify at least one recipient.");
+    }
+
     // execute the blockchain commands
-    tipBotStorage.sendPayment("ccx7ZuCP9NA2KmnxbyBn9QgeLSATHXHRAXVpxgiaNxsH4GwMvQ92SeYhEeF2tJHADHbW4bZMFHvFf8GpucLrRyw49q4Gkc3AXM", 1, "a09fc9e4797450bdeac8cfdd1080216799c49eab89aae7d5cdb4935e441e185a", function (data) {
+    tipBotStorage.sendPayment(message.member.user.id, message.mentions.users.first().id, parseFloat(args[0])).then(data => {
       console.log(data);
+    }).catch(err => {
+      return message.reply(err);
     });
   }
 

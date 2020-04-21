@@ -23,6 +23,8 @@ class TipBotStorage {
       this.dataFile = { lastBlock: 1 };
     }
 
+    // set the standard fee for tipping
+    this.fee = 0.001 * config.metrics.coinUnits;
     // periodically sync transactions
     this._synchronizeTransactions(true);
   }
@@ -42,7 +44,7 @@ class TipBotStorage {
             resolve();
           } else {
             valueBlock.transactions.forEach(function (valueTx, idxTx) {
-              localDB.run('INSERT OR IGNORE INTO transactions(block, payment_id, timestamp, amount, tx_hash) VALUES(?,?,?,?,?)', [valueTx.blockIndex, valueTx.paymentId, valueTx.timestamp, valueTx.amount, valueTx.transactionHash], function (err) {
+              localDB.run('INSERT OR REPLACE INTO transactions(block, payment_id, timestamp, amount, tx_hash) VALUES(?,?,?,?,?)', [valueTx.blockIndex, valueTx.paymentId, valueTx.timestamp, valueTx.amount, valueTx.transactionHash], function (err) {
                 if (err) {
                   reject(false);
                 } else {
@@ -60,6 +62,8 @@ class TipBotStorage {
 
   /************************************************************
    *  Internal function that fetches the next blocks array.   *
+   *  Works recursivly until we do not pass the current block *
+   *  height. It returns the current block height as result.  *
    ***********************************************************/
   _fetchNextBlockArray = (startIndex, currentHeight) => {
     return new Promise(async resolve => {
@@ -126,11 +130,8 @@ class TipBotStorage {
         } else {
           this.generatePaymentId().then(payment_id => {
             this.db.run('INSERT INTO wallets(address, user_id, user_name, payment_id) VALUES(?,?,?,?)', [address, userId, userName, payment_id], function (err) {
-              if (err) {
-                reject(err);
-              } else {
-                resolve("Successfully registered wallet");
-              }
+              if (err) reject(err);
+              else resolve("Successfully registered wallet");
             });
           });
         }
@@ -141,11 +142,8 @@ class TipBotStorage {
   showWalletInfo = (userId, resultCallback) => {
     return new Promise((resolve, reject) => {
       this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
-        if (row) {
-          resolve({ address: row.address, payment_id: row.payment_id });
-        } else {
-          reject("Failed to find info for the user");
-        }
+        if (row) resolve({ address: row.address, payment_id: row.payment_id });
+        else reject("Failed to find info for the user");
       });
     });
   }
@@ -156,11 +154,8 @@ class TipBotStorage {
         this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, user_row) => {
           if (!err && user_row) {
             this.db.get('SELECT SUM(amount) as "balance" FROM transactions WHERE payment_id = ?', [user_row.payment_id], (err, balance_row) => {
-              if (!err && balance_row) {
-                resolve({ balance: balance_row.balance, payment_id: user_row.payment_id });
-              } else {
-                reject("Failed to get balance for the user");
-              }
+              if (!err && balance_row) resolve({ balance: balance_row.balance || 0, payment_id: user_row.payment_id });
+              else reject("Failed to get balance for the user");
             });
           } else {
             reject("Failed to find info for the user");
@@ -177,57 +172,79 @@ class TipBotStorage {
    *  Checks the available balance first to see if there is   *
    *  enough found to be able to send out the tip.            *
    ***********************************************************/
-  sendPayment = (userId, targetUser, amount, resultCallback) => {
+  sendPayment = (fromUserId, toUserId, amount) => {
+    let localCCX = this.CCXWallet;
+    let localFee = this.fee;
+    let localDB = this.db;
 
-    // write transaction to the sqlite database
-    function doWriteTransaction(address, payment_id, txdata) {
-      localDB.run('INSERT INTO transactions(user_id, target_user, target_address, payment_id, amount, tx_hash) VALUES(?,?,?,?,?)', [userId, targetUser, address, payment_id, amount, txdata.hash], function (err) {
-        if (err) {
-          resultCallback({ success: true, reason: err });
-        } else {
-          resultCallback({ success: true, data: txdata });
-        }
-      });
-    }
+    return new Promise((resolve, reject) => {
 
-    // call the wallet RFC to send the transaction
-    function doSendPayment(address, payment_id) {
-      const opts = {
-        transfers: [{ address: address, amount: amount * config.metrics.coinUnits }],
-        fee: 0.001 * config.metrics.coinUnits,
-        anonimity: 4,
-        paymentId: payment_id
+      function checkForPendingTransactions(userId) {
+        return new Promise((resolve, reject) => {
+          localDB.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, user_row) => {
+            if (!err && user_row) {
+              if (user_row.last_tip_tx) {
+                this.db.get('SELECT * FROM transactions WHERE tx_hash = ?', [user_row.last_tip_tx], (err, tx_row) => {
+                  if (!err && tx_row) resolve(tx_row);
+                  else reject(err || "The wallet is not fully synchronized. Try again later.")
+                });
+              } else {
+                resolve(null);
+              }
+            } else {
+              reject(err || "Could not find user!");
+            }
+          });
+        });
       }
 
-      this.CCXWallet.send(opts).then(txdata => {
-        doWriteTransaction(address, payment_id, txdata);
+      // write transaction to the sqlite database
+      function doWriteTransaction(paymentId, txhash) {
+        localDB.run('INSERT INTO transactions(block, payment_id, timestamp, amount, tx_hash) VALUES(0,?,0,?,?)', [paymentId, -1 * ((amount * config.metrics.coinUnits) + localFee), txhash.transactionHash], function (err) {
+          if (!err) resolve(txhash);
+          else reject(err);
+        });
+      }
+
+      // call the wallet RFC to send the transaction
+      function doSendPayment(address, paymentId) {
+        const opts = {
+          transfers: [{ address: address, amount: amount * config.metrics.coinUnits }],
+          fee: localFee,
+          anonimity: 4,
+          paymentId: paymentId
+        }
+
+        localCCX.sendTransaction(opts).then(txhash => {
+          doWriteTransaction(paymentId, txhash);
+        }).catch(err => {
+          reject(err);
+        });
+      }
+
+      // get target user data from sqlite DB
+      function doGetTargetUserData(userId) {
+        localDB.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
+          if (!err && row) doSendPayment(row.address, row.payment_id);
+          else reject("failed to get target user info");
+        });
+      }
+
+      // get balance first and check if its enough
+      this.getBalance(fromUserId).then(balanceData => {
+        if (balanceData.balance > ((amount * config.metrics.coinUnits) + localFee)) {
+          // first check for pending TXs
+          checkForPendingTransactions(fromUserId).then(txData => {
+            doGetTargetUserData(toUserId);
+          }).catch(err => {
+            reject(err);
+          });
+        } else {
+          reject(`insuficient balance ${balanceData.balance / config.metrics.coinUnits}`);
+        }
       }).catch(err => {
-        resultCallback({ success: false, reason: err });
+        reject(err);
       });
-    }
-
-    // get target user data from sqlite DB
-    function doGetTargetUserData(payment_id) {
-      this.db.get('SELECT * FROM wallets WHERE user_id = ?', [targetUser], (err, row) => {
-        if (!err && row) {
-          doSendPayment(row.address, amount, payment_id)
-        } else {
-          resultCallback({ success: false, reason: "failed to get target user info" });
-        }
-      });
-    }
-
-    // get balance first and check if its enough
-    this.getBalance(userId, function (balanceData) {
-      if (data.success) {
-        if (balanceData.balance > amount * config.metrics.coinUnits) {
-          doGetTargetUserData(balanceData.payment_id);
-        } else {
-          resultCallback({ success: false, reason: "insuficient balance" });
-        }
-      } else {
-        resultCallback({ success: false, reason: data.reason });
-      }
     });
   }
 }
