@@ -29,6 +29,10 @@ class TipBotStorage {
     this._synchronizeTransactions(true);
   }
 
+  _isHex64String = (str, len) => {
+    return ((typeof str === 'string') && /^[0-9a-fA-F]{64}$/.test(str) && (str.length = len));
+  }
+
   _SyncBlockArray = (txdata) => {
     return new Promise((resolve, reject) => {
       let blockCount = txdata.items.length;
@@ -128,6 +132,11 @@ class TipBotStorage {
         if (row) {
           reject("User already has a registered wallet!");
         } else {
+          // check if its a valid CCX address
+          if (!_isHex64String(address, 98)) {
+            reject("Please provide a valid CCX address");
+          }
+
           this.generatePaymentId().then(payment_id => {
             this.db.run('INSERT INTO wallets(address, user_id, user_name, payment_id) VALUES(?,?,?,?)', [address, userId, userName, payment_id], function (err) {
               if (err) reject(err);
