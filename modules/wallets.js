@@ -96,6 +96,8 @@ class TipBotStorage {
    *  new transaction and looks at payment_id for matching.   *
    ***********************************************************/
   _synchronizeTransactions = (periodic) => {
+    let synchronizeTransactions = this._synchronizeTransactions;
+
     return new Promise(async resolve => {
       this.CCXWallet.info().then(data => {
         this._fetchNextBlockArray(this.dataFile.lastBlock, data.height).then(lastHeight => {
@@ -104,7 +106,7 @@ class TipBotStorage {
 
           if (periodic) {
             setTimeout(function () {
-              resolve(this._synchronizeTransactions(periodic));
+              resolve(synchronizeTransactions(periodic));
             }, 300000);
           } else {
             resolve(lastHeight);

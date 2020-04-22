@@ -11,10 +11,26 @@ module.exports = {
           if (err) throw err;
 
           var template = Handlebars.compile(source);
-          message.channel.send(template(data));
+          marketsEmbed = {
+            color: 0x0099ff,
+            title: 'Conceal Exchanges',
+            url: 'https://conceal.network',
+            author: {
+              name: 'Conceal Network',
+              icon_url: 'https://conceal.network/images/branding/logo.png',
+              url: 'https://discord.gg/YbpHVSd'
+            },
+            fields: JSON.parse(template(data)),
+            timestamp: new Date(),
+            footer: {
+              text: 'Privacy by default',
+              icon_url: 'https://conceal.network/images/branding/logo.png'
+            },
+          };
+
+          message.channel.send({ embed: marketsEmbed });
         });
       });
     }
-
   }
 };

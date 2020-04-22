@@ -1,4 +1,6 @@
-{{#each .}}> **Name**: {{this.name}}
-> **URL**: {{this.url}}
-
-{{/each}}
+[{{#each .}}
+  {
+    "name": "{{this.name}}",
+    "value": "{{this.url}}"
+  }{{#unless @last}},{{/unless}}
+{{/each}}]
