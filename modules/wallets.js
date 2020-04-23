@@ -255,9 +255,9 @@ class TipBotStorage {
       }
 
       // get target user data from sqlite DB
-      function doGetTargetUserData(userId) {
+      function doGetTargetUserData(userId, paymentId) {
         localDB.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
-          if (!err && row) doSendPayment(row.address, row.payment_id);
+          if (!err && row) doSendPayment(row.address, paymentId);
           else reject("failed to get target user info");
         });
       }
@@ -267,7 +267,7 @@ class TipBotStorage {
         if (balanceData.balance > ((amount * config.metrics.coinUnits) + localFee)) {
           // first check for pending TXs
           checkForPendingTransactions(fromUserId).then(txData => {
-            doGetTargetUserData(toUserId);
+            doGetTargetUserData(toUserId, balanceData.payment_id);
           }).catch(err => {
             reject(err);
           });

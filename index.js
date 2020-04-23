@@ -105,20 +105,21 @@ client.on("message", async message => {
   }
 
   if (command === "tip") {
-    if (args.length == 0) {
-      return message.reply("You need to specify a ammount and recipient.");
+    if (args.length < 2) {
+      message.reply("You need to specify an ammount and a recipient.");
     }
 
     if (!message.mentions.users.first()) {
-      return message.reply("You need to specify at least one recipient.");
+      message.reply("You need to specify at least one recipient.");
     }
 
     // execute the blockchain commands
     tipBotStorage.sendPayment(message.member.user.id, message.mentions.users.first().id, parseFloat(args[0])).then(data => {
+      message.author.send(`Success! ***TX hash***: ${data.transactionHash}, ***Secret key***: ${data.transactionSecretKey}`);
       console.log(data);
     }).catch(err => {
-      return message.reply(err);
-    });
+      message.author.send(err);
+    }).finally(message.reply('The tip details were send to you in DM'));
   }
 
   if (command === "say") {

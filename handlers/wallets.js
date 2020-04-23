@@ -46,7 +46,7 @@ module.exports = {
 
     if (args[0] == "balance") {
       tipBotStorage.getBalance(message.member.user.id).then(data => {
-        message.author.send(`***Balance***: ${data.balance}, ***Payment Id***: ${data.payment_id}`);
+        message.author.send(`***Balance***: ${(data.balance / config.metrics.coinUnits).toLocaleString()} CCX, ***Payment Id***: ${data.payment_id}`);
       }).catch(err => {
         message.author.send(`Error trying to get balance: ${err}`);
       }).finally(message.reply('The balance information has been sent to you in DM'));
