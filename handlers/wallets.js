@@ -5,11 +5,27 @@ const Handlebars = require("handlebars");
 module.exports = {
   executeCommand: function (tipBotStorage, message, command, args) {
     if (args[0] == "register") {
-      tipBotStorage.registerWallet(message.member.user.id, message.member.user.username, args[1]).then(data => {
-        message.author.send(data.reason);
-      }).catch(err => {
-        message.author.send(`Error trying to register wallet: ${err}`);
-      }).finally(message.reply('The registration information has been sent to you in DM'));
+      if (args.length < 2) {
+        message.reply('Please type your wallet address. Use "help" command for help')
+      } else {
+        tipBotStorage.registerWallet(message.member.user.id, message.member.user.username, args[1]).then(response => {
+          message.author.send(response);
+        }).catch(err => {
+          message.author.send(`Error trying to register wallet: ${err}`);
+        }).finally(message.reply('The registration information has been sent to you in DM'));
+      }
+    }
+
+    if (args[0] == "update") {
+      if (args.length < 2) {
+        message.reply('Please type your wallet address. Use "help" command for help')
+      } else {
+        tipBotStorage.updateWallet(message.member.user.id, args[1]).then(response => {
+          message.author.send(response);
+        }).catch(err => {
+          message.author.send(`Error trying to update wallet: ${err}`);
+        }).finally(message.reply('The update information has been sent to you in DM'));
+      }
     }
 
     if (args[0] == "show") {

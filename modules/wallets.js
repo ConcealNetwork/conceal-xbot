@@ -29,8 +29,9 @@ class TipBotStorage {
     this._synchronizeTransactions(true);
   }
 
-  _isHex64String = (str, len) => {
-    return ((typeof str === 'string') && /^[0-9a-fA-F]{64}$/.test(str) && (str.length = len));
+  _isValidAddress = (str, len) => {
+    //return ((typeof str === 'string') && /^[0-9a-fA-F]{64}$/.test(str) && (str.length == len));
+    return str.length == len;
   }
 
   _SyncBlockArray = (txdata) => {
@@ -128,14 +129,14 @@ class TipBotStorage {
     });
   }
 
-  registerWallet = (userId, userName, address, resultCallback) => {
+  registerWallet = (userId, userName, address) => {
     return new Promise((resolve, reject) => {
       this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
         if (row) {
           reject("User already has a registered wallet!");
         } else {
           // check if its a valid CCX address
-          if (!_isHex64String(address, 98)) {
+          if (!this._isValidAddress(address, 98)) {
             reject("Please provide a valid CCX address");
           }
 
@@ -150,7 +151,27 @@ class TipBotStorage {
     });
   }
 
-  showWalletInfo = (userId, resultCallback) => {
+  updateWallet = (userId, address) => {
+    return new Promise((resolve, reject) => {
+      this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
+        if (!row) {
+          reject('You are not registered yet. Please use a "register" command');
+        } else {
+          // check if its a valid CCX address
+          if (!this._isValidAddress(address, 98)) {
+            reject("Please provide a valid CCX address");
+          }
+
+          this.db.run('UPDATE wallets SET address = ? where user_id = ?', [address, userId], function (err) {
+            if (err) reject(err);
+            else resolve("Successfully updated wallet");
+          });
+        }
+      });
+    });
+  }
+
+  showWalletInfo = (userId) => {
     return new Promise((resolve, reject) => {
       this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
         if (row) resolve({ address: row.address, payment_id: row.payment_id });
@@ -159,7 +180,7 @@ class TipBotStorage {
     });
   }
 
-  getBalance = (userId, resultCallback) => {
+  getBalance = (userId) => {
     return new Promise((resolve, reject) => {
       this._synchronizeTransactions(false).then(lastHeight => {
         this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, user_row) => {
