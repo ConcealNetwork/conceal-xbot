@@ -6,7 +6,7 @@ module.exports = {
   executeCommand: function (message, command, args) {
     if (args[0] == "info") {
       // get the basic markets info
-      markets.getMarketInfo(function (data) {
+      markets.getMarketInfo().then(data => {
         fs.readFile('./templates/market.msg', 'utf8', function (err, source) {
           if (err) throw err;
 
@@ -33,8 +33,11 @@ module.exports = {
             },
           };
 
+          // send resply back to the channel
           message.channel.send({ embed: marketsEmbed });
         });
+      }).catch(err => {
+        message.channel.send(err);
       });
     }
   }
