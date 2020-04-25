@@ -2,6 +2,7 @@ const fs = require('fs');
 const Numeral = require('numeral');
 const Discord = require("discord.js");
 const Handlebars = require("handlebars");
+const pools = require("./handlers/pools.js");
 const markets = require("./handlers/markets.js");
 const wallets = require("./handlers/wallets.js");
 const exchanges = require("./handlers/exchanges.js");
@@ -104,6 +105,15 @@ client.on("message", async message => {
 
     // execute the blockchain commands
     wallets.executeCommand(tipBotStorage, message, command, args);
+  }
+
+  if (command === "pools") {
+    if (args.length == 0) {
+      return message.reply(`You need to specify a pool command! Type: ***${config.prefix}pools help*** for list of commands`);
+    }
+
+    // execute the blockchain commands
+    pools.executeCommand(message, command, args);
   }
 
   if (command === "tip") {
