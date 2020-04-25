@@ -122,6 +122,15 @@ client.on("message", async message => {
     }).finally(message.reply('The tip details were send to you in DM'));
   }
 
+  if (command === "help") {
+
+    fs.readFile('./templates/help.msg', 'utf8', function (err, source) {
+      if (err) throw err;
+      var template = Handlebars.compile(source);
+      message.channel.send(template(template));
+    });
+  }
+
   if (command === "say") {
     // makes the bot say something and delete the message. As an example, it's open to anyone to use. 
     // To get the "message" itself we join the `args` back into a string with spaces: 
