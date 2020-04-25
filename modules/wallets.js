@@ -9,7 +9,7 @@ const fs = require('fs');
 
 class TipBotStorage {
   constructor() {
-    this.CCXWallet = new CCXApi("http://127.0.0.1", config.wallet.port, config.daemon.port, (config.wallet.rfcTimeout || 5) * 1000);
+    this.CCX = new CCXApi("http://127.0.0.1", config.wallet.port, config.daemon.port, (config.wallet.rfcTimeout || 5) * 1000);
     this.db = new sqlite3.Database(path.join(appRoot.path, "tipbot.db"), sqlite3.OPEN_READWRITE, (err) => {
       if (err) {
         console.log('Could not connect to database', err);
@@ -78,7 +78,7 @@ class TipBotStorage {
           blockCount: 1000,
         }
 
-        this.CCXWallet.getTransactions(opts).then(txdata => {
+        this.CCX.getTransactions(opts).then(txdata => {
           this._SyncBlockArray(txdata).then(data => {
             resolve(this._fetchNextBlockArray(Math.min(startIndex + 1000, currentHeight), currentHeight));
           }).catch(err => {
@@ -100,7 +100,7 @@ class TipBotStorage {
     let synchronizeTransactions = this._synchronizeTransactions;
 
     return new Promise(async resolve => {
-      this.CCXWallet.info().then(data => {
+      this.CCX.info().then(data => {
         this._fetchNextBlockArray(this.dataFile.lastBlock, data.height).then(lastHeight => {
           this.dataFile.lastBlock = lastHeight;
           jsonfile.writeFileSync(path.join(appRoot.path, "data.json"), this.dataFile, { spaces: 2 });
@@ -205,7 +205,7 @@ class TipBotStorage {
    *  enough found to be able to send out the tip.            *
    ***********************************************************/
   sendPayment = (fromUserId, toUserId, amount) => {
-    let localCCX = this.CCXWallet;
+    let localCCX = this.CCX;
     let localFee = this.fee;
     let localDB = this.db;
 

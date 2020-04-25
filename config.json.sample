@@ -2,11 +2,11 @@
   "token": "here_you_put_your_token",
   "prefix": ".",
   "daemon": {
-    "api": "https://explorer.conceal.network/daemon",
     "port": 6060
   },
   "metrics": {
-    "coinUnits": 1000000
+    "coinUnits": 1000000,
+    "blockTargetInterval": 120
   },
   "wallet": {
     "address": "your_wallet_address",

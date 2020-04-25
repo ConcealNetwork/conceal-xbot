@@ -1,53 +1,34 @@
 const config = require("../config.json");
-const request = require("request");
+const CCXApi = require("conceal-api");
 
-module.exports = {
-  getInfo: function (resultCallback) {
-    var packetData = {
-      uri: `${config.daemon.api}/getinfo`,
-      strictSSL: false,
-      method: "GET",
-      json: true
-    };
-
-    request(packetData, function (err, res, data) {
-      if (!err) {
-        resultCallback(data);
-      }
-    });
-  },
-  getLastHeaderInfo: function (resultCallback) {
-    var packetData = {
-      uri: `${config.daemon.api}/json_rpc`,
-      strictSSL: false,
-      method: "POST",
-      json: true,
-      json: {
-        "jsonrpc": "2.0",
-        "id": "concealBot",
-        "method": "getlastblockheader"
-      }
-    };
-
-    request(packetData, function (err, res, header) {
-      if (!err) {
-        packetData.json = {
-          "jsonrpc": "2.0",
-          "id": "concealBot",
-          "method": "f_block_json",
-          "params": {
-            "hash": header.result.block_header.hash
-          }
-
-        }
-
-        request(packetData, function (err, res, data) {
-          if (!err) {
-            resultCallback(data);
-          }
-        });
-      }
-    });
-
+class BlockchainInfo {
+  constructor() {
+    this.CCX = new CCXApi("http://127.0.0.1", config.wallet.port, config.daemon.port, (config.wallet.rfcTimeout || 5) * 1000);
   }
-};
+
+  getInfo = () => {
+    return new Promise((resolve, reject) => {
+      this.CCX.info()
+        .then(data => resolve(data))
+        .catch(err => reject(err));
+    });
+  }
+
+  getBlockInfo = (hash) => {
+    return new Promise((resolve, reject) => {
+      this.CCX.block(hash)
+        .then(data => resolve(data.block))
+        .catch(err => reject(err));
+    });
+  }
+
+  getLastHeaderInfo = () => {
+    return new Promise((resolve, reject) => {
+      this.CCX.lastBlockHeader()
+        .then(data => resolve(data.block_header))
+        .catch(err => reject(err));
+    });
+  }
+}
+
+module.exports = BlockchainInfo;

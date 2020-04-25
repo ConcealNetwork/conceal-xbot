@@ -6,6 +6,7 @@ const markets = require("./handlers/markets.js");
 const wallets = require("./handlers/wallets.js");
 const exchanges = require("./handlers/exchanges.js");
 const blockchain = require("./handlers/blockchain.js");
+const BlockchainInfo = require("./modules/blockchain.js");
 const TipBotStorage = require("./modules/wallets.js");
 
 // This is your client. Some people call it `bot`, some people call it `self`, 
@@ -13,6 +14,7 @@ const TipBotStorage = require("./modules/wallets.js");
 // this is what we're refering to. Your client.
 const client = new Discord.Client();
 const tipBotStorage = new TipBotStorage();
+const blockchainInfo = new BlockchainInfo();
 
 // Here we load the config.json file that contains our token and our prefix values. 
 const config = require("./config.json");
@@ -92,7 +94,7 @@ client.on("message", async message => {
     }
 
     // execute the blockchain commands
-    blockchain.executeCommand(message, command, args);
+    blockchain.executeCommand(blockchainInfo, message, command, args);
   }
 
   if (command === "wallet") {
