@@ -1,6 +1,7 @@
 ```css
 
   #blockchain
+    help         .blockchain help -> gives detailed info on blockchain commands
     supply       .blockchain supply -> gives the current circulating supply of CCX.
     height       .blockchain height -> gives the current blockchain height.
     reward       .blockchain reward -> gives the current block reward.

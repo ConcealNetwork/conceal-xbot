@@ -6,6 +6,15 @@ const blockchain = require("../modules/blockchain.js");
 
 module.exports = {
   executeCommand: function (blockchainInfo, message, command, args) {
+    if (args[0] === "help") {
+
+      fs.readFile('./templates/help_blockchain.msg', 'utf8', function (err, source) {
+        if (err) throw err;
+        var template = Handlebars.compile(source);
+        message.channel.send(template(template));
+      });
+    }
+
     if (args[0] == "supply") {
       blockchainInfo.getLastHeaderInfo().then(headerData => {
         blockchainInfo.getBlockInfo(headerData.hash).then(blockData => {

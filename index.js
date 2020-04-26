@@ -87,7 +87,7 @@ client.on("message", async message => {
     }
 
     // execute the markets commands
-    markets.executeCommand(message, command, args);
+    return markets.executeCommand(message, command, args);
   }
 
   if (command === "blockchain") {
@@ -96,7 +96,7 @@ client.on("message", async message => {
     }
 
     // execute the blockchain commands
-    blockchain.executeCommand(blockchainInfo, message, command, args);
+    return blockchain.executeCommand(blockchainInfo, message, command, args);
   }
 
   if (command === "wallet") {
@@ -105,7 +105,7 @@ client.on("message", async message => {
     }
 
     // execute the blockchain commands
-    wallets.executeCommand(tipBotStorage, message, command, args);
+    return wallets.executeCommand(tipBotStorage, message, command, args);
   }
 
   if (command === "pools") {
@@ -114,20 +114,20 @@ client.on("message", async message => {
     }
 
     // execute the blockchain commands
-    pools.executeCommand(message, command, args);
+    return pools.executeCommand(message, command, args);
   }
 
   if (command === "tip") {
     if (args.length < 2) {
-      message.reply('You need to specify an ammount and a recipient. Use ".wallet help" command for help');
+      return message.reply('You need to specify an ammount and a recipient. Use ".wallet help" command for help');
     }
 
     if (!message.mentions.users.first()) {
-      message.reply('You need to specify at least one recipient. Use ".wallet help" command for help');
+      return message.reply('You need to specify at least one recipient. Use ".wallet help" command for help');
     }
 
     // execute the blockchain commands
-    tipBotStorage.sendPayment(message.member.user.id, message.mentions.users.first().id, parseFloat(args[0])).then(data => {
+    return tipBotStorage.sendPayment(message.member.user.id, message.mentions.users.first().id, parseFloat(args[0])).then(data => {
       message.author.send(`Success! ***TX hash***: ${data.transactionHash}, ***Secret key***: ${data.transactionSecretKey}`);
       console.log(data);
     }).catch(err => {
@@ -140,6 +140,7 @@ client.on("message", async message => {
       source = fs.readFileSync(`./templates/help_general_${i}.msg`, { encoding: 'utf8', flag: 'r' });
       var template = Handlebars.compile(source);
       message.channel.send(template(template));
+      return true;
     }
   }
 
@@ -150,7 +151,7 @@ client.on("message", async message => {
     // Then we delete the command message (sneaky, right?). The catch just ignores the error with a cute smiley thing.
     message.delete().catch(O_o => { });
     // And we get the bot to say the thing: 
-    message.channel.send(sayMessage);
+    return message.channel.send(sayMessage);
   }
 
   if (command === "kick") {
@@ -176,7 +177,7 @@ client.on("message", async message => {
 
     // Now, time for a swift kick in the nuts!
     await member.kick(reason).catch(error => message.reply(`Sorry ${message.author} I couldn't kick because of : ${error}`));
-    message.reply(`${member.user.tag} has been kicked by ${message.author.tag} because: ${reason}`);
+    return message.reply(`${member.user.tag} has been kicked by ${message.author.tag} because: ${reason}`);
   }
 
   if (command === "ban") {
@@ -195,7 +196,7 @@ client.on("message", async message => {
     if (!reason) reason = "No reason provided";
 
     await member.ban(reason).catch(error => message.reply(`Sorry ${message.author} I couldn't ban because of : ${error}`));
-    message.reply(`${member.user.tag} has been banned by ${message.author.tag} because: ${reason}`);
+    return message.reply(`${member.user.tag} has been banned by ${message.author.tag} because: ${reason}`);
   }
 
   if (command === "purge") {
@@ -212,8 +213,11 @@ client.on("message", async message => {
 
     // So we get our messages, and delete them. Simple enough, right?
     const fetched = await message.channel.fetchMessages({ limit: deleteCount });
-    message.channel.bulkDelete(fetched).catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
+    return message.channel.bulkDelete(fetched).catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
   }
+
+  // if we came this far then no command was found
+  return message.reply('Unknow command. Please type ".help" for more info on how to use the bot');
 });
 
 client.login(config.token);
