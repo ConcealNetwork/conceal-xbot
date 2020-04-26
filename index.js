@@ -142,10 +142,10 @@ client.on("message", async message => {
         message.channel.send(source);
       });
 
-      if (partNum < 7) {
+      if (partNum < 2) {
         setTimeout(() => {
           sendNextHelpPart(partNum + 1)
-        }, 500);
+        }, 200);
       }
     }
 
