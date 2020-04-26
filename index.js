@@ -78,7 +78,7 @@ client.on("message", async message => {
     }
 
     // execute the exchanges commands
-    exchanges.executeCommand(message, command, args);
+    return exchanges.executeCommand(message, command, args);
   }
 
   if (command === "markets") {
