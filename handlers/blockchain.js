@@ -31,7 +31,7 @@ module.exports = {
       });
     }
 
-    if (args[0] == "totalsupply") {
+    if (args[0] === "totalsupply" || args[0] === "total") {
       blockchainInfo.getLastHeaderInfo().then(headerData => {
         blockchainInfo.getBlockInfo(headerData.hash).then(blockData => {
           let supply = Numeral(blockData.alreadyGeneratedCoins / config.metrics.coinUnits);
@@ -44,7 +44,7 @@ module.exports = {
       });
     }
 
-    if (args[0] == "banked") {
+    if (args[0] === "banked") {
       blockchainInfo.getInfo().then(data => {
         let banked = Numeral(data.full_deposit_amount / config.metrics.coinUnits);
         message.channel.send(`***Total banked amount is***: ${banked.format('0,0')} CCX`);
@@ -53,7 +53,7 @@ module.exports = {
       });
     }
 
-    if (args[0] == "height") {
+    if (args[0] === "height") {
       blockchainInfo.getInfo().then(data => {
         message.channel.send(`***Blockchain height is***: ${data.height}`);
       }).catch(err => {
@@ -61,7 +61,7 @@ module.exports = {
       });
     }
 
-    if (args[0] == "reward") {
+    if (args[0] === "reward") {
       blockchainInfo.getLastHeaderInfo().then(data => {
         let reward = Numeral(data.reward / config.metrics.coinUnits);
         message.channel.send(`***Current reward is***: ${reward.format('0')} CCX`);
@@ -70,7 +70,7 @@ module.exports = {
       });
     }
 
-    if (args[0] == "hashrate") {
+    if (args[0] === "hashrate") {
       blockchainInfo.getInfo().then(data => {
         message.channel.send(`***Current hashrate is***: ${data.difficulty / config.metrics.blockTargetInterval}`);
       }).catch(err => {
@@ -78,11 +78,11 @@ module.exports = {
       });
     }
 
-    if (args[0] == "maxsupply") {
+    if (args[0] === "maxsupply") {
       message.channel.send(`***Max supply is***: 200000000 CCX`);
     }
 
-    if (args[0] == "difficulty") {
+    if (args[0] === "difficulty" || args[0] === "diff") {
       blockchainInfo.getInfo().then(data => {
         message.channel.send(`***Current difficulty is***: ${data.difficulty}`);
       }).catch(err => {

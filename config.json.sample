@@ -4,6 +4,9 @@
   "daemon": {
     "port": 6060
   },
+  "guild": {
+    "id": "your_guild_id"
+  },
   "metrics": {
     "coinUnits": 1000000,
     "blockTargetInterval": 120

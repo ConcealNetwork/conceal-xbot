@@ -17,6 +17,7 @@
     "numeral": "^2.0.6",
     "request": "^2.88.2",
     "shortid": "^2.2.15",
+    "spelling": "^2.0.2",
     "sqlite3": "^4.1.1"
   }
 }

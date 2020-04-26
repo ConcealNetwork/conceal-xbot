@@ -9,7 +9,7 @@ Bellow is a list of all available commands.
 Example: .pools list
 ```
 ```css
-#height     
+#info     
 
 .pools info -> Gives the info about all CCX pools.
 
