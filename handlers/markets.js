@@ -49,5 +49,11 @@ module.exports = {
         message.channel.send(err);
       });
     }
+
+    if (args[0] == "pricechart") {
+      markets.getPriceChart().then(filename => {
+        message.channel.send('CCX price chart', { files: [filename] });
+      });
+    }
   }
 };

@@ -1,3 +1,5 @@
+const fs = require('fs');
+const shortid = require('shortid');
 const request = require("request");
 
 module.exports = {
@@ -28,6 +30,20 @@ module.exports = {
       request(packetData, function (err, res, data) {
         if (!err) resolve(data);
         else reject(err);
+      });
+    });
+  },
+  getPriceChart: function () {
+    return new Promise((resolve, reject) => {
+      let url = "https://explorer.conceal.network/services/charts/price.png";
+      let filename = `./images/${shortid.generate()}.png`;
+
+      request.head(url, (err, res, body) => {
+        request(url)
+          .pipe(fs.createWriteStream(filename))
+          .on('close', function () {
+            resolve(filename);
+          });
       });
     });
   }

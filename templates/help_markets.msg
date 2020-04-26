@@ -8,3 +8,10 @@ Bellow is a list of all available commands.
 
 Example: .markets info
 ```
+```css
+#pricechart     
+
+.markets pricechart -> Gives CCX price chart for last 7 days.
+
+Example: .pricechart info
+```
