@@ -1,7 +1,7 @@
 ```css
 
   #wallet
-    help         .wallet help -> gives detailed info on wallet commands
+    help         .wallet help -> gives detailed info on wallet commands.
     register     .wallet register -> registers a new wallet for the user. You need to specify a valid CCX address.
     update       .wallet update -> updates the current user wallet with new CCX address.
     show         .wallet show -> gives the current wallet details for the user.
