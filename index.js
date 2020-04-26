@@ -136,12 +136,22 @@ client.on("message", async message => {
   }
 
   if (command === "help") {
-    for (let i = 1; i < 8; i++) {
-      source = fs.readFileSync(`./templates/help_general_${i}.msg`, { encoding: 'utf8', flag: 'r' });
-      var template = Handlebars.compile(source);
-      message.channel.send(template(template));
-      return true;
+    function sendNextHelpPart(partNum) {
+      fs.readFile(`./templates/help_general_${partNum}.msg`, 'utf8', function (err, source) {
+        if (err) throw err;
+        message.channel.send(source);
+      });
+
+      if (partNum < 7) {
+        setTimeout(() => {
+          sendNextHelpPart(partNum + 1)
+        }, 500);
+      }
     }
+
+    // send first part and return 
+    sendNextHelpPart(1);
+    return true;
   }
 
   if (command === "say") {

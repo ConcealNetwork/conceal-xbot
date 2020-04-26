@@ -10,8 +10,7 @@ module.exports = {
 
       fs.readFile('./templates/help_blockchain.msg', 'utf8', function (err, source) {
         if (err) throw err;
-        var template = Handlebars.compile(source);
-        message.channel.send(template(template));
+        message.channel.send(source);
       });
     }
 
