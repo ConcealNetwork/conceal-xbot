@@ -4,9 +4,18 @@ const Handlebars = require("handlebars");
 
 module.exports = {
   executeCommand: function (tipBotStorage, message, command, args) {
+    if (args[0] === "help") {
+
+      fs.readFile('./templates/help_wallets.msg', 'utf8', function (err, source) {
+        if (err) throw err;
+        var template = Handlebars.compile(source);
+        message.channel.send(template(template));
+      });
+    }
+
     if (args[0] == "register") {
       if (args.length < 2) {
-        message.reply('Please type your wallet address. Use "help" command for help')
+        message.reply('Please type your wallet address. Use ".wallet help" command for help')
       } else {
         tipBotStorage.registerWallet(message.member.user.id, message.member.user.username, args[1]).then(response => {
           message.author.send(response);
@@ -18,7 +27,7 @@ module.exports = {
 
     if (args[0] == "update") {
       if (args.length < 2) {
-        message.reply('Please type your wallet address. Use "help" command for help')
+        message.reply('Please type your wallet address. Use ".wallet help" command for help')
       } else {
         tipBotStorage.updateWallet(message.member.user.id, args[1]).then(response => {
           message.author.send(response);

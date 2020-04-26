@@ -4,6 +4,7 @@ const Discord = require("discord.js");
 const Handlebars = require("handlebars");
 const pools = require("./handlers/pools.js");
 const markets = require("./handlers/markets.js");
+const marketsData = require("./modules/markets.js");
 const wallets = require("./handlers/wallets.js");
 const exchanges = require("./handlers/exchanges.js");
 const blockchain = require("./handlers/blockchain.js");
@@ -37,12 +38,12 @@ client.on("guildCreate", guild => {
 });
 
 client.on('guildMemberAdd', member => {
-  markets.getExchanges(function (data) {
+  marketsData.getExchanges().then(data => {
     fs.readFile('./templates/welcome.msg', 'utf8', function (err, source) {
       if (err) throw err;
 
       var template = Handlebars.compile(source);
-      member.send(template(member));
+      member.send(template(data));
     });
   });
 });
@@ -118,11 +119,11 @@ client.on("message", async message => {
 
   if (command === "tip") {
     if (args.length < 2) {
-      message.reply("You need to specify an ammount and a recipient.");
+      message.reply('You need to specify an ammount and a recipient. Use ".wallet help" command for help');
     }
 
     if (!message.mentions.users.first()) {
-      message.reply("You need to specify at least one recipient.");
+      message.reply('You need to specify at least one recipient. Use ".wallet help" command for help');
     }
 
     // execute the blockchain commands
@@ -135,12 +136,11 @@ client.on("message", async message => {
   }
 
   if (command === "help") {
-
-    fs.readFile('./templates/help.msg', 'utf8', function (err, source) {
-      if (err) throw err;
+    for (let i = 1; i < 8; i++) {
+      source = fs.readFileSync(`./templates/help_general_${i}.msg`, { encoding: 'utf8', flag: 'r' });
       var template = Handlebars.compile(source);
       message.channel.send(template(template));
-    });
+    }
   }
 
   if (command === "say") {
