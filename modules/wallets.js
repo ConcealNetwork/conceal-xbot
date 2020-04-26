@@ -8,13 +8,9 @@ const path = require('path');
 const fs = require('fs');
 
 class TipBotStorage {
-  constructor() {
+  constructor(database) {
     this.CCX = new CCXApi("http://127.0.0.1", config.wallet.port, config.daemon.port, (config.wallet.rfcTimeout || 5) * 1000);
-    this.db = new sqlite3.Database(path.join(appRoot.path, "tipbot.db"), sqlite3.OPEN_READWRITE, (err) => {
-      if (err) {
-        console.log('Could not connect to database', err);
-      }
-    });
+    this.db = database;
 
     // load the data file
     if (fs.existsSync(path.join(appRoot.path, "data.json"))) {

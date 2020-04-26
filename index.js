@@ -1,28 +1,38 @@
 const fs = require('fs');
+const path = require('path');
 const Numeral = require('numeral');
+const sqlite3 = require('sqlite3');
 const Discord = require("discord.js");
+const appRoot = require('app-root-path');
 const Handlebars = require("handlebars");
 const pools = require("./handlers/pools.js");
 const users = require("./handlers/users.js");
+const UsersData = require("./modules/users.js");
 const markets = require("./handlers/markets.js");
 const marketsData = require("./modules/markets.js");
 const wallets = require("./handlers/wallets.js");
 const exchanges = require("./handlers/exchanges.js");
 const blockchain = require("./handlers/blockchain.js");
-const BlockchainInfo = require("./modules/blockchain.js");
 const TipBotStorage = require("./modules/wallets.js");
+const BlockchainInfo = require("./modules/blockchain.js");
+
+// open the access to the database if it fails we must stop
+this.db = new sqlite3.Database(path.join(appRoot.path, "tipbot.db"), sqlite3.OPEN_READWRITE, (err) => {
+  if (err) {
+    console.log('Could not connect to database', err);
+  }
+});
 
 // This is your client. Some people call it `bot`, some people call it `self`, 
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
 // this is what we're refering to. Your client.
 const client = new Discord.Client();
-const tipBotStorage = new TipBotStorage();
+const usersData = new UsersData(this.db);
+const tipBotStorage = new TipBotStorage(this.db);
 const blockchainInfo = new BlockchainInfo();
 
 // Here we load the config.json file that contains our token and our prefix values. 
 const config = require("./config.json");
-// config.token contains the bot's token
-// config.prefix contains the message prefix.
 
 client.on("ready", () => {
   // This event will run if the bot starts, and logs in, successfully.
@@ -61,6 +71,9 @@ client.on("message", async message => {
   // It's good practice to ignore other bots. This also makes your bot ignore itself
   // and not get into a spam loop (we call that "botception").
   if (message.author.bot) return;
+
+  // update the activity for the current user
+  usersData.updateUserActivity(message.member.user.id);
 
   // Also good practice to ignore any message that does not start with our prefix, 
   // which is set in the configuration file.
