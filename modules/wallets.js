@@ -7,7 +7,7 @@ const crypto = require("crypto");
 const path = require('path');
 const fs = require('fs');
 
-class TipBotStorage {
+class WalletsData {
   constructor(database) {
     this.CCX = new CCXApi("http://127.0.0.1", config.wallet.port, config.daemon.port, (config.wallet.rfcTimeout || 5) * 1000);
     this.db = database;
@@ -277,4 +277,4 @@ class TipBotStorage {
   }
 }
 
-module.exports = TipBotStorage;
+module.exports = WalletsData;

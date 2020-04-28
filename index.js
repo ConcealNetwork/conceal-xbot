@@ -12,14 +12,16 @@ const markets = require("./handlers/markets.js");
 const marketsData = require("./modules/markets.js");
 const wallets = require("./handlers/wallets.js");
 const exchanges = require("./handlers/exchanges.js");
+const giveaways = require("./handlers/giveaways.js");
 const blockchain = require("./handlers/blockchain.js");
-const TipBotStorage = require("./modules/wallets.js");
-const BlockchainInfo = require("./modules/blockchain.js");
+const WalletsData = require("./modules/wallets.js");
+const GiveawaysData = require("./modules/giveaways.js");
+const BlockchainData = require("./modules/blockchain.js");
 
 // open the access to the database if it fails we must stop
 this.db = new sqlite3.Database(path.join(appRoot.path, "tipbot.db"), sqlite3.OPEN_READWRITE, (err) => {
   if (err) {
-    console.log('Could not connect to database', err);
+    console.error('Could not connect to database', err);
   }
 });
 
@@ -28,11 +30,18 @@ this.db = new sqlite3.Database(path.join(appRoot.path, "tipbot.db"), sqlite3.OPE
 // this is what we're refering to. Your client.
 const client = new Discord.Client();
 const usersData = new UsersData(this.db);
-const tipBotStorage = new TipBotStorage(this.db);
-const blockchainInfo = new BlockchainInfo();
+const walletsData = new WalletsData(this.db);
+const giveawaysData = new GiveawaysData(this.db);
+const blockchainData = new BlockchainData();
 
 // Here we load the config.json file that contains our token and our prefix values. 
 const config = require("./config.json");
+
+// handle all unhandler exceptions
+process.on('uncaughtException', err => {
+  console.error('There was an uncaught error', err)
+  process.exit(1);
+});
 
 client.on("ready", () => {
   // This event will run if the bot starts, and logs in, successfully.
@@ -65,6 +74,11 @@ client.on("guildDelete", guild => {
   client.user.setActivity(`Serving ${client.guilds.size} servers`);
 });
 
+client.on('messageReactionAdd', (reaction, user) => {
+  console.log(user);
+});
+
+
 client.on("message", async message => {
   // This event will run on every single message received, from any channel or DM.
 
@@ -72,8 +86,12 @@ client.on("message", async message => {
   // and not get into a spam loop (we call that "botception").
   if (message.author.bot) return;
 
-  // update the activity for the current user
-  usersData.updateUserActivity(message.member.user.id);
+  if (message.member && message.member.user) {
+    // update the activity for the current user
+    usersData.updateUserActivity(message.member.user.id).catch(err => {
+      console.error('Error trying to log user activity', err);
+    });
+  }
 
   // Also good practice to ignore any message that does not start with our prefix, 
   // which is set in the configuration file.
@@ -110,7 +128,7 @@ client.on("message", async message => {
     }
 
     // execute the blockchain commands
-    return blockchain.executeCommand(blockchainInfo, message, command, args);
+    return blockchain.executeCommand(blockchainData, message, command, args);
   }
 
   if (command === "wallet") {
@@ -119,7 +137,7 @@ client.on("message", async message => {
     }
 
     // execute the blockchain commands
-    return wallets.executeCommand(tipBotStorage, message, command, args);
+    return wallets.executeCommand(WalletsData, message, command, args);
   }
 
   if (command === "pools") {
@@ -129,6 +147,15 @@ client.on("message", async message => {
 
     // execute the blockchain commands
     return pools.executeCommand(message, command, args);
+  }
+
+  if (command === "giveaway") {
+    if (args.length == 0) {
+      return message.reply(`You need to specify a giveaway command! Type: ***${config.prefix}giveaway help*** for list of commands`);
+    }
+
+    // execute the blockchain commands
+    return giveaways.executeCommand(giveawaysData, client, message, command, args);
   }
 
   if (command === "users") {
@@ -142,20 +169,36 @@ client.on("message", async message => {
 
   if (command === "tip") {
     if (args.length < 2) {
-      return message.reply('You need to specify an ammount and a recipient. Use ".wallet help" command for help');
+      return message.reply('You need to specify an ammount and a recipient.');
     }
 
     if (!message.mentions.users.first()) {
-      return message.reply('You need to specify at least one recipient. Use ".wallet help" command for help');
+      return message.reply('You need to specify at least one recipient.');
     }
 
     // execute the blockchain commands
-    return tipBotStorage.sendPayment(message.member.user.id, message.mentions.users.first().id, parseFloat(args[0])).then(data => {
+    return WalletsData.sendPayment(message.member.user.id, message.mentions.users.first().id, parseFloat(args[0])).then(data => {
       message.author.send(`Success! ***TX hash***: ${data.transactionHash}, ***Secret key***: ${data.transactionSecretKey}`);
-      console.log(data);
     }).catch(err => {
       message.author.send(err);
     }).finally(message.reply('The tip details were send to you in DM'));
+  }
+
+  if (command === "rain") {
+    if (args.length < 2) {
+      return message.reply('You need to specify an ammount number of recipients.');
+    }
+
+    if (args.length == 1) {
+      return message.reply('You need to specify the numbers of recipients.');
+    }
+
+    // execute the blockchain commands
+    return usersData.getLastActiveUsers(parseInt(args[1])).then(users => {
+      console.log(users);
+    }).catch(err => {
+      message.author.send(err);
+    });
   }
 
   if (command === "help") {
