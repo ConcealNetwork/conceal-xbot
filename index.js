@@ -184,6 +184,11 @@ client.on("message", async message => {
     }).finally(message.reply('The tip details were send to you in DM'));
   }
 
+  /************************************************************
+   *  Rain command. Take ammount specified and number of user *
+   *  It then takes latest active users and proportionally    *
+   *  rains the CCX specified over all of them                *
+   ***********************************************************/
   if (command === "rain") {
     let count = 0;
 
@@ -211,9 +216,9 @@ client.on("message", async message => {
 
           if (discordUser) {
             walletsData.sendPayment(message.member.user.id, user.user_id, payPart).then(data => {
-              message.channel.send(`\:money_with_wings: ${payPart} CCX rained on user ${discordUser.username}`);
+              message.channel.send(`\:money_with_wings: ${payPart} CCX rained on user <@${user.user_id}>`);
             }).catch(err => {
-              message.channel.send(`\:x: Failed to rain on user ${discordUser.username}`);
+              message.channel.send(`\:x: Failed to rain on user <@${user.user_id}>`);
             });
           }
         });
