@@ -201,49 +201,26 @@ class WalletsData {
    *  enough found to be able to send out the tip.            *
    ***********************************************************/
   sendPayment = (fromUserId, toUserId, amount) => {
-    let localCCX = this.CCX;
-    let localFee = this.fee;
-    let localDB = this.db;
-
     return new Promise((resolve, reject) => {
 
-      function checkForPendingTransactions(userId) {
-        return new Promise((resolve, reject) => {
-          localDB.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, user_row) => {
-            if (!err && user_row) {
-              if (user_row.last_tip_tx) {
-                this.db.get('SELECT * FROM transactions WHERE tx_hash = ?', [user_row.last_tip_tx], (err, tx_row) => {
-                  if (!err && tx_row) resolve(tx_row);
-                  else reject(err || "The wallet is not fully synchronized. Try again later.")
-                });
-              } else {
-                resolve(null);
-              }
-            } else {
-              reject(err || "Could not find user!");
-            }
-          });
-        });
-      }
-
       // write transaction to the sqlite database
-      function doWriteTransaction(paymentId, txhash) {
-        localDB.run('INSERT INTO transactions(block, payment_id, timestamp, amount, tx_hash) VALUES(0,?,0,?,?)', [paymentId, -1 * ((amount * config.metrics.coinUnits) + localFee), txhash.transactionHash], function (err) {
+      let doWriteTransaction = (paymentId, txhash) => {
+        this.db.run('INSERT INTO transactions(block, payment_id, timestamp, amount, tx_hash) VALUES(0,?,0,?,?)', [paymentId, -1 * ((amount * config.metrics.coinUnits) + this.fee), txhash.transactionHash], function (err) {
           if (!err) resolve(txhash);
           else reject(err);
         });
       }
 
       // call the wallet RFC to send the transaction
-      function doSendPayment(address, paymentId) {
+      let doSendPayment = (address, paymentId) => {
         const opts = {
           transfers: [{ address: address, amount: amount * config.metrics.coinUnits }],
-          fee: localFee,
+          fee: this.fee,
           anonimity: 4,
           paymentId: paymentId
         }
 
-        localCCX.sendTransaction(opts).then(txhash => {
+        this.CCX.sendTransaction(opts).then(txhash => {
           doWriteTransaction(paymentId, txhash);
         }).catch(err => {
           reject(err);
@@ -251,8 +228,8 @@ class WalletsData {
       }
 
       // get target user data from sqlite DB
-      function doGetTargetUserData(userId, paymentId) {
-        localDB.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
+      let doGetTargetUserData = (userId, paymentId) => {
+        this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
           if (!err && row) doSendPayment(row.address, paymentId);
           else reject("failed to get target user info");
         });
@@ -260,13 +237,8 @@ class WalletsData {
 
       // get balance first and check if its enough
       this.getBalance(fromUserId).then(balanceData => {
-        if (balanceData.balance > ((amount * config.metrics.coinUnits) + localFee)) {
-          // first check for pending TXs
-          checkForPendingTransactions(fromUserId).then(txData => {
-            doGetTargetUserData(toUserId, balanceData.payment_id);
-          }).catch(err => {
-            reject(err);
-          });
+        if (balanceData.balance > ((amount * config.metrics.coinUnits) + this.fee)) {
+          doGetTargetUserData(toUserId, balanceData.payment_id);
         } else {
           reject(`insuficient balance ${balanceData.balance / config.metrics.coinUnits}`);
         }

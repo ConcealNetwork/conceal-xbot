@@ -137,7 +137,7 @@ client.on("message", async message => {
     }
 
     // execute the blockchain commands
-    return wallets.executeCommand(WalletsData, message, command, args);
+    return wallets.executeCommand(walletsData, message, command, args);
   }
 
   if (command === "pools") {
@@ -185,19 +185,41 @@ client.on("message", async message => {
   }
 
   if (command === "rain") {
+    let count = 0;
+
+    if (args.length < 1) {
+      return message.reply('You need to specify an ammount to rain');
+    }
+
     if (args.length < 2) {
-      return message.reply('You need to specify an ammount number of recipients.');
+      count = 10;
+    } else {
+      count = Math.min(parseInt(args[1]), 100);
     }
 
-    if (args.length == 1) {
-      return message.reply('You need to specify the numbers of recipients.');
-    }
+    // parse the amount and calculate the fee
+    let amount = parseFloat(args[0]);
 
-    // execute the blockchain commands
-    return usersData.getLastActiveUsers(parseInt(args[1])).then(users => {
-      console.log(users);
+    return usersData.getLastActiveUsers(count).then(users => {
+      let targetUsers = users.filter(user => user.user_id !== message.member.user.id);
+
+      if (targetUsers.length > 0) {
+        let payPart = (amount / targetUsers.length) - 0.001;
+
+        targetUsers.forEach(function (user, index) {
+          let discordUser = client.users.get(user.user_id) || client.fetchUser(user.user_id);
+
+          if (discordUser) {
+            walletsData.sendPayment(message.member.user.id, user.user_id, payPart).then(data => {
+              message.channel.send(`\:money_with_wings: ${payPart} CCX rained on user ${discordUser.username}`);
+            }).catch(err => {
+              message.channel.send(`\:x: Failed to rain on user ${discordUser.username}`);
+            });
+          }
+        });
+      }
     }).catch(err => {
-      message.author.send(err);
+      message.reply(err);
     });
   }
 
