@@ -167,6 +167,11 @@ client.on("message", async message => {
     return users.executeCommand(client, message, command, args);
   }
 
+  /************************************************************
+   *  Tip command. Take ammount specified and tip the target  *
+   *  user. User needs to have a registered wallet otherwise  *
+   *  it fails. Also checks the balance first.                *
+   ***********************************************************/
   if (command === "tip") {
     if (args.length < 2) {
       return message.reply('You need to specify an ammount and a recipient.');

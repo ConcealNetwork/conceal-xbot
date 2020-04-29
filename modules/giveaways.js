@@ -14,7 +14,7 @@ class GiveawaysData {
    *  Checks the available balance first to see if there is   *
    *  enough found to be able to send out the tip.            *
    ***********************************************************/
-  createGiveaway = (userId, messageId, description, timespan, amount, winners) => {
+  createGiveaway = (userId, messageId, timespan, winners, amount, description) => {
     return new Promise((resolve, reject) => {
       this.db.run('INSERT INTO giveaways(user_id, message_id, creation_ts, description, timespan, amount, winners, is_active) VALUES(?,?,CURRENT_TIMESTAMP,?,?,?,?,1)', [userId, messageId, description, timespan, amount, winners], function (err, result) {
         if (err) {
