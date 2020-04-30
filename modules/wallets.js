@@ -176,32 +176,48 @@ class WalletsData {
     });
   }
 
+  /**************************************************************
+   *  Get current balance of the user. It take all transactions *
+   *  and all giveaways and sums it all together to get balance *
+   *************************************************************/
   getBalance = (userId) => {
+
+    let doGetUserWalletData = async (userId) => {
+      return new Promise((resolve, reject) => {
+        this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, user_row) => {
+          if (!err && user_row) resolve(user_row);
+          else reject(err);
+        });
+      });
+    }
+
+    let doGetTransactionsSum = async (paymentId) => {
+      return new Promise((resolve, reject) => {
+        this.db.get('SELECT SUM(amount) as "balance" FROM transactions WHERE payment_id = ?', [paymentId], (err, balance_row) => {
+          if (!err && balance_row) resolve(balance_row.balance || 0);
+          else reject(err);
+        });
+      });
+    }
+
+    let doGetGiveawaySum = async (userId) => {
+      return new Promise((resolve, reject) => {
+        this.db.get('SELECT SUM(amount) as "balance" FROM giveaways WHERE user_id = ?', [userId], (err, balance_row) => {
+          if (!err && balance_row) resolve(balance_row.balance || 0);
+          else reject(err);
+        });
+      });
+    }
+
     return new Promise((resolve, reject) => {
       this._synchronizeTransactions(false).then(lastHeight => {
-        this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, user_row) => {
-          if (!err && user_row) {
-            this.db.get('SELECT SUM(amount) as "balance" FROM transactions WHERE payment_id = ?', [user_row.payment_id], (err, balance_row) => {
-              if (!err && balance_row) {
-                this.db.get('SELECT SUM(amount) as "balance" FROM giveaways WHERE user_id = ?', [userId], (err, giveaway_row) => {
-                  if (!err && giveaway_row) {
-                    let txBalance = balance_row.balance || 0;
-                    let gaBalance = giveaway_row.balance || 0;
-                    resolve({ balance: txBalance - gaBalance, payment_id: user_row.payment_id });
-                  } else {
-                    reject("Failed to get balance for the user");
-                  }
-                });
-              } else {
-                reject("Failed to get balance for the user");
-              }
-            });
-          } else {
-            reject("Failed to find info for the user");
-          }
-        });
-      }).catch(err => {
-        reject(err);
+        (async () => {
+          let userData = await doGetUserWalletData(userId);
+          let txBalance = await doGetTransactionsSum(userData.payment_id);
+          let gaBalance = await doGetGiveawaySum(userId);
+          // send back the balance info and the user payment_id info
+          resolve({ balance: txBalance - gaBalance, payment_id: userData.payment_id });
+        })().catch(e => reject("Failed to find info for the user"));
       });
     });
   }
