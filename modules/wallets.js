@@ -182,7 +182,7 @@ class WalletsData {
    *************************************************************/
   getBalance = (userId) => {
 
-    let doGetUserWalletData = async (userId) => {
+    let doGetUserWalletData = (userId) => {
       return new Promise((resolve, reject) => {
         this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, user_row) => {
           if (!err && user_row) resolve(user_row);
@@ -191,7 +191,7 @@ class WalletsData {
       });
     }
 
-    let doGetTransactionsSum = async (paymentId) => {
+    let doGetTransactionsSum = (paymentId) => {
       return new Promise((resolve, reject) => {
         this.db.get('SELECT SUM(amount) as "balance" FROM transactions WHERE payment_id = ?', [paymentId], (err, balance_row) => {
           if (!err && balance_row) resolve(balance_row.balance || 0);
@@ -200,7 +200,7 @@ class WalletsData {
       });
     }
 
-    let doGetGiveawaySum = async (userId) => {
+    let doGetGiveawaySum = (userId) => {
       return new Promise((resolve, reject) => {
         this.db.get('SELECT SUM(amount) as "balance" FROM giveaways WHERE user_id = ?', [userId], (err, balance_row) => {
           if (!err && balance_row) resolve(balance_row.balance || 0);
@@ -231,11 +231,12 @@ class WalletsData {
     return new Promise((resolve, reject) => {
 
       // write transaction to the sqlite database
-      let doWriteTransaction = (paymentId, txhash) => {
-        this.db.run('INSERT INTO transactions(block, payment_id, timestamp, amount, tx_hash) VALUES(0,?,0,?,?)', [paymentId, -1 * ((amount * config.metrics.coinUnits) + this.fee), txhash.transactionHash], function (err) {
-          if (!err) resolve(txhash);
-          else reject(err);
-        });
+      let doWriteTransaction = (paymentId, txData) => {
+        this.db.run('INSERT INTO transactions(block, payment_id, timestamp, amount, tx_hash) VALUES(0,?,0,?,?)',
+          [paymentId, -1 * ((amount * config.metrics.coinUnits) + this.fee), txData.transactionHash], function (err) {
+            if (!err) resolve(txData);
+            else reject(err);
+          });
       }
 
       // call the wallet RFC to send the transaction
@@ -248,16 +249,16 @@ class WalletsData {
         }
 
         this.CCX.sendTransaction(opts).then(txhash => {
-          doWriteTransaction(paymentId, txhash);
+          resolve(txhash);
         }).catch(err => {
           reject(err);
         });
       }
 
       // get target user data from sqlite DB
-      let doGetTargetUserData = (userId, paymentId) => {
+      let doGetTargetUserAddress = (userId) => {
         this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
-          if (!err && row) doSendPayment(row.address, paymentId);
+          if (!err && row) resolve(row.address);
           else reject("failed to get target user info");
         });
       }
@@ -265,7 +266,12 @@ class WalletsData {
       // get balance first and check if its enough
       this.getBalance(fromUserId).then(balanceData => {
         if (balanceData.balance > ((amount * config.metrics.coinUnits) + this.fee)) {
-          doGetTargetUserData(toUserId, balanceData.payment_id);
+          (async () => {
+            let userData = await doGetTargetUserAddress(toUserId);
+            let txData = await doSendPayment(balanceData.payment_id);
+            await doWriteTransaction(balanceData.payment_id, txData);
+            resolve(txData);
+          })().catch(e => reject(e));
         } else {
           reject(`insuficient balance ${balanceData.balance / config.metrics.coinUnits} CCX`);
         }
