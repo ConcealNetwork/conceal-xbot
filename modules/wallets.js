@@ -251,7 +251,7 @@ class WalletsData {
         if (balanceData.balance > ((amount * config.metrics.coinUnits) + this.fee)) {
           doGetTargetUserData(toUserId, balanceData.payment_id);
         } else {
-          reject(`insuficient balance ${balanceData.balance / config.metrics.coinUnits}`);
+          reject(`insuficient balance ${balanceData.balance / config.metrics.coinUnits} CCX`);
         }
       }).catch(err => {
         reject(err);

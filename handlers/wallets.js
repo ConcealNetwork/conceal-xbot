@@ -3,7 +3,7 @@ const config = require("../config.json");
 const Handlebars = require("handlebars");
 
 module.exports = {
-  executeCommand: function (tipBotStorage, message, command, args) {
+  executeCommand: function (walletsData, message, command, args) {
     if (args[0] === "help") {
 
       fs.readFile('./templates/help_wallets.msg', 'utf8', function (err, source) {
@@ -16,7 +16,7 @@ module.exports = {
       if (args.length < 2) {
         message.reply('Please type your wallet address. Use ".wallet help" command for help')
       } else {
-        tipBotStorage.registerWallet(message.member.user.id, message.member.user.username, args[1]).then(response => {
+        walletsData.registerWallet(message.member.user.id, message.member.user.username, args[1]).then(response => {
           message.author.send(response);
         }).catch(err => {
           message.author.send(`Error trying to register wallet: ${err}`);
@@ -28,7 +28,7 @@ module.exports = {
       if (args.length < 2) {
         message.reply('Please type your wallet address. Use ".wallet help" command for help')
       } else {
-        tipBotStorage.updateWallet(message.member.user.id, args[1]).then(response => {
+        walletsData.updateWallet(message.member.user.id, args[1]).then(response => {
           message.author.send(response);
         }).catch(err => {
           message.author.send(`Error trying to update wallet: ${err}`);
@@ -37,7 +37,7 @@ module.exports = {
     }
 
     if (args[0] == "show") {
-      tipBotStorage.showWalletInfo(message.member.user.id).then(data => {
+      walletsData.showWalletInfo(message.member.user.id).then(data => {
         message.author.send(`***Address***: ${data.address}, ***Payment Id***: ${data.payment_id}`);
       }).catch(err => {
         message.author.send(`Error trying to get wallet info: ${err}`);
@@ -45,7 +45,7 @@ module.exports = {
     }
 
     if (args[0] == "deposit") {
-      tipBotStorage.showWalletInfo(message.member.user.id).then(data => {
+      walletsData.showWalletInfo(message.member.user.id).then(data => {
         message.author.send(`Please deposit your CCX to ***Address***: ${config.wallet.address}, ***Payment Id***: ${data.payment_id}. Its mandatory to include payment Id or your funds will be lost!`);
       }).catch(err => {
         message.author.send(err);
@@ -53,7 +53,7 @@ module.exports = {
     }
 
     if (args[0] == "balance") {
-      tipBotStorage.getBalance(message.member.user.id).then(data => {
+      walletsData.getBalance(message.member.user.id).then(data => {
         message.author.send(`***Balance***: ${(data.balance / config.metrics.coinUnits).toLocaleString()} CCX, ***Payment Id***: ${data.payment_id}`);
       }).catch(err => {
         message.author.send(`Error trying to get balance: ${err}`);
@@ -61,7 +61,7 @@ module.exports = {
     }
 
     if (command === "paymentid") {
-      tipBotStorage.generatePaymentId().then(payment_id => {
+      walletsData.generatePaymentId().then(payment_id => {
         message.channel.send(payment_id);
       });
     }

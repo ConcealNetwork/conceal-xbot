@@ -155,7 +155,7 @@ client.on("message", async message => {
     }
 
     // execute the blockchain commands
-    return giveaways.executeCommand(giveawaysData, client, message, command, args);
+    return giveaways.executeCommand(giveawaysData, walletsData, client, message, command, args);
   }
 
   if (command === "users") {
@@ -182,7 +182,7 @@ client.on("message", async message => {
     }
 
     // execute the blockchain commands
-    return WalletsData.sendPayment(message.member.user.id, message.mentions.users.first().id, parseFloat(args[0])).then(data => {
+    return walletsData.sendPayment(message.member.user.id, message.mentions.users.first().id, parseFloat(args[0])).then(data => {
       message.author.send(`Success! ***TX hash***: ${data.transactionHash}, ***Secret key***: ${data.transactionSecretKey}`);
     }).catch(err => {
       message.author.send(err);
