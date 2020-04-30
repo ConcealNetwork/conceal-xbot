@@ -182,8 +182,19 @@ class WalletsData {
         this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, user_row) => {
           if (!err && user_row) {
             this.db.get('SELECT SUM(amount) as "balance" FROM transactions WHERE payment_id = ?', [user_row.payment_id], (err, balance_row) => {
-              if (!err && balance_row) resolve({ balance: balance_row.balance || 0, payment_id: user_row.payment_id });
-              else reject("Failed to get balance for the user");
+              if (!err && balance_row) {
+                this.db.get('SELECT SUM(amount) as "balance" FROM giveaways WHERE user_id = ?', [userId], (err, giveaway_row) => {
+                  if (!err && giveaway_row) {
+                    let txBalance = balance_row.balance || 0;
+                    let gaBalance = giveaway_row.balance || 0;
+                    resolve({ balance: txBalance - gaBalance, payment_id: user_row.payment_id });
+                  } else {
+                    reject("Failed to get balance for the user");
+                  }
+                });
+              } else {
+                reject("Failed to get balance for the user");
+              }
             });
           } else {
             reject("Failed to find info for the user");

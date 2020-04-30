@@ -15,7 +15,7 @@ module.exports = {
       let timespan = parseInt(args[1]);
       let winners = parseInt(args[2]);
       let amount = parseFloat(args[3]);
-      let description = args[4];
+      let description = args.slice(4).join(" ");
 
       const giveawayEmbed = {
         color: 0x0099ff,
@@ -34,14 +34,14 @@ module.exports = {
         }
       };
 
-      // delete the command
-      //message.delete();
+      // delete the bot command 
+      message.delete().catch(O_o => { });
 
       message.channel.send({ embed: giveawayEmbed }).then(newMsg => {
         giveawaysData.createGiveaway(message.member.user.id, newMsg.id, timespan, winners, amount, description).then(data => {
           newMsg.react('🎉');
         }).catch(err => {
-          newMsg.delete();
+          newMsg.delete().catch(O_o => { });
           message.channel.send(`Error creating giveaway: ${err}`);
         });
       });
