@@ -45,15 +45,16 @@ class WalletsData {
             resolve();
           } else {
             valueBlock.transactions.forEach(function (valueTx, idxTx) {
-              localDB.run('INSERT OR REPLACE INTO transactions(block, payment_id, timestamp, amount, tx_hash) VALUES(?,?,?,?,?)', [valueTx.blockIndex, valueTx.paymentId, valueTx.timestamp, valueTx.amount, valueTx.transactionHash], function (err) {
-                if (err) {
-                  reject(false);
-                } else {
-                  if ((idxBlock == blockCount - 1) && (idxTx == txCount - 1)) {
-                    resolve(true);
+              localDB.run('INSERT OR REPLACE INTO transactions(block, payment_id, timestamp, amount, tx_hash) VALUES(?,?,?,?,?)',
+                [valueTx.blockIndex, valueTx.paymentId, valueTx.timestamp, valueTx.amount, valueTx.transactionHash], function (err) {
+                  if (err) {
+                    reject(false);
+                  } else {
+                    if ((idxBlock == blockCount - 1) && (idxTx == txCount - 1)) {
+                      resolve(true);
+                    }
                   }
-                }
-              });
+                });
             });
           }
         });
@@ -137,10 +138,11 @@ class WalletsData {
           }
 
           this.generatePaymentId().then(payment_id => {
-            this.db.run('INSERT INTO wallets(address, user_id, user_name, payment_id) VALUES(?,?,?,?)', [address, userId, userName, payment_id], function (err) {
-              if (err) reject(err);
-              else resolve("Successfully registered wallet");
-            });
+            this.db.run('INSERT INTO wallets(address, user_id, user_name, payment_id) VALUES(?,?,?,?)',
+              [address, userId, userName, payment_id], function (err) {
+                if (err) reject(err);
+                else resolve("Successfully registered wallet");
+              });
           });
         }
       });

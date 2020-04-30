@@ -28,11 +28,26 @@ this.db = new sqlite3.Database(path.join(appRoot.path, "tipbot.db"), sqlite3.OPE
 // This is your client. Some people call it `bot`, some people call it `self`, 
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
 // this is what we're refering to. Your client.
-const client = new Discord.Client();
+const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
+
+// initialize data models
 const usersData = new UsersData(this.db);
 const walletsData = new WalletsData(this.db);
-const giveawaysData = new GiveawaysData(this.db);
 const blockchainData = new BlockchainData();
+
+// the giveaway data model, with events callback
+const giveawaysData = new GiveawaysData(this.db, function (channelId, messageId, reactionId) {
+  let channel = client.channels.get(channelId);
+  channel.fetchMessage(messageId).then(message => {
+    message.reactions.forEach(reaction => {
+      reaction.fetchUsers().then(users => {
+        console.log(reaction);
+      });
+    });
+  }).catch(err => {
+    console.log(err);
+  });
+});
 
 // Here we load the config.json file that contains our token and our prefix values. 
 const config = require("./config.json");

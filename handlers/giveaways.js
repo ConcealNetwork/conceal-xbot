@@ -40,7 +40,7 @@ module.exports = {
           message.delete().catch(O_o => { });
 
           message.channel.send({ embed: giveawayEmbed }).then(newMsg => {
-            giveawaysData.createGiveaway(message.member.user.id, newMsg.id, timespan, winners, amount, description).then(data => {
+            giveawaysData.createGiveaway(message.member.user.id, newMsg.channel.id, newMsg.id, timespan, winners, amount, description).then(data => {
               newMsg.react('🎉');
             }).catch(err => {
               newMsg.delete().catch(O_o => { });
