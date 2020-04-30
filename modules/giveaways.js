@@ -11,20 +11,54 @@ class GiveawaysData {
     this._initializeGiveaways(onGiveawayEvent);
   }
 
-  _setSingleEvent = (creation_ts, timespan, channelId, messageId, onEventCallback) => {
-    let creationTS = moment(creation_ts);
-    let eventTS = moment(creation_ts).add(timespan, 'seconds');
+  _setSingleEvent = (data, onEventCallback) => {
+    let creationTS = moment(data.creation_ts);
+    let eventTS = moment(data.creation_ts).add(data.timespan, 'seconds');
     let timeout = eventTS.diff(creationTS, 'milliseconds');
 
     setTimeout(() => {
-      onEventCallback(channelId, messageId);
+      onEventCallback(data);
     }, timeout);
   }
 
   _initializeGiveaways = (onEventCallback) => {
     let setSingleEvent = this._setSingleEvent;
     this.db.each("SELECT * from giveaways where is_active = 1", function (err, row) {
-      setSingleEvent(row.creation_ts, row.timespan, row.channel_id, row.message_id, onEventCallback);
+      setSingleEvent(row, onEventCallback);
+    });
+  }
+
+  createEmbedMessage = (title, description, footer) => {
+    return {
+      color: 0x0099ff,
+      title: title,
+      url: 'https://discord.js.org',
+      author: {
+        name: 'Conceal Network',
+        icon_url: 'https://conceal.network/images/branding/logo.png',
+        url: 'https://discord.gg/YbpHVSd'
+      },
+      description: description,
+      timestamp: new Date(),
+      footer: {
+        text: footer,
+        icon_url: 'https://conceal.network/images/branding/logo.png'
+      }
+    };
+  }
+
+  getGiveaway = (messageId) => {
+    return new Promise((resolve, reject) => {
+      this.db.get("SELECT * from giveaways where message_id = ?", [messageId], function (err, row) {
+        if (!err & row) resolve(row);
+        else reject("Failed to get Giveaway");
+      });
+    });
+  }
+
+  finishGiveaway = (users, messageId) => {
+    return new Promise((resolve, reject) => {
+
     });
   }
 

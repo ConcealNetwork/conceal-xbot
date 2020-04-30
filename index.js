@@ -36,13 +36,22 @@ const walletsData = new WalletsData(this.db);
 const blockchainData = new BlockchainData();
 
 // the giveaway data model, with events callback
-const giveawaysData = new GiveawaysData(this.db, function (channelId, messageId, reactionId) {
-  let channel = client.channels.get(channelId);
-  channel.fetchMessage(messageId).then(message => {
+const giveawaysData = new GiveawaysData(this.db, function (data) {
+  let channel = client.channels.get(data.channel_id);
+  channel.fetchMessage(data.message_id).then(message => {
     message.reactions.forEach(reaction => {
-      reaction.fetchUsers().then(users => {
-        console.log(reaction);
-      });
+      if (reaction.emoji.identifier == "%F0%9F%8E%89") {
+        reaction.fetchUsers().then(users => {
+          let gaUsers = users.filter(user => !user.bot);
+
+          giveawaysData.finishGiveaway(gaUsers, data.message_id).then(gaData => {
+            const gaEmbed = giveawaysData.createEmbedMessage(data.description, 'Giveaway is finished!', `${gaUsers.size} winners.`);
+            message.edit({ embed: gaEmbed });
+          }).catch(err => {
+            console.log(err);
+          });
+        });
+      }
     });
   }).catch(err => {
     console.log(err);

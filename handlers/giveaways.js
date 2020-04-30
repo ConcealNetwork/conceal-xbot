@@ -15,32 +15,17 @@ module.exports = {
       let timespan = parseInt(args[1]);
       let winners = parseInt(args[2]);
       let amount = parseFloat(args[3]);
-      let description = args.slice(4).join(" ");
+      let title = args.slice(4).join(" ");
 
       walletsData.getBalance(message.member.user.id).then(balanceData => {
         if (balanceData.balance > (amount * config.metrics.coinUnits)) {
-          const giveawayEmbed = {
-            color: 0x0099ff,
-            title: description,
-            url: 'https://discord.js.org',
-            author: {
-              name: 'Conceal Network',
-              icon_url: 'https://conceal.network/images/branding/logo.png',
-              url: 'https://discord.gg/YbpHVSd'
-            },
-            description: `React with \:tada: to enter. Prize is ${amount} CCX`,
-            timestamp: new Date(),
-            footer: {
-              text: `${winners} winners | ends at ...`,
-              icon_url: 'https://conceal.network/images/branding/logo.png'
-            }
-          };
-
-          // delete the bot command 
+          const description = `React with \:tada: to enter. Prize is ${amount} CCX`;
+          const footer = `${winners} winners | ends at ...`;
+          const giveawayEmbed = giveawaysData.createEmbedMessage(title, description, footer);
           message.delete().catch(O_o => { });
 
           message.channel.send({ embed: giveawayEmbed }).then(newMsg => {
-            giveawaysData.createGiveaway(message.member.user.id, newMsg.channel.id, newMsg.id, timespan, winners, amount, description).then(data => {
+            giveawaysData.createGiveaway(message.member.user.id, newMsg.channel.id, newMsg.id, timespan, winners, amount, title).then(data => {
               newMsg.react('🎉');
             }).catch(err => {
               newMsg.delete().catch(O_o => { });
