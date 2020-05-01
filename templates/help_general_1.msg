@@ -33,3 +33,12 @@ Bellow is a list of all available commands.
     maxsupply    .blockchain maxsupply -> gives the max supply of CCX.
     difficulty   .blockchain difficulty -> gives the current difficulty of the network.
 ```
+```css
+
+  #giveaway
+    help         .giveaway help -> gives detailed info on giveaway commands.
+    create       .giveaway create -> creates a new giveaway based on parameters.
+    list         .giveaway list -> lists all active giveaways.
+    delete       .giveaway delete -> deletes an active giveaway.
+```
+

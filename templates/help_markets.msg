@@ -13,5 +13,5 @@ Example: .markets info
 
 .markets pricechart -> Gives CCX price chart for last 7 days.
 
-Example: .pricechart info
+Example: .markets pricechart
 ```

@@ -34,26 +34,7 @@ const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION']
 const usersData = new UsersData(this.db);
 const walletsData = new WalletsData(this.db);
 const blockchainData = new BlockchainData();
-
-// the giveaway data model, with events callback
-const giveawaysData = new GiveawaysData(this.db, function (data) {
-  let channel = client.channels.get(data.channel_id);
-  channel.fetchMessage(data.message_id).then(message => {
-    message.reactions.forEach(reaction => {
-      if (reaction.emoji.identifier == "%F0%9F%8E%89") {
-        reaction.fetchUsers().then(users => {
-          // exclude all bots from the list of users
-          let gaUsers = users.filter(user => !user.bot);
-
-          // call the handler for finishing the giveaway
-          giveaways.finishGiveaway(giveawaysData, walletsData, message, gaUsers.array(), data.user_id);
-        });
-      }
-    });
-  }).catch(err => {
-    console.error(err);
-  });
-});
+const giveawaysData = new GiveawaysData(this.db);
 
 // Here we load the config.json file that contains our token and our prefix values. 
 const config = require("./config.json");
@@ -70,6 +51,26 @@ client.on("ready", () => {
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
   client.user.setActivity(`Serving ${client.guilds.size} servers`);
+
+  // we are ready so we can initialize the giveaways
+  giveawaysData.initialize(function (data) {
+    let channel = client.channels.get(data.channel_id);
+    channel.fetchMessage(data.message_id).then(message => {
+      message.reactions.forEach(reaction => {
+        if (reaction.emoji.identifier == "%F0%9F%8E%89") {
+          reaction.fetchUsers().then(users => {
+            // exclude all bots from the list of users
+            let gaUsers = users.filter(user => !user.bot);
+
+            // call the handler for finishing the giveaway
+            giveaways.finishGiveaway(giveawaysData, walletsData, message, gaUsers.array(), data.user_id);
+          });
+        }
+      });
+    }).catch(err => {
+      console.error(err);
+    });
+  });
 });
 
 client.on("guildCreate", guild => {

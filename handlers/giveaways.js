@@ -1,4 +1,5 @@
 const fs = require('fs');
+const Handlebars = require("handlebars");
 const config = require("../config.json");
 
 module.exports = {
@@ -18,7 +19,7 @@ module.exports = {
       let title = null;
 
       if (!args[1]) {
-        message.channel.send('Please specify a timespan.');
+        return message.channel.send('Please specify a timespan.');
       } else {
         if (args[1].search("s") > 0) timespan = parseInt(args[1]);
         else if (args[1].search("m") > 0) timespan = parseInt(args[1]) * 60;
@@ -28,19 +29,19 @@ module.exports = {
       }
 
       if (!args[2]) {
-        message.channel.send('Please specify a number of winners.');
+        return message.channel.send('Please specify a number of winners.');
       } else {
         winners = parseInt(args[2].replace(/w/g, ''));
       }
 
       if (!args[3]) {
-        message.channel.send('Please specify reward amount.');
+        return message.channel.send('Please specify reward amount.');
       } else {
         amount = parseFloat(args[3].replace(/CCX/g, ''));
       }
 
       if (!args[4]) {
-        message.channel.send('Please specify giveaway title.');
+        return message.channel.send('Please specify giveaway title.');
       } else {
         title = args.slice(4).join(" ");
       }
@@ -66,6 +67,40 @@ module.exports = {
       }).catch(err => {
         message.channel.send(err);
       });
+    }
+
+    if (args[0] === "list") {
+      giveawaysData.listGiveaways().then(data => {
+        fs.readFile('./templates/giveaway_list.msg', 'utf8', function (err, source) {
+          if (err) throw err;
+
+          let template = Handlebars.compile(source);
+          message.channel.send(template(data));
+        });
+
+      }).catch(err => {
+        message.channel.send('Failed to list giveaways');
+      });
+    }
+
+    if (args[0] === "delete") {
+      if (!args[1]) {
+        return message.channel.send('Please specify the giveaway id!');
+      } else {
+        let giveawayId = parseInt(args[1]);
+
+        giveawaysData.getGiveawayByRowId(giveawayId).then(data => {
+          if (data.user_id !== message.member.user.id) {
+            message.channel.send('You cannot delete giveaways from other users.');
+          } else {
+            giveawaysData.finishGiveaway(giveawayId).then(data => {
+              message.channel.send('Giveaway was succesfully deleted.');
+            });
+          }
+        }).catch(err => {
+          message.channel.send(`Error deleting giveaway: ${err}`);
+        });
+      }
     }
   },
   finishGiveaway: function (giveawaysData, walletsData, message, users) {

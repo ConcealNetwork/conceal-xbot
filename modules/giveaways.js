@@ -6,29 +6,36 @@ const path = require('path');
 const fs = require('fs');
 
 class GiveawaysData {
-  constructor(database, onGiveawayEvent) {
+  constructor(database) {
     this.db = database;
-    this.onGiveawayEvent = onGiveawayEvent;
-    this._initializeGiveaways(onGiveawayEvent);
+    this.onGiveawayEvent = null;
   }
 
   _setSingleEvent = (data, onEventCallback) => {
     let creationTS = moment(data.creation_ts);
     let eventTS = moment(data.creation_ts).add(data.timespan, 'seconds');
-    let timeout = eventTS.diff(creationTS, 'milliseconds');
+    let timeout = Math.max(0, eventTS.diff(moment(), 'milliseconds'));
 
     setTimeout(() => {
       onEventCallback(data);
     }, timeout);
   }
 
-  _initializeGiveaways = (onEventCallback) => {
+  /*********************************************************** *
+  *  Initializes the currently active giveaways and add events *
+  *************************************************************/
+  initialize = (onEventCallback) => {
     let setSingleEvent = this._setSingleEvent;
+    this.onGiveawayEvent = onEventCallback;
+
     this.db.each("SELECT * from giveaways where is_active = 1", function (err, row) {
       setSingleEvent(row, onEventCallback);
     });
   }
 
+  /************************************************************
+  *  creates an embed for the discord message for giveaway    *
+  ************************************************************/
   createEmbedMessage = (title, description, footer) => {
     return {
       color: 0x0099ff,
@@ -48,6 +55,9 @@ class GiveawaysData {
     };
   }
 
+  /************************************************************
+   *  Gets a giveaway by row id where it is in the DB         *
+   ***********************************************************/
   getGiveawayByRowId = (rowId) => {
     return new Promise((resolve, reject) => {
       this.db.get("SELECT * from giveaways where id = ?", [rowId], function (err, row) {
@@ -57,15 +67,34 @@ class GiveawaysData {
     });
   }
 
+  /************************************************************
+   *  Gets a giveaway by message id to which it is attached   *
+   ***********************************************************/
   getGiveawayByMessageId = (messageId) => {
     return new Promise((resolve, reject) => {
       this.db.get("SELECT * from giveaways where message_id = ?", [messageId], function (err, row) {
         if (!err && row) resolve(row);
-        else reject("Failed to get Giveaway");
+        else reject("Failed to get giveaway");
       });
     });
   }
 
+  /************************************************************
+   *  Lists all active giveaways from all users               *
+   ***********************************************************/
+  listGiveaways = () => {
+    return new Promise((resolve, reject) => {
+      this.db.all("SELECT * from giveaways where is_active = 1", function (err, rows) {
+        if (!err && rows) resolve(rows);
+        else reject("Failed to list giveaways");
+      });
+    });
+  }
+
+  /************************************************************
+   *  Finishes the giveaway. Basically it just sets the flag  *
+   *  that makes the giveawy not active anymore.              *
+   ***********************************************************/
   finishGiveaway = (messageId) => {
     return new Promise((resolve, reject) => {
       let getGiveawayByMessageId = this.getGiveawayByMessageId;
@@ -83,9 +112,8 @@ class GiveawaysData {
   }
 
   /************************************************************
-   *  Function to send the payment to specified user from DB. *
-   *  Checks the available balance first to see if there is   *
-   *  enough found to be able to send out the tip.            *
+   *  Creates a new giveaway based on parameters. Sets an     *
+   *  event for when the giveaway will be triggered.          *
    ***********************************************************/
   createGiveaway = (userId, channelId, messageId, timespan, winners, amount, description) => {
     return new Promise((resolve, reject) => {
