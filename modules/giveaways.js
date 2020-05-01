@@ -66,11 +66,18 @@ class GiveawaysData {
     });
   }
 
-  finishGiveaway = (users, messageId) => {
+  finishGiveaway = (messageId) => {
     return new Promise((resolve, reject) => {
+      let getGiveawayByMessageId = this.getGiveawayByMessageId;
+
       this.db.run('UPDATE giveaways SET is_active = 0 WHERE  message_id = ?', [messageId], function (err) {
-        if (!err) resolve();
-        else reject(err);
+        if (!err) {
+          getGiveawayByMessageId(messageId).then(data => {
+            resolve(data);
+          }).catch(err => reject(err));
+        } else {
+          reject(err);
+        }
       });
     });
   }

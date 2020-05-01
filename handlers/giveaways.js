@@ -39,6 +39,36 @@ module.exports = {
         message.channel.send(err);
       });
     }
+  },
+  finishGiveaway: function (giveawaysData, walletsData, message, users) {
+    giveawaysData.finishGiveaway(message.id).then(finishedData => {
+      (async () => {
+        let validUsers = [];
+
+        for (let i = 0; i < users.length; i++) {
+          let hasWallet = await walletsData.userHasWallet(users[i].id);
+          if (hasWallet) validUsers.push(users[i]);
+        }
+
+        if (validUsers.length > 0) {
+          let payPart = ((finishedData.amount / config.metrics.coinUnits) / validUsers.length) - 0.001;
+
+          for (let i = 0; i < users.length; i++) {
+            await walletsData.sendPayment(finishedData.user_id, validUsers[i].id, payPart);
+          }
+
+          fs.readFile('./templates/giveaway_finished.msg', 'utf8', function (err, source) {
+            if (err) throw err;
+
+            let template = Handlebars.compile(source);
+            let embedDescription = template(validUsers);
+            let footerText = `${validUsers.length} winners paid.`;
+            const gaEmbed = giveawaysData.createEmbedMessage(finishedData.description, embedDescription, footerText);
+            message.edit({ embed: gaEmbed });
+          });
+        }
+      })().catch(err => console.error(err));
+    }).catch(err => console.error(err));
   }
 }
 

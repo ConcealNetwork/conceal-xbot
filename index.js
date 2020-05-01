@@ -42,25 +42,16 @@ const giveawaysData = new GiveawaysData(this.db, function (data) {
     message.reactions.forEach(reaction => {
       if (reaction.emoji.identifier == "%F0%9F%8E%89") {
         reaction.fetchUsers().then(users => {
+          // exclude all bots from the list of users
           let gaUsers = users.filter(user => !user.bot);
 
-          giveawaysData.finishGiveaway(gaUsers, data.message_id).then(finishedData => {
-            fs.readFile('./templates/giveaway_finished.msg', 'utf8', function (err, source) {
-              if (err) throw err;
-
-              let template = Handlebars.compile(source);
-              let embedDescription = template(gaUsers.array());
-              const gaEmbed = giveawaysData.createEmbedMessage(data.description, embedDescription, `${gaUsers.size} winners paid.`);
-              message.edit({ embed: gaEmbed });
-            });
-          }).catch(err => {
-            console.log(err);
-          });
+          // call the handler for finishing the giveaway
+          giveaways.finishGiveaway(giveawaysData, walletsData, message, gaUsers.array(), data.user_id);
         });
       }
     });
   }).catch(err => {
-    console.log(err);
+    console.error(err);
   });
 });
 

@@ -172,8 +172,17 @@ class WalletsData {
   showWalletInfo = (userId) => {
     return new Promise((resolve, reject) => {
       this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
-        if (row) resolve({ address: row.address, payment_id: row.payment_id });
+        if (!err && row) resolve({ address: row.address, payment_id: row.payment_id });
         else reject("Failed to find info for the user");
+      });
+    });
+  }
+
+  userHasWallet = (userId) => {
+    return new Promise((resolve, reject) => {
+      this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
+        if (!err) resolve(row !== undefined);
+        else reject(err);
       });
     });
   }
