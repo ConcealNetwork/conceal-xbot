@@ -12,10 +12,38 @@ module.exports = {
     }
 
     if (args[0] === "create") {
-      let timespan = parseInt(args[1]);
-      let winners = parseInt(args[2]);
-      let amount = parseFloat(args[3]);
-      let title = args.slice(4).join(" ");
+      let timespan = null;
+      let winners = null;
+      let amount = null;
+      let title = null;
+
+      if (!args[1]) {
+        message.channel.send('Please specify a timespan.');
+      } else {
+        if (args[1].search("s") > 0) timespan = parseInt(args[1]);
+        else if (args[1].search("m") > 0) timespan = parseInt(args[1]) * 60;
+        else if (args[1].search("h") > 0) timespan = parseInt(args[1]) * 3600;
+        else if (args[1].search("d") > 0) timespan = parseInt(args[1]) * 86400;
+        else timespan = parseInt(args[1]);
+      }
+
+      if (!args[2]) {
+        message.channel.send('Please specify a number of winners.');
+      } else {
+        winners = parseInt(args[2].replace(/w/g, ''));
+      }
+
+      if (!args[3]) {
+        message.channel.send('Please specify reward amount.');
+      } else {
+        amount = parseFloat(args[3].replace(/CCX/g, ''));
+      }
+
+      if (!args[4]) {
+        message.channel.send('Please specify giveaway title.');
+      } else {
+        title = args.slice(4).join(" ");
+      }
 
       walletsData.getBalance(message.member.user.id).then(balanceData => {
         if (balanceData.balance > (amount * config.metrics.coinUnits)) {
