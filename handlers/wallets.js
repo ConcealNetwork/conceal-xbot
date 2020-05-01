@@ -4,6 +4,11 @@ const Handlebars = require("handlebars");
 
 module.exports = {
   executeCommand: function (walletsData, message, command, args) {
+    function sendCommonError(errMsg) {
+      message.author.send(errMsg);
+      message.author.send('If you do not have the wallet registered yet please register it. For list of wallet commands type ```.wallet help```');
+    }
+
     if (args[0] === "help") {
 
       fs.readFile('./templates/help_wallets.msg', 'utf8', function (err, source) {
@@ -40,7 +45,7 @@ module.exports = {
       walletsData.showWalletInfo(message.member.user.id).then(data => {
         message.author.send(`***Address***: ${data.address}, ***Payment Id***: ${data.payment_id}`);
       }).catch(err => {
-        message.author.send(`Error trying to get wallet info: ${err}`);
+        sendCommonError(`Error trying to get wallet info: ${err}`);
       }).finally(message.reply('The wallet information has been sent to you in DM'));
     }
 
@@ -48,7 +53,7 @@ module.exports = {
       walletsData.showWalletInfo(message.member.user.id).then(data => {
         message.author.send(`Please deposit your CCX to ***Address***: ${config.wallet.address}, ***Payment Id***: ${data.payment_id}. Its mandatory to include payment Id or your funds will be lost!`);
       }).catch(err => {
-        message.author.send(err);
+        sendCommonError(`Error trying to get deposit info: ${err}`);
       }).finally(message.reply('The deposit information has been sent to you in DM'));
     }
 
@@ -56,7 +61,7 @@ module.exports = {
       walletsData.getBalance(message.member.user.id).then(data => {
         message.author.send(`***Balance***: ${(data.balance / config.metrics.coinUnits).toLocaleString()} CCX, ***Payment Id***: ${data.payment_id}`);
       }).catch(err => {
-        message.author.send(`Error trying to get balance: ${err}`);
+        sendCommonError(`Error trying to get balance: ${err}`);
       }).finally(message.reply('The balance information has been sent to you in DM'));
     }
 

@@ -243,34 +243,40 @@ class WalletsData {
 
       // write transaction to the sqlite database
       let doWriteTransaction = (paymentId, txData) => {
-        this.db.run('INSERT INTO transactions(block, payment_id, timestamp, amount, tx_hash) VALUES(0,?,0,?,?)',
-          [paymentId, -1 * ((amount * config.metrics.coinUnits) + this.fee), txData.transactionHash], function (err) {
-            if (!err) resolve(txData);
-            else reject(err);
-          });
+        return new Promise((resolve, reject) => {
+          this.db.run('INSERT INTO transactions(block, payment_id, timestamp, amount, tx_hash) VALUES(0,?,0,?,?)',
+            [paymentId, -1 * ((amount * config.metrics.coinUnits) + this.fee), txData.transactionHash], function (err) {
+              if (!err) resolve(txData);
+              else reject(err);
+            });
+        });
       }
 
       // call the wallet RFC to send the transaction
       let doSendPayment = (address, paymentId) => {
-        const opts = {
-          transfers: [{ address: address, amount: amount * config.metrics.coinUnits }],
-          fee: this.fee,
-          anonimity: 4,
-          paymentId: paymentId
-        }
+        return new Promise((resolve, reject) => {
+          const opts = {
+            transfers: [{ address: address, amount: amount * config.metrics.coinUnits }],
+            fee: this.fee,
+            anonimity: 4,
+            paymentId: paymentId
+          }
 
-        this.CCX.sendTransaction(opts).then(txhash => {
-          resolve(txhash);
-        }).catch(err => {
-          reject(err);
+          this.CCX.sendTransaction(opts).then(txhash => {
+            resolve(txhash);
+          }).catch(err => {
+            reject(err);
+          });
         });
       }
 
       // get target user data from sqlite DB
       let doGetTargetUserAddress = (userId) => {
-        this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
-          if (!err && row) resolve(row.address);
-          else reject("failed to get target user info");
+        return new Promise((resolve, reject) => {
+          this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
+            if (!err && row) resolve(row.address);
+            else reject("failed to get target user info");
+          });
         });
       }
 
@@ -278,8 +284,8 @@ class WalletsData {
       this.getBalance(fromUserId).then(balanceData => {
         if (balanceData.balance > ((amount * config.metrics.coinUnits) + this.fee)) {
           (async () => {
-            let userData = await doGetTargetUserAddress(toUserId);
-            let txData = await doSendPayment(balanceData.payment_id);
+            let address = await doGetTargetUserAddress(toUserId);
+            let txData = await doSendPayment(address, balanceData.payment_id);
             await doWriteTransaction(balanceData.payment_id, txData);
             resolve(txData);
           })().catch(e => reject(e));
