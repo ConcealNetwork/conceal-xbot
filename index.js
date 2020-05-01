@@ -230,7 +230,15 @@ client.on("message", async message => {
     }
 
     // parse the amount and calculate the fee
-    let amount = parseFloat(args[0]);
+    let amount = parseFloat(args[0].replace(/CCX/g, ''));
+
+    if (!amount) {
+      return message.reply('You need to specify a valid amount');
+    }
+
+    if (!count) {
+      return message.reply('You need to specify a valid user count');
+    }
 
     return usersData.getLastActiveUsers(count).then(users => {
       let targetUsers = users.filter(user => user.user_id !== message.member.user.id);

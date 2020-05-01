@@ -126,6 +126,9 @@ class WalletsData {
     });
   }
 
+  /************************************************************
+   *  Register a new wallet for the user.                     *
+   ***********************************************************/
   registerWallet = (userId, userName, address) => {
     return new Promise((resolve, reject) => {
       this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
@@ -149,6 +152,9 @@ class WalletsData {
     });
   }
 
+  /************************************************************
+   *  Update the wallet address for the user.                 *
+   ***********************************************************/
   updateWallet = (userId, address) => {
     return new Promise((resolve, reject) => {
       this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
@@ -169,6 +175,9 @@ class WalletsData {
     });
   }
 
+  /************************************************************
+   *  Sends the wallet info to the user.                      *
+   ***********************************************************/
   showWalletInfo = (userId) => {
     return new Promise((resolve, reject) => {
       this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
@@ -178,6 +187,9 @@ class WalletsData {
     });
   }
 
+  /************************************************************
+   *  Checks if the user has a wallet registered.             *
+   ***********************************************************/
   userHasWallet = (userId) => {
     return new Promise((resolve, reject) => {
       this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {

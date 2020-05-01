@@ -26,18 +26,30 @@ module.exports = {
         else if (args[1].search("h") > 0) timespan = parseInt(args[1]) * 3600;
         else if (args[1].search("d") > 0) timespan = parseInt(args[1]) * 86400;
         else timespan = parseInt(args[1]);
+
+        if (!timespan) {
+          return message.reply('You need to specify a valid timespan!');
+        }
       }
 
       if (!args[2]) {
         return message.channel.send('Please specify a number of winners.');
       } else {
         winners = parseInt(args[2].replace(/w/g, ''));
+
+        if (!winners) {
+          return message.reply('You need to specify a valid winners number!');
+        }
       }
 
       if (!args[3]) {
         return message.channel.send('Please specify reward amount.');
       } else {
         amount = parseFloat(args[3].replace(/CCX/g, ''));
+
+        if (!amount) {
+          return message.reply('You need to specify a valid amount!');
+        }
       }
 
       if (!args[4]) {
