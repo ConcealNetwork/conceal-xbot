@@ -116,6 +116,20 @@ module.exports = {
     }
   },
   finishGiveaway: function (giveawaysData, walletsData, message, users) {
+    let getRandom = (arr, n) => {
+      var result = new Array(n),
+        len = arr.length,
+        taken = new Array(len);
+      if (n > len)
+        throw new RangeError("getRandom: more elements taken than available");
+      while (n--) {
+        var x = Math.floor(Math.random() * len);
+        result[n] = arr[x in taken ? taken[x] : x];
+        taken[x] = --len in taken ? taken[len] : len;
+      }
+      return result;
+    }
+
     giveawaysData.finishGiveaway(message.id).then(finishedData => {
       (async () => {
         let validUsers = [];
@@ -126,18 +140,19 @@ module.exports = {
         }
 
         if (validUsers.length > 0) {
-          let payPart = ((finishedData.amount / config.metrics.coinUnits) / validUsers.length) - 0.001;
+          let winners = getRandom(validUsers, Math.min(validUsers.length, finishedData.winners));
+          let payPart = ((finishedData.amount / config.metrics.coinUnits) / winners.length) - 0.001;
 
           for (let i = 0; i < users.length; i++) {
-            await walletsData.sendPayment(finishedData.user_id, validUsers[i].id, payPart);
+            await walletsData.sendPayment(finishedData.user_id, winners[i].id, payPart);
           }
 
           fs.readFile('./templates/giveaway_finished.msg', 'utf8', function (err, source) {
             if (err) throw err;
 
             let template = Handlebars.compile(source);
-            let embedDescription = template(validUsers);
-            let footerText = `${validUsers.length} winners paid.`;
+            let embedDescription = template(winners);
+            let footerText = `${winners.length} winners paid.`;
             const gaEmbed = giveawaysData.createEmbedMessage(finishedData.description, embedDescription, footerText);
             message.edit({ embed: gaEmbed });
           });

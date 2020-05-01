@@ -63,7 +63,7 @@ client.on("ready", () => {
             let gaUsers = users.filter(user => !user.bot);
 
             // call the handler for finishing the giveaway
-            giveaways.finishGiveaway(giveawaysData, walletsData, message, gaUsers.array(), data.user_id);
+            giveaways.finishGiveaway(giveawaysData, walletsData, message, gaUsers.array());
           });
         }
       });
