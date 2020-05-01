@@ -44,9 +44,15 @@ const giveawaysData = new GiveawaysData(this.db, function (data) {
         reaction.fetchUsers().then(users => {
           let gaUsers = users.filter(user => !user.bot);
 
-          giveawaysData.finishGiveaway(gaUsers, data.message_id).then(gaData => {
-            const gaEmbed = giveawaysData.createEmbedMessage(data.description, 'Giveaway is finished!', `${gaUsers.size} winners.`);
-            message.edit({ embed: gaEmbed });
+          giveawaysData.finishGiveaway(gaUsers, data.message_id).then(finishedData => {
+            fs.readFile('./templates/giveaway_finished.msg', 'utf8', function (err, source) {
+              if (err) throw err;
+
+              let template = Handlebars.compile(source);
+              let embedDescription = template(gaUsers.array());
+              const gaEmbed = giveawaysData.createEmbedMessage(data.description, embedDescription, `${gaUsers.size} winners paid.`);
+              message.edit({ embed: gaEmbed });
+            });
           }).catch(err => {
             console.log(err);
           });
@@ -99,7 +105,7 @@ client.on("guildDelete", guild => {
 });
 
 client.on('messageReactionAdd', (reaction, user) => {
-  console.log(user);
+  // nothing to do so far
 });
 
 

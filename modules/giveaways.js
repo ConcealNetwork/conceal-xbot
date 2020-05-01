@@ -8,6 +8,7 @@ const fs = require('fs');
 class GiveawaysData {
   constructor(database, onGiveawayEvent) {
     this.db = database;
+    this.onGiveawayEvent = onGiveawayEvent;
     this._initializeGiveaways(onGiveawayEvent);
   }
 
@@ -47,10 +48,19 @@ class GiveawaysData {
     };
   }
 
-  getGiveaway = (messageId) => {
+  getGiveawayByRowId = (rowId) => {
+    return new Promise((resolve, reject) => {
+      this.db.get("SELECT * from giveaways where id = ?", [rowId], function (err, row) {
+        if (!err && row) resolve(row);
+        else reject("Failed to get Giveaway");
+      });
+    });
+  }
+
+  getGiveawayByMessageId = (messageId) => {
     return new Promise((resolve, reject) => {
       this.db.get("SELECT * from giveaways where message_id = ?", [messageId], function (err, row) {
-        if (!err & row) resolve(row);
+        if (!err && row) resolve(row);
         else reject("Failed to get Giveaway");
       });
     });
@@ -58,7 +68,10 @@ class GiveawaysData {
 
   finishGiveaway = (users, messageId) => {
     return new Promise((resolve, reject) => {
-
+      this.db.run('UPDATE giveaways SET is_active = 0 WHERE  message_id = ?', [messageId], function (err) {
+        if (!err) resolve();
+        else reject(err);
+      });
     });
   }
 
@@ -69,13 +82,20 @@ class GiveawaysData {
    ***********************************************************/
   createGiveaway = (userId, channelId, messageId, timespan, winners, amount, description) => {
     return new Promise((resolve, reject) => {
+      let getGiveawayByRowId = this.getGiveawayByRowId;
+      let onGiveawayEvent = this.onGiveawayEvent;
+      let setSingleEvent = this._setSingleEvent;
+
       this.db.run(`INSERT INTO giveaways(user_id, channel_id, message_id, creation_ts, description, timespan, amount, winners, is_active) 
                                VALUES(?,?,?,CURRENT_TIMESTAMP,?,?,?,?,1)`,
-        [userId, channelId, messageId, description, timespan, amount * config.metrics.coinUnits, winners], function (err, result) {
+        [userId, channelId, messageId, description, timespan, amount * config.metrics.coinUnits, winners], function (err) {
           if (err) {
             reject(err);
           } else {
-            resolve();
+            getGiveawayByRowId(this.lastID).then(row => {
+              setSingleEvent(row, onGiveawayEvent);
+              resolve(row);
+            }).catch(err => reject(err));
           }
         });
     });
