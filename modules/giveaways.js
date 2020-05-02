@@ -117,17 +117,18 @@ class GiveawaysData {
    ***********************************************************/
   createGiveaway = (userId, channelId, messageId, timespan, winners, amount, description) => {
     return new Promise((resolve, reject) => {
-      let getGiveawayByRowId = this.getGiveawayByRowId;
+      let timestamp = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+      let getGiveawayByMessageId = this.getGiveawayByMessageId;
       let onGiveawayEvent = this.onGiveawayEvent;
       let setSingleEvent = this._setSingleEvent;
 
       this.db.run(`INSERT INTO giveaways(user_id, channel_id, message_id, creation_ts, description, timespan, amount, winners, is_active) 
-                               VALUES(?,?,?,CURRENT_TIMESTAMP,?,?,?,?,1)`,
-        [userId, channelId, messageId, description, timespan, amount * config.metrics.coinUnits, winners], function (err) {
+                               VALUES(?,?,?,?,?,?,?,?,1)`,
+        [userId, channelId, messageId, timestamp, description, timespan, amount * config.metrics.coinUnits, winners], function (err) {
           if (err) {
             reject(err);
           } else {
-            getGiveawayByRowId(this.lastID).then(row => {
+            getGiveawayByMessageId(messageId).then(row => {
               setSingleEvent(row, onGiveawayEvent);
               resolve(row);
             }).catch(err => reject(err));

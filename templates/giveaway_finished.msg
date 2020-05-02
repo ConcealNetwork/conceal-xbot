@@ -1,9 +1,15 @@
 Giveaway is finished! Winners: 
 
 {{#each .}}
-<@{{this.id}}>
+{{#if (eq this.status true)}} 
+SUCCESS: <@{{this.user.id}}>
+{{else}}
+FAILED: <@{{this.user.id}}>
+{{/if}}
+{{#if @last}} 
 
-Congratulations
+Congratulations.
+{{/if}}
 {{else}}
 There is no winners this time.
 {{/each}}

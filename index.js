@@ -17,6 +17,7 @@ const blockchain = require("./handlers/blockchain.js");
 const WalletsData = require("./modules/wallets.js");
 const GiveawaysData = require("./modules/giveaways.js");
 const BlockchainData = require("./modules/blockchain.js");
+const HandlebarHelpers = require('just-handlebars-helpers');
 
 // open the access to the database if it fails we must stop
 this.db = new sqlite3.Database(path.join(appRoot.path, "tipbot.db"), sqlite3.OPEN_READWRITE, (err) => {
@@ -35,6 +36,9 @@ const usersData = new UsersData(this.db);
 const walletsData = new WalletsData(this.db);
 const blockchainData = new BlockchainData();
 const giveawaysData = new GiveawaysData(this.db);
+
+// register the handlebar helpers
+HandlebarHelpers.registerHelpers(Handlebars);
 
 // Here we load the config.json file that contains our token and our prefix values. 
 const config = require("./config.json");
