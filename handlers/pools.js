@@ -15,7 +15,7 @@ module.exports = {
     if (args[0] == "info") {
       // get the basic markets info
       pools.getPoolsInfo().then(data => {
-        fs.readFile('./templates/poolinfo.msg', 'utf8', function (err, source) {
+        fs.readFile('./templates/pools_info.msg', 'utf8', function (err, source) {
           if (err) throw err;
 
           var template = Handlebars.compile(source);
@@ -30,7 +30,7 @@ module.exports = {
     if (args[0] == "list") {
       // get the basic markets info
       pools.getPoolsList().then(data => {
-        fs.readFile('./templates/poollist.msg', 'utf8', function (err, source) {
+        fs.readFile('./templates/pools_list.msg', 'utf8', function (err, source) {
           if (err) throw err;
 
           var template = Handlebars.compile(source);
