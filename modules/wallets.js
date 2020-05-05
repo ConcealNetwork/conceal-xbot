@@ -96,7 +96,7 @@ class WalletsData {
   _synchronizeTransactions = (periodic) => {
     let synchronizeTransactions = this._synchronizeTransactions;
 
-    return new Promise(async resolve => {
+    return new Promise((resolve, reject) => {
       this.CCX.info().then(data => {
         this._fetchNextBlockArray(this.dataFile.lastBlock, data.height).then(lastHeight => {
           this.dataFile.lastBlock = lastHeight;
@@ -241,6 +241,8 @@ class WalletsData {
           // send back the balance info and the user payment_id info
           resolve({ balance: txBalance - gaBalance, payment_id: userData.payment_id });
         })().catch(e => reject("Failed to find info for the user"));
+      }).catch(err => {
+        reject(err);
       });
     });
   }
