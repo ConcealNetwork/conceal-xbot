@@ -40,6 +40,55 @@ class UsersData {
       });
     });
   }
+
+  /************************************************************
+   *  Function that selects "N" most active users of all time *
+   *  from the server and checks that they have the wallet    *
+   *  registered.                                             *
+   ***********************************************************/
+  getAllTimeActiveUsers = (count) => {
+    return new Promise((resolve, reject) => {
+      this.db.all('SELECT user_activity.user_id from user_activity where user_activity.user_id in (select wallets.user_id from wallets) ORDER BY MSG_ALLTIME DESC LIMIT ?;', [count], function (err, rows) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+  }
+
+  /************************************************************
+   *  Function that selects "N" last active users by perios   *
+   *  from the server and checks that they have the wallet    *
+   *  registered.                                             *
+   ***********************************************************/
+  getActiveUsersByPeriod = (count) => {
+    return new Promise((resolve, reject) => {
+      this.db.all('SELECT user_activity.user_id from user_activity where user_activity.user_id in (select wallets.user_id from wallets) ORDER BY MSG_PERIOD DESC LIMIT ?;', [count], function (err, rows) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+  }
+
+  /************************************************************
+   * Resets the period counters for all users in the databese *
+   ***********************************************************/
+  resetPeriodCounter = () => {
+    return new Promise((resolve, reject) => {
+      this.db.run('UPDATE user_activity SET MSG_PERIOD = 0', function (err, rows) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
 }
 
 module.exports = UsersData;

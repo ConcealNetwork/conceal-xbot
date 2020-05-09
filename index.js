@@ -7,6 +7,7 @@ const appRoot = require('app-root-path');
 const Handlebars = require("handlebars");
 const pools = require("./handlers/pools.js");
 const users = require("./handlers/users.js");
+const rains = require("./handlers/rains.js");
 const UsersData = require("./modules/users.js");
 const markets = require("./handlers/markets.js");
 const marketsData = require("./modules/markets.js");
@@ -221,52 +222,17 @@ client.on("message", async message => {
    *  rains the CCX specified over all of them                *
    ***********************************************************/
   if (command === "rain") {
-    let count = 0;
-
-    if (args.length < 1) {
-      return message.reply('You need to specify an ammount to rain');
+    if (args.length == 0) {
+      return message.reply(`You need to specify a rain command! Type: ***${config.prefix}rain help*** for list of commands`);
     }
 
-    if (args.length < 2) {
-      count = 10;
-    } else {
-      count = Math.min(parseInt(args[1]), 100);
-    }
-
-    // parse the amount and calculate the fee
-    let amount = parseFloat(args[0].replace(/CCX/g, ''));
-
-    if (!amount) {
-      return message.reply('You need to specify a valid amount');
-    }
-
-    if (!count) {
-      return message.reply('You need to specify a valid user count');
-    }
-
-    return usersData.getLastActiveUsers(count).then(users => {
-      let targetUsers = users.filter(user => user.user_id !== message.member.user.id);
-
-      if (targetUsers.length > 0) {
-        let payPart = (amount / targetUsers.length) - 0.001;
-
-        targetUsers.forEach(function (user, index) {
-          let discordUser = client.users.get(user.user_id) || client.fetchUser(user.user_id);
-
-          if (discordUser) {
-            walletsData.sendPayment(message.member.user.id, user.user_id, payPart).then(data => {
-              message.channel.send(`\:money_with_wings: ${payPart} CCX rained on user <@${user.user_id}>`);
-            }).catch(err => {
-              message.channel.send(`\:x: Failed to rain on user <@${user.user_id}>`);
-            });
-          }
-        });
-      }
-    }).catch(err => {
-      message.reply(err);
-    });
+    // execute the rain commands
+    return rains.executeCommand(usersData, walletsData, client, message, command, args);
   }
 
+  /************************************************************
+   *  General help command. Prints the general help out.      *
+   ***********************************************************/
   if (command === "help") {
     function sendNextHelpPart(partNum) {
       fs.readFile(`./templates/help_general_${partNum}.msg`, 'utf8', function (err, source) {
