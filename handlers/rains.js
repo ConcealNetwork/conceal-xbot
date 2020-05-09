@@ -37,7 +37,7 @@ module.exports = {
       }
 
       (async () => {
-        switch ((args[0]) {
+        switch (args[0]) {
           case 'recent':
             users = await usersData.getLastActiveUsers(count);
             break;
