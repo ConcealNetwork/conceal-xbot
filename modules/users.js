@@ -15,7 +15,7 @@ class UsersData {
    ***********************************************************/
   updateUserActivity = (userId) => {
     return new Promise((resolve, reject) => {
-      this.db.run('INSERT OR REPLACE INTO user_activity(user_id, timestamp, msgcount) VALUES(?,CURRENT_TIMESTAMP, COALESCE((SELECT msgcount FROM user_activity WHERE user_id=?), 0) + 1);)', [userId, userId], function (err) {
+      this.db.run('INSERT OR REPLACE INTO user_activity(user_id, timestamp, msg_alltime, msg_period) VALUES(?,CURRENT_TIMESTAMP, COALESCE((SELECT msg_alltime FROM user_activity WHERE user_id=?), 0) + 1);, COALESCE((SELECT msg_period FROM user_activity WHERE user_id=?), 0) + 1);)', [userId, userId, userId], function (err) {
         if (err) {
           reject(err);
         } else {
