@@ -15,7 +15,7 @@ class UsersData {
    ***********************************************************/
   updateUserActivity = (userId) => {
     return new Promise((resolve, reject) => {
-      this.db.run('INSERT OR REPLACE INTO user_activity(user_id, timestamp, msg_alltime, msg_period) VALUES(?,CURRENT_TIMESTAMP, COALESCE((SELECT msg_alltime FROM user_activity WHERE user_id=?), 0) + 1);, COALESCE((SELECT msg_period FROM user_activity WHERE user_id=?), 0) + 1);)', [userId, userId, userId], function (err) {
+      this.db.run('INSERT OR REPLACE INTO user_activity(user_id, timestamp, msg_alltime, msg_period) VALUES(?,CURRENT_TIMESTAMP, COALESCE((SELECT msg_alltime FROM user_activity WHERE user_id=?), 0) + 1, COALESCE((SELECT msg_period FROM user_activity WHERE user_id=?), 0) + 1)', [userId, userId, userId], function (err) {
         if (err) {
           reject(err);
         } else {
@@ -29,9 +29,15 @@ class UsersData {
    *  Function that selects "N" last active users on the      *
    *  server and checks that they have the wallet registered. *
    ***********************************************************/
-  getLastActiveUsers = (count) => {
+  getLastActiveUsers = (count, exclude) => {
     return new Promise((resolve, reject) => {
-      this.db.all('SELECT user_activity.user_id from user_activity where user_activity.user_id in (select wallets.user_id from wallets) ORDER BY TIMESTAMP DESC LIMIT ?;', [count], function (err, rows) {
+      let excludeAsString = '';
+
+      if (exclude) {
+        excludeAsString = exclude.join(',');
+      }
+
+      this.db.all('SELECT user_activity.user_id from user_activity where user_activity.user_id in (select wallets.user_id from wallets where wallets.user_id NOT IN (?)) ORDER BY TIMESTAMP DESC LIMIT ?;', [excludeAsString, count], function (err, rows) {
         if (err) {
           reject(err);
         } else {
@@ -46,9 +52,15 @@ class UsersData {
    *  from the server and checks that they have the wallet    *
    *  registered.                                             *
    ***********************************************************/
-  getAllTimeActiveUsers = (count) => {
+  getAllTimeActiveUsers = (count, exclude) => {
     return new Promise((resolve, reject) => {
-      this.db.all('SELECT user_activity.user_id from user_activity where user_activity.user_id in (select wallets.user_id from wallets) ORDER BY MSG_ALLTIME DESC LIMIT ?;', [count], function (err, rows) {
+      let excludeAsString = '';
+
+      if (exclude) {
+        excludeAsString = exclude.join(',');
+      }
+
+      this.db.all('SELECT user_activity.user_id from user_activity where user_activity.user_id in (select wallets.user_id from wallets where wallets.user_id NOT IN (?)) ORDER BY MSG_ALLTIME DESC LIMIT ?;', [excludeAsString, count], function (err, rows) {
         if (err) {
           reject(err);
         } else {
@@ -63,9 +75,15 @@ class UsersData {
    *  from the server and checks that they have the wallet    *
    *  registered.                                             *
    ***********************************************************/
-  getActiveUsersByPeriod = (count) => {
+  getActiveUsersByPeriod = (count, exclude) => {
     return new Promise((resolve, reject) => {
-      this.db.all('SELECT user_activity.user_id from user_activity where user_activity.user_id in (select wallets.user_id from wallets) ORDER BY MSG_PERIOD DESC LIMIT ?;', [count], function (err, rows) {
+      let excludeAsString = '';
+
+      if (exclude) {
+        excludeAsString = exclude.join(',');
+      }
+
+      this.db.all('SELECT user_activity.user_id from user_activity where user_activity.user_id in (select wallets.user_id from wallets where wallets.user_id NOT IN (?)) ORDER BY MSG_PERIOD DESC LIMIT ?;', [excludeAsString, count], function (err, rows) {
         if (err) {
           reject(err);
         } else {

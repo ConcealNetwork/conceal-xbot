@@ -39,23 +39,20 @@ module.exports = {
       (async () => {
         switch (args[0]) {
           case 'recent':
-            users = await usersData.getLastActiveUsers(count);
+            users = await usersData.getLastActiveUsers(count, [message.member.user.id]);
             break;
           case 'alltime':
-            users = await usersData.getAllTimeActiveUsers(count);
+            users = await usersData.getAllTimeActiveUsers(count, [message.member.user.id]);
             break;
           case 'period':
-            users = await usersData.getActiveUsersByPeriod(count);
+            users = await usersData.getActiveUsersByPeriod(count, [message.member.user.id]);
             break;
         }
 
-        // now get the target users and make sure that the caller is not among them
-        let targetUsers = users.filter(user => user.user_id !== message.member.user.id);
+        if (users.length > 0) {
+          let payPart = (amount / users.length) - 0.001;
 
-        if (targetUsers.length > 0) {
-          let payPart = (amount / targetUsers.length) - 0.001;
-
-          targetUsers.forEach(function (user, index) {
+          users.forEach(function (user, index) {
             let discordUser = client.users.get(user.user_id) || client.fetchUser(user.user_id);
 
             if (discordUser) {
@@ -73,6 +70,9 @@ module.exports = {
     }
 
     if (args[0] === "reset") {
+      if (!message.member.roles.some(r => ["Administrator"].includes(r.name)))
+        return message.reply("Sorry, you don't have permissions to use this!");
+
       usersData.resetPeriodCounter().then(() => {
         message.channel.send('Period was succesffully reset.');
       }).catch(err => {
