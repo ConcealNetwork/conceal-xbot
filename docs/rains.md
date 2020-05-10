@@ -1,4 +1,4 @@
-# Giveaways
+# Rains
 
 With this set of command you can do rains. Rains basically as the name suggest, rain a specified amount of CCX over specified number of users selected by certain criteria. The possible criteria for selection are:
 
