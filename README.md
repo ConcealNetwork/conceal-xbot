@@ -50,4 +50,17 @@ This are commands related to giveaways. You need to have a CCX wallet registered
 | [.giveaway list](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/giveaways.md#listing-all-active-giveaways) | Lists all active giveaways. |
 | [.giveaway delete](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/giveaways.md#deleting-a-giveaway) | Deletes an active giveaway. |
 
+## rain
+
+This are commands related to rains. You need to have a CCX wallet registered with the Bot in order to use them. Click on the command to see how to use it.
+
+| Command  | Description |
+| ------------- | ------------- |
+| [.rain help](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#rains) | Gives detailed info on giveaway commands. |
+| [.rain recent](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#rain-by-recent-activity) | Creates a new giveaway based on parameters. |
+| [.rain alltime](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#rain-by-alltime-activity) | Lists all active giveaways. |
+| [.rain period](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#rain-by-period-activity) | Deletes an active giveaway. |
+| [.rain reset](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#reseting-the-period) | Deletes an active giveaway. |
+
+
 
