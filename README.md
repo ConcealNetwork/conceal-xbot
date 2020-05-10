@@ -45,9 +45,9 @@ This are commands related to giveaways. You need to have a CCX wallet registered
 
 | Command  | Description |
 | ------------- | ------------- |
-| .giveaway help  | Gives detailed info on giveaway commands. |
-| .giveaway create  | Creates a new giveaway based on parameters. |
-| .giveaway list  | Lists all active giveaways. |
-| .giveaway delete  | Deletes an active giveaway. |
+| [.giveaway help](http://github.com) | Gives detailed info on giveaway commands. |
+| [.giveaway create](http://github.com) | Creates a new giveaway based on parameters. |
+| [.giveaway list](http://github.com) | Lists all active giveaways. |
+| [.giveaway delete](http://github.com) | Deletes an active giveaway. |
 
 
