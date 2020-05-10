@@ -45,9 +45,9 @@ This are commands related to giveaways. You need to have a CCX wallet registered
 
 | Command  | Description |
 | ------------- | ------------- |
-| [.giveaway help](http://github.com) | Gives detailed info on giveaway commands. |
-| [.giveaway create](http://github.com) | Creates a new giveaway based on parameters. |
-| [.giveaway list](http://github.com) | Lists all active giveaways. |
-| [.giveaway delete](http://github.com) | Deletes an active giveaway. |
+| [.giveaway help](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/giveaways.md#giveaways) | Gives detailed info on giveaway commands. |
+| [.giveaway create](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/giveaways.md#creating-a-giveaway) | Creates a new giveaway based on parameters. |
+| [.giveaway list](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/giveaways.md#listing-all-active-giveaways) | Lists all active giveaways. |
+| [.giveaway delete](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/giveaways.md#deleting-a-giveaway) | Deletes an active giveaway. |
 
 
