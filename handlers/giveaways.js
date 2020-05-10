@@ -58,27 +58,33 @@ module.exports = {
         title = args.slice(4).join(" ");
       }
 
-      walletsData.getBalance(message.member.user.id).then(balanceData => {
-        if (balanceData.balance > (amount * config.metrics.coinUnits)) {
-          const description = `React with \:tada: to enter. Prize is ${amount} CCX`;
-          const footer = `${winners} winners | ends at ...`;
-          const giveawayEmbed = giveawaysData.createEmbedMessage(title, description, footer);
-          message.delete().catch(O_o => { });
+      walletsData.userHasWallet(message.member.user.id).then(hasWallet => {
+        if (hasWallet) {
+          walletsData.getBalance(message.member.user.id).then(balanceData => {
+            if (balanceData.balance > (amount * config.metrics.coinUnits)) {
+              const description = `React with \:tada: to enter. Prize is ${amount} CCX`;
+              const footer = `${winners} winners | ends at ...`;
+              const giveawayEmbed = giveawaysData.createEmbedMessage(title, description, footer);
+              message.delete().catch(O_o => { });
 
-          message.channel.send({ embed: giveawayEmbed }).then(newMsg => {
-            giveawaysData.createGiveaway(message.member.user.id, newMsg.channel.id, newMsg.id, timespan, winners, amount, title).then(data => {
-              newMsg.react('🎉');
-            }).catch(err => {
-              newMsg.delete().catch(O_o => { });
-              message.channel.send(`Error creating giveaway: ${err}`);
-            });
+              message.channel.send({ embed: giveawayEmbed }).then(newMsg => {
+                giveawaysData.createGiveaway(message.member.user.id, newMsg.channel.id, newMsg.id, timespan, winners, amount, title).then(data => {
+                  newMsg.react('🎉');
+                }).catch(err => {
+                  newMsg.delete().catch(O_o => { });
+                  message.channel.send(`Error creating giveaway: ${err}`);
+                });
+              });
+            } else {
+              message.channel.send(`insuficient balance ${balanceData.balance / config.metrics.coinUnits} CCX`);
+            }
+          }).catch(err => {
+            message.channel.send(err);
           });
         } else {
-          message.channel.send(`insuficient balance ${balanceData.balance / config.metrics.coinUnits} CCX`);
+          return message.reply('You need to register a wallet first to use giveaway features');
         }
-      }).catch(err => {
-        message.channel.send(err);
-      });
+      })
     }
 
     if (args[0] === "list") {

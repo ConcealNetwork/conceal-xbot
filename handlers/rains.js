@@ -37,6 +37,12 @@ module.exports = {
       }
 
       (async () => {
+        let userHasWallet = await walletsData.userHasWallet(message.member.user.id);
+
+        if (!userHasWallet) {
+          return message.reply('You need to register a wallet first to use rain features');
+        }
+
         switch (args[0]) {
           case 'recent':
             users = await usersData.getLastActiveUsers(count, [message.member.user.id]);
