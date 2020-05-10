@@ -10,7 +10,7 @@ You need to have a CCX wallet registered with the Bot in order to be able to cre
 
 ## Creating a giveaway
 
-.giveaway create &#60;timespan&#62; &#60;winners&#62; &#60;ammount&#62; &#60;title&#62;
+>.giveaway create &#60;timespan&#62; &#60;winners&#62; &#60;ammount&#62; &#60;title&#62;
 
 #### Parameters
 
@@ -25,11 +25,11 @@ You need to have a CCX wallet registered with the Bot in order to be able to cre
 
 #### Example of use
 
-.giveaway create 1h 3w 100CCX Random Giveaway
+>.giveaway create 1h 3w 100CCX Random Giveaway
 
 ## Listing all active giveaways
 
-.giveaway list
+>.giveaway list
 
 #### Parameters
 
@@ -37,11 +37,11 @@ This command has no additional parameters.
 
 #### Example of use
 
-.giveaway list
+>.giveaway list
 
 ## Deleting a giveaway
 
-.giveaway delete &#60;id&#62;
+>.giveaway delete &#60;id&#62;
 
 #### Parameters
 
@@ -49,4 +49,4 @@ This command has no additional parameters.
 
 #### Example of use
 
-.giveaway delete 5
+>.giveaway delete 5
