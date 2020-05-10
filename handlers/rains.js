@@ -22,7 +22,7 @@ module.exports = {
       if (args.length < 3) {
         count = 10;
       } else {
-        count = Math.min(parseInt(args[2]), 100);
+        count = Math.min(parseInt(args[2].replace(/u/g, '')), 100);
       }
 
       // parse the amount and calculate the fee
