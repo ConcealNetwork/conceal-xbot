@@ -65,3 +65,16 @@ This command has no additional parameters.
 #### Example of use
 
 >.wallet balance
+
+## Generating a payment Id
+
+>.wallet paymentid
+
+#### Parameters
+
+This command has no additional parameters.
+
+#### Example of use
+
+>.wallet paymentid
+
