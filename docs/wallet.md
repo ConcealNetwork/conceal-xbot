@@ -1,4 +1,4 @@
-# Rains
+# Wallet
 
 With this set of command you can manage your wallet. You can check your balance, deposit and withdraw funds from or to the bot wallet.
 

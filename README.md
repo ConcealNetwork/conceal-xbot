@@ -68,13 +68,13 @@ This are commands related to your wallet. You need to have a CCX wallet register
 
 | Command  | Description |
 | ------------- | ------------- |
-| [.wallet help](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#rains) | Gives detailed info on wallet commands. |
-| [.wallet register](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#rain-by-recent-activity) | Registers a new wallet for the user. You need to specify a valid CCX address. |
-| [.wallet update](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#rain-by-alltime-activity) | Updates the current user wallet with new CCX address. |
-| [.wallet show](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#rain-by-period-activity) | Deletes an active giveaway. |
-| [.wallet deposit](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#reseting-the-period) | Gives the user info about how to deposit to his/her wallet. |
+| [.wallet help](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#wallet) | Gives detailed info on wallet commands. |
+| [.wallet register](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#register-a-wallet) | Registers a new wallet for the user. You need to specify a valid CCX address. |
+| [.wallet update](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#update-your-wallet) | Updates the current user wallet with new CCX address. |
+| [.wallet show](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#show-your-wallet-info) | Deletes an active giveaway. |
+| [.wallet deposit](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#showing-how-to-deposit) | Gives the user info about how to deposit to his/her wallet. |
 | [.wallet withdraw](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#reseting-the-period) | Allows you to withdraw your funds back to your wallet. |
-| [.wallet balance](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#reseting-the-period) | Shows the current user wallet balance. |
+| [.wallet balance](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#showing-your-wallet-balance) | Shows the current user wallet balance. |
 | [.wallet paymentid](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#reseting-the-period) | Generates a paymentId. |
 
 
