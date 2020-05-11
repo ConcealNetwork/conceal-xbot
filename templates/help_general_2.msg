@@ -30,7 +30,7 @@
 
   #users
     .users help -> Gives detailed info on users commands.
-    .users all -> Counts all users on the server..
+    .users all -> Counts all users on the server.
     .users online -> Counts all online users on the server.
     .users offline -> Counts all offline users on the server.
     .users ban -> Bans a user from the server.
@@ -39,8 +39,8 @@
 ```css
 
   #general
-    .help -> shows you this help content.
-    .tip -> tip a user that also has a registered wallet.
-    .say -> makes the bot say something as if he said it.
-    .purge -> purges last N messages from the channel. 
+    .help -> Shows you this help content.
+    .tip -> Tip a user that also has a registered wallet.
+    .say -> Makes the bot say something as if he said it.
+    .purge -> Purges last N messages from the channel. 
 ```

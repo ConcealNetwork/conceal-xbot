@@ -4,6 +4,17 @@ Conceal XBOT is a bot made specifically for Conceal public Discord server. While
 
 The Bot is organized in multiple sections bassed on the content it serves. A lot of them requires the user to have a CCX wallet registered with the bot, so make sure you register one if you want to use its full potential. The command that the bot supports can be distributed in the following sections:
 
+## general
+
+This are general commands that do not fall into any specific category. Click on the command to see how to use it.
+
+| Command  | Description |
+| ------------- | ------------- |
+| .help  | Shows you this help content. |
+| .tip  | Tip a user that also has a registered wallet. |
+| .say | Makes the bot say something as if he said it. |
+| .purge | Purges last N messages from the channel.  |
+
 ## markets
 
 This are commands that enable the user to see market data related to CCX. Click on the command to see how to use it.
@@ -22,6 +33,29 @@ This are commands that enable the user to see exchanges info related to CCX. Cli
 | ------------- | ------------- |
 | .exchanges help  | Gives detailed info on exchanges commands. |
 | .exchanges info  | Gives general info about the exchanges. |
+
+## pools
+
+This are commands that enable the user to see pools info. Click on the command to see how to use it.
+
+| Command  | Description |
+| ------------- | ------------- |
+| .pools help  | Gives detailed info on pools commands. |
+| .pools list  | Gives the list of all CCX pools. |
+| .pools info  | Gives the info about all CCX pools. |
+
+## users
+
+This are commands that enable the user to all the info related to CCX Discord server users. Click on the command to see how to use it.
+
+| Command  | Description |
+| ------------- | ------------- |
+| .users help  | Gives detailed info on users commands. |
+| .users all  | Counts all users on the server.. |
+| .users online  | Counts all online users on the server. |
+| .users offline  | Counts all offline users on the server. |
+| .users ban  | Bans a user from the server. |
+| .users kick  | Kicks a user from the server. |
 
 ## blockchain
 
