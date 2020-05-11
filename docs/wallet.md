@@ -54,6 +54,18 @@ This command has no additional parameters.
 
 >.wallet deposit
 
+## Withdraw your funds
+
+>.wallet withdraw &#60;amount&#62;
+
+#### Parameters
+
+* **amount**: Amount to witdraw from the bot back to your registered wallet.
+
+#### Example of use
+
+>.wallet withdraw 50CCX
+
 ## Showing your wallet balance
 
 >.wallet balance

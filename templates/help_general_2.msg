@@ -13,6 +13,7 @@
     .wallet update -> Updates the current user wallet with new CCX address.
     .wallet show -> Gives the current wallet details for the user.
     .wallet deposit -> Gives the user info about how to deposit to his/her wallet.
+    .wallet withdraw -> Allows you to withdraw your funds back to your wallet.
     .wallet balance -> Shows the current user wallet balance.
     .wallet paymentid -> Generates a paymentId.
 ```

@@ -57,6 +57,24 @@ module.exports = {
       }).finally(message.reply('The deposit information has been sent to you in DM'));
     }
 
+    if (args[0] == "withdraw") {
+      if (args.length < 2) {
+        message.reply('Please type the amount you want to withdraw')
+      } else {
+        let amount = parseFloat(args[1].replace(/CCX/g, ''));
+
+        if (!amount) {
+          return message.reply('You need to specify a valid amount!');
+        }
+
+        walletsData.sendPayment(message.member.user.id, message.member.user.id, amount).then(data => {
+          message.author.send(`Success! ***TX hash***: ${data.transactionHash}, ***Secret key***: ${data.transactionSecretKey}`);
+        }).catch(err => {
+          message.author.send(`Error trying to withdraw funds: ${err}`);
+        }).finally(message.reply('The withdraw information has been sent to you in DM'));
+      }
+    }
+
     if (args[0] == "balance") {
       walletsData.getBalance(message.member.user.id).then(data => {
         message.author.send(`***Balance***: ${(data.balance / config.metrics.coinUnits).toLocaleString()} CCX, ***Payment Id***: ${data.payment_id}`);

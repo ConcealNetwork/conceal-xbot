@@ -75,6 +75,6 @@ This are commands related to your wallet. You need to have a CCX wallet register
 | [.wallet deposit](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#showing-how-to-deposit) | Gives the user info about how to deposit to his/her wallet. |
 | [.wallet withdraw](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#reseting-the-period) | Allows you to withdraw your funds back to your wallet. |
 | [.wallet balance](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#showing-your-wallet-balance) | Shows the current user wallet balance. |
-| [.wallet paymentid](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#reseting-the-period) | Generates a paymentId. |
+| [.wallet paymentid](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#generating-a-payment-id) | Generates a paymentId. |
 
 
