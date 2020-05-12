@@ -58,20 +58,39 @@ module.exports = {
     }
 
     if (args[0] == "withdraw") {
+      let amount = 0;
+
       if (args.length < 2) {
         message.reply('Please type the amount you want to withdraw')
       } else {
-        let amount = parseFloat(args[1].replace(/CCX/g, ''));
+        if (args[1] !== "all") {
+          amount = parseFloat(args[1].replace(/CCX/g, '')) * config.metrics.coinUnits;
 
-        if (!amount) {
-          return message.reply('You need to specify a valid amount!');
+          if (!amount) {
+            return message.reply('You need to specify a valid amount!');
+          }
         }
 
-        walletsData.sendPayment(message.member.user.id, message.member.user.id, amount).then(data => {
-          message.author.send(`Success! ***TX hash***: ${data.transactionHash}, ***Secret key***: ${data.transactionSecretKey}`);
+        walletsData.getBalance(message.member.user.id).then(data => {
+          if (amount == 0) {
+            amount = data.balance - (0.0011 * config.metrics.coinUnits);
+          }
+
+          // use slightly more for the fee to avoid rounding errors
+          if ((amount + (0.0011 * config.metrics.coinUnits)) <= data.balance) {
+            walletsData.sendPayment(message.member.user.id, message.member.user.id, amount / config.metrics.coinUnits).then(data => {
+              message.author.send(`Success! ***TX hash***: ${data.transactionHash}, ***Secret key***: ${data.transactionSecretKey}`);
+            }).catch(err => {
+              sendCommonError(`Error trying to withdraw funds: ${err}`);
+            }).finally(message.reply('The withdraw information has been sent to you in DM'));
+          } else {
+            message.author.send('Your balance is to low to send the selected amount');
+            message.reply('The withdraw information has been sent to you in DM')
+          }
         }).catch(err => {
-          message.author.send(`Error trying to withdraw funds: ${err}`);
-        }).finally(message.reply('The withdraw information has been sent to you in DM'));
+          sendCommonError(`Error trying to withdraw funds: ${err}`);
+          message.reply('The withdraw information has been sent to you in DM')
+        });
       }
     }
 

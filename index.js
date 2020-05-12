@@ -113,6 +113,10 @@ client.on("message", async message => {
   // and not get into a spam loop (we call that "botception").
   if (message.author.bot) return;
 
+  if (message.channel.type == "dm") {
+    return message.channel.send("Bot is not available in DM");
+  }
+
   if (message.member && message.member.user) {
     // update the activity for the current user
     usersData.updateUserActivity(message.member.user.id).catch(err => {
