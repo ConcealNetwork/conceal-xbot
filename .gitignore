@@ -104,3 +104,7 @@ dist
 .tern-port
 /config.json
 /tipbot.db
+/images
+/sqlite3.exe
+/wallet
+/data.json
