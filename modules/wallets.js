@@ -138,6 +138,7 @@ class WalletsData {
           // check if its a valid CCX address
           if (!this._isValidAddress(address, 98)) {
             reject("Please provide a valid CCX address");
+            return;
           }
 
           this.generatePaymentId().then(payment_id => {
@@ -164,6 +165,7 @@ class WalletsData {
           // check if its a valid CCX address
           if (!this._isValidAddress(address, 98)) {
             reject("Please provide a valid CCX address");
+            return;
           }
 
           this.db.run('UPDATE wallets SET address = ? where user_id = ?', [address, userId], function (err) {
