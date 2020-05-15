@@ -2,6 +2,17 @@ const fs = require('fs');
 const config = require("../config.json");
 const Handlebars = require("handlebars");
 
+let availableCommands = [
+  "help",
+  "register",
+  "update",
+  "show",
+  "deposit",
+  "withdraw",
+  "balance",
+  "paymentid"
+];
+
 module.exports = {
   executeCommand: function (walletsData, message, command, args) {
     function sendCommonError(errMsg) {
@@ -15,8 +26,12 @@ module.exports = {
       }
     }
 
-    if (args[0] === "help") {
+    if (availableCommands.indexOf(args[0]) == -1) {
+      // no valid command was found notify the user about it
+      return message.channel.send('Uknows wallet command. Type ".wallet help" for available commands');
+    }
 
+    if (args[0] === "help") {
       fs.readFile('./templates/help_wallets.msg', 'utf8', function (err, source) {
         if (err) throw err;
         message.channel.send(source);

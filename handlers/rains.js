@@ -1,8 +1,21 @@
 const fs = require('fs');
 const config = require("../config.json");
 
+let availableCommands = [
+  "help",
+  "recent",
+  "alltime",
+  "period",
+  "reset"
+];
+
 module.exports = {
   executeCommand: async function (usersData, walletsData, client, message, command, args) {
+    if (availableCommands.indexOf(args[0]) == -1) {
+      // no valid command was found notify the user about it
+      return message.channel.send('Uknows rain command. Type ".rain help" for available commands');
+    }
+
     if (args[0] === "help") {
 
       fs.readFile('./templates/help_rains.msg', 'utf8', function (err, source) {

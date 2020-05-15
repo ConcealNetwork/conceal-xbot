@@ -2,8 +2,18 @@ const fs = require('fs');
 const Handlebars = require("handlebars");
 const markets = require("../modules/markets.js");
 
+let availableCommands = [
+  "help",
+  "info"
+];
+
 module.exports = {
   executeCommand: function (message, command, args) {
+    if (availableCommands.indexOf(args[0]) == -1) {
+      // no valid command was found notify the user about it
+      return message.channel.send('Uknows exchanges command. Type ".exchanges help" for available commands');
+    }
+
     if (args[0] === "help") {
 
       fs.readFile('./templates/help_exchanges.msg', 'utf8', function (err, source) {

@@ -1,8 +1,22 @@
 const fs = require('fs');
 const config = require("../config.json");
 
+let availableCommands = [
+  "help",
+  "all",
+  "online",
+  "offline",
+  "kick",
+  "ban"
+];
+
 module.exports = {
   executeCommand: async function (client, message, command, args) {
+    if (availableCommands.indexOf(args[0]) == -1) {
+      // no valid command was found notify the user about it
+      return message.channel.send('Uknows users command. Type ".users help" for available commands');
+    }
+
     if (args[0] === "help") {
 
       fs.readFile('./templates/help_users.msg', 'utf8', function (err, source) {

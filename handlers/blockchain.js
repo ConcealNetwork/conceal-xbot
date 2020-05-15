@@ -4,8 +4,26 @@ const config = require("../config.json");
 const Handlebars = require("handlebars");
 const blockchain = require("../modules/blockchain.js");
 
+let availableCommands = [
+  "help",
+  "totalsupply",
+  "total",
+  "banked",
+  "height",
+  "reward",
+  "hashrate",
+  "maxsupply",
+  "difficulty",
+  "diff"
+];
+
 module.exports = {
   executeCommand: function (blockchainInfo, message, command, args) {
+    if (availableCommands.indexOf(args[0]) == -1) {
+      // no valid command was found notify the user about it
+      return message.channel.send('Uknows blockchain command. Type ".blockchain help" for available commands');
+    }
+
     if (args[0] === "help") {
 
       fs.readFile('./templates/help_blockchain.msg', 'utf8', function (err, source) {

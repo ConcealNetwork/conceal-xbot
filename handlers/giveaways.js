@@ -2,8 +2,20 @@ const fs = require('fs');
 const Handlebars = require("handlebars");
 const config = require("../config.json");
 
+let availableCommands = [
+  "help",
+  "create",
+  "list",
+  "delete"
+];
+
 module.exports = {
   executeCommand: async function (giveawaysData, walletsData, client, message, command, args) {
+    if (availableCommands.indexOf(args[0]) == -1) {
+      // no valid command was found notify the user about it
+      return message.channel.send('Uknows giveaway command. Type ".giveaway help" for available commands');
+    }
+
     if (args[0] === "help") {
 
       fs.readFile('./templates/help_giveaways.msg', 'utf8', function (err, source) {
