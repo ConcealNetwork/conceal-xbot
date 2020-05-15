@@ -9,6 +9,12 @@ module.exports = {
       message.author.send('If you do not have the wallet registered yet please register it. For list of wallet commands type ```.wallet help```');
     }
 
+    function sendNotification(content) {
+      if (message.channel.type !== "dm") {
+        message.reply(content)
+      }
+    }
+
     if (args[0] === "help") {
 
       fs.readFile('./templates/help_wallets.msg', 'utf8', function (err, source) {
@@ -21,11 +27,11 @@ module.exports = {
       if (args.length < 2) {
         message.reply('Please type your wallet address. Use ".wallet help" command for help')
       } else {
-        walletsData.registerWallet(message.member.user.id, message.member.user.username, args[1]).then(response => {
+        walletsData.registerWallet(message.author.id, message.author.username, args[1]).then(response => {
           message.author.send(response);
         }).catch(err => {
           message.author.send(`Error trying to register wallet: ${err}`);
-        }).finally(message.reply('The registration information has been sent to you in DM'));
+        }).finally(sendNotification('The registration information has been sent to you in DM'));
       }
     }
 
@@ -33,28 +39,28 @@ module.exports = {
       if (args.length < 2) {
         message.reply('Please type your wallet address. Use ".wallet help" command for help')
       } else {
-        walletsData.updateWallet(message.member.user.id, args[1]).then(response => {
+        walletsData.updateWallet(message.author.id, args[1]).then(response => {
           message.author.send(response);
         }).catch(err => {
           message.author.send(`Error trying to update wallet: ${err}`);
-        }).finally(message.reply('The update information has been sent to you in DM'));
+        }).finally(sendNotification('The update information has been sent to you in DM'));
       }
     }
 
     if (args[0] == "show") {
-      walletsData.showWalletInfo(message.member.user.id).then(data => {
+      walletsData.showWalletInfo(message.author.id).then(data => {
         message.author.send(`***Address***: ${data.address}, ***Payment Id***: ${data.payment_id}`);
       }).catch(err => {
         sendCommonError(`Error trying to get wallet info: ${err}`);
-      }).finally(message.reply('The wallet information has been sent to you in DM'));
+      }).finally(sendNotification('The wallet information has been sent to you in DM'));
     }
 
     if (args[0] == "deposit") {
-      walletsData.showWalletInfo(message.member.user.id).then(data => {
+      walletsData.showWalletInfo(message.author.id).then(data => {
         message.author.send(`Please deposit your CCX to ***Address***: ${config.wallet.address}, ***Payment Id***: ${data.payment_id}. Its mandatory to include payment Id or your funds will be lost!`);
       }).catch(err => {
         sendCommonError(`Error trying to get deposit info: ${err}`);
-      }).finally(message.reply('The deposit information has been sent to you in DM'));
+      }).finally(sendNotification('The deposit information has been sent to you in DM'));
     }
 
     if (args[0] == "withdraw") {
@@ -71,41 +77,43 @@ module.exports = {
           }
         }
 
-        walletsData.getBalance(message.member.user.id).then(data => {
+        walletsData.getBalance(message.author.id).then(data => {
           if (amount == 0) {
             amount = data.balance - (0.0011 * config.metrics.coinUnits);
           }
 
           // use slightly more for the fee to avoid rounding errors
           if ((amount + (0.0011 * config.metrics.coinUnits)) <= data.balance) {
-            walletsData.sendPayment(message.member.user.id, message.member.user.id, amount / config.metrics.coinUnits).then(data => {
+            walletsData.sendPayment(message.author.id, message.author.id, amount / config.metrics.coinUnits).then(data => {
               message.author.send(`Success! ***TX hash***: ${data.transactionHash}, ***Secret key***: ${data.transactionSecretKey}`);
             }).catch(err => {
               sendCommonError(`Error trying to withdraw funds: ${err}`);
-            }).finally(message.reply('The withdraw information has been sent to you in DM'));
+            }).finally(sendNotification('The withdraw information has been sent to you in DM'));
           } else {
             message.author.send('Your balance is to low to send the selected amount');
-            message.reply('The withdraw information has been sent to you in DM')
+            sendNotification('The withdraw information has been sent to you in DM');
           }
         }).catch(err => {
           sendCommonError(`Error trying to withdraw funds: ${err}`);
-          message.reply('The withdraw information has been sent to you in DM')
+          sendNotification('The withdraw information has been sent to you in DM');
         });
       }
     }
 
     if (args[0] == "balance") {
-      walletsData.getBalance(message.member.user.id).then(data => {
+      walletsData.getBalance(message.author.id).then(data => {
         message.author.send(`***Balance***: ${(data.balance / config.metrics.coinUnits).toLocaleString()} CCX, ***Payment Id***: ${data.payment_id}`);
       }).catch(err => {
         sendCommonError(`Error trying to get balance: ${err}`);
-      }).finally(message.reply('The balance information has been sent to you in DM'));
+      }).finally(sendNotification('The withdraw information has been sent to you in DM'));
     }
 
-    if (command === "paymentid") {
-      walletsData.generatePaymentId().then(payment_id => {
-        message.channel.send(payment_id);
-      });
+    if (args[0] === "paymentid") {
+      walletsData.showWalletInfo(message.author.id).then(data => {
+        message.author.send(`***Payment Id***: ${data.payment_id}`);
+      }).catch(err => {
+        sendCommonError(`Error trying to get wallet info: ${err}`);
+      }).finally(sendNotification('The paymentid information has been sent to you in DM'));
     }
   }
 };

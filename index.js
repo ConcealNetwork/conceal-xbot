@@ -113,13 +113,13 @@ client.on("message", async message => {
   // and not get into a spam loop (we call that "botception").
   if (message.author.bot) return;
 
-  if (message.channel.type == "dm") {
-    return message.channel.send("Bot is not available in DM");
-  }
+  //if (message.channel.type == "dm") {
+  //  return message.channel.send("Bot is not available in DM");
+  //}
 
-  if (message.member && message.member.user) {
+  if (message && message.author) {
     // update the activity for the current user
-    usersData.updateUserActivity(message.member.user.id).catch(err => {
+    usersData.updateUserActivity(message.author.id).catch(err => {
       console.error('Error trying to log user activity', err);
     });
   }
@@ -213,7 +213,7 @@ client.on("message", async message => {
     }
 
     // execute the blockchain commands
-    return walletsData.sendPayment(message.member.user.id, message.mentions.users.first().id, parseFloat(args[0])).then(data => {
+    return walletsData.sendPayment(message.author.id, message.mentions.users.first().id, parseFloat(args[0])).then(data => {
       message.author.send(`Success! ***TX hash***: ${data.transactionHash}, ***Secret key***: ${data.transactionSecretKey}`);
     }).catch(err => {
       message.author.send(err);
@@ -268,7 +268,7 @@ client.on("message", async message => {
 
   if (command === "purge") {
     // This command removes all messages from all users in the channel, up to 100.
-    if (!message.member.roles.some(r => ["Administrator", "Moderator"].includes(r.name)))
+    if (!message.author.roles.some(r => ["Administrator", "Moderator"].includes(r.name)))
       return message.reply("Sorry, you don't have permissions to use this!");
 
     // get the delete count, as an actual number.

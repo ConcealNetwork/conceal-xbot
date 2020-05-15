@@ -37,7 +37,7 @@ module.exports = {
       }
 
       (async () => {
-        let userHasWallet = await walletsData.userHasWallet(message.member.user.id);
+        let userHasWallet = await walletsData.userHasWallet(message.author.id);
 
         if (!userHasWallet) {
           return message.reply('You need to register a wallet first to use rain features');
@@ -45,13 +45,13 @@ module.exports = {
 
         switch (args[0]) {
           case 'recent':
-            users = await usersData.getLastActiveUsers(count, [message.member.user.id]);
+            users = await usersData.getLastActiveUsers(count, [message.author.id]);
             break;
           case 'alltime':
-            users = await usersData.getAllTimeActiveUsers(count, [message.member.user.id]);
+            users = await usersData.getAllTimeActiveUsers(count, [message.author.id]);
             break;
           case 'period':
-            users = await usersData.getActiveUsersByPeriod(count, [message.member.user.id]);
+            users = await usersData.getActiveUsersByPeriod(count, [message.author.id]);
             break;
         }
 
@@ -62,7 +62,7 @@ module.exports = {
             let discordUser = client.users.get(user.user_id) || client.fetchUser(user.user_id);
 
             if (discordUser) {
-              walletsData.sendPayment(message.member.user.id, user.user_id, payPart).then(data => {
+              walletsData.sendPayment(message.author.id, user.user_id, payPart).then(data => {
                 message.channel.send(`\:money_with_wings: ${payPart} CCX rained on user <@${user.user_id}>`);
               }).catch(err => {
                 message.channel.send(`\:x: Failed to rain on user <@${user.user_id}>`);
@@ -76,7 +76,7 @@ module.exports = {
     }
 
     if (args[0] === "reset") {
-      if (!message.member.roles.some(r => ["Administrator"].includes(r.name)))
+      if (!message.author.roles.some(r => ["Administrator"].includes(r.name)))
         return message.reply("Sorry, you don't have permissions to use this!");
 
       usersData.resetPeriodCounter().then(() => {

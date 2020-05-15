@@ -58,9 +58,9 @@ module.exports = {
         title = args.slice(4).join(" ");
       }
 
-      walletsData.userHasWallet(message.member.user.id).then(hasWallet => {
+      walletsData.userHasWallet(message.author.id).then(hasWallet => {
         if (hasWallet) {
-          walletsData.getBalance(message.member.user.id).then(balanceData => {
+          walletsData.getBalance(message.author.id).then(balanceData => {
             if (balanceData.balance > (amount * config.metrics.coinUnits)) {
               const description = `React with \:tada: to enter. Prize is ${amount} CCX`;
               const footer = `${winners} winners | ends at ...`;
@@ -68,7 +68,7 @@ module.exports = {
               message.delete().catch(O_o => { });
 
               message.channel.send({ embed: giveawayEmbed }).then(newMsg => {
-                giveawaysData.createGiveaway(message.member.user.id, newMsg.channel.id, newMsg.id, timespan, winners, amount, title).then(data => {
+                giveawaysData.createGiveaway(message.author.id, newMsg.channel.id, newMsg.id, timespan, winners, amount, title).then(data => {
                   newMsg.react('🎉');
                 }).catch(err => {
                   newMsg.delete().catch(O_o => { });
@@ -108,7 +108,7 @@ module.exports = {
         let giveawayId = parseInt(args[1]);
 
         giveawaysData.getGiveawayByRowId(giveawayId).then(data => {
-          if (data.user_id !== message.member.user.id) {
+          if (data.user_id !== message.author.id) {
             message.channel.send('You cannot delete giveaways from other users.');
           } else {
             giveawaysData.finishGiveaway(giveawayId).then(data => {
