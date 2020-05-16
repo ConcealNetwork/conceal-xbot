@@ -69,18 +69,26 @@ module.exports = {
         }
 
         if (users.length > 0) {
-          let payPart = (amount / users.length) - 0.001;
+          walletsData.getBalance(message.author.id).then(balanceData => {
+            if (balanceData.balance > (amount * config.metrics.coinUnits)) {
+              let payPart = (amount / users.length) - 0.001;
 
-          users.forEach(function (user, index) {
-            let discordUser = client.users.get(user.user_id) || client.fetchUser(user.user_id);
+              users.forEach(function (user, index) {
+                let discordUser = client.users.get(user.user_id) || client.fetchUser(user.user_id);
 
-            if (discordUser) {
-              walletsData.sendPayment(message.author.id, user.user_id, payPart).then(data => {
-                message.channel.send(`\:money_with_wings: ${payPart} CCX rained on user <@${user.user_id}>`);
-              }).catch(err => {
-                message.channel.send(`\:x: Failed to rain on user <@${user.user_id}>`);
+                if (discordUser) {
+                  walletsData.sendPayment(message.author.id, user.user_id, payPart).then(data => {
+                    message.channel.send(`\:money_with_wings: ${payPart} CCX rained on user <@${user.user_id}>`);
+                  }).catch(err => {
+                    message.channel.send(`\:x: Failed to rain on user <@${user.user_id}>`);
+                  });
+                }
               });
+            } else {
+              message.channel.send(`insuficient balance ${balanceData.balance / config.metrics.coinUnits} CCX`);
             }
+          }).catch(err => {
+            message.channel.send(err);
           });
         }
       })().catch(err => {
