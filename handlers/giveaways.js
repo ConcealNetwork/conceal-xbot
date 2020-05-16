@@ -163,7 +163,7 @@ module.exports = {
           let payPart = ((finishedData.amount / config.metrics.coinUnits) / winners.length) - 0.001;
           let processed = [];
 
-          for (let i = 0; i < users.length; i++) {
+          for (let i = 0; i < winners.length; i++) {
             try {
               await walletsData.sendPayment(finishedData.user_id, winners[i].id, payPart);
               processed.push({ status: true, user: winners[i] });
@@ -177,10 +177,15 @@ module.exports = {
 
             let template = Handlebars.compile(source);
             let embedDescription = template(processed);
-            let footerText = `${winners.length} winners paid.`;
+            let footerText = `${winners.length} winners paid. | Finished at:`;
             const gaEmbed = giveawaysData.createEmbedMessage(finishedData.description, embedDescription, footerText);
             message.edit({ embed: gaEmbed });
           });
+        } else {
+          let embedDescription = 'There were no valid winners for the giveaway.';
+          let footerText = `0 winners paid. | Finished at:`;
+          const gaEmbed = giveawaysData.createEmbedMessage(finishedData.description, embedDescription, footerText);
+          message.edit({ embed: gaEmbed });
         }
       })().catch(err => console.error(err));
     }).catch(err => console.error(err));
