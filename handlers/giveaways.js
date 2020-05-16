@@ -1,4 +1,5 @@
 const fs = require('fs');
+const moment = require('moment');
 const Handlebars = require("handlebars");
 const config = require("../config.json");
 
@@ -74,8 +75,8 @@ module.exports = {
         if (hasWallet) {
           walletsData.getBalance(message.author.id).then(balanceData => {
             if (balanceData.balance > (amount * config.metrics.coinUnits)) {
-              const description = `React with \:tada: to enter. Prize is ${amount} CCX`;
-              const footer = `${winners} winners | ends at ...`;
+              const description = `React with \:tada: to enter. Prize is ${amount} CCX. \n Ends at ${moment().add(timespan, 'seconds').format('LLLL')}`;
+              const footer = `${winners} winners | Created at:`;
               const giveawayEmbed = giveawaysData.createEmbedMessage(title, description, footer);
               message.delete().catch(O_o => { });
 
@@ -88,7 +89,7 @@ module.exports = {
                 });
               });
             } else {
-              message.channel.send(`insuficient balance ${balanceData.balance / config.metrics.coinUnits} CCX`);
+              message.channel.send(`Insuficient balance!`);
             }
           }).catch(err => {
             message.channel.send(err);

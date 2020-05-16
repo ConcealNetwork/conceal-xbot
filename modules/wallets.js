@@ -227,7 +227,7 @@ class WalletsData {
 
     let doGetGiveawaySum = (userId) => {
       return new Promise((resolve, reject) => {
-        this.db.get('SELECT SUM(amount) as "balance" FROM giveaways WHERE user_id = ?', [userId], (err, balance_row) => {
+        this.db.get('SELECT SUM(amount) as "balance" FROM giveaways WHERE is_active = 1 and user_id = ?', [userId], (err, balance_row) => {
           if (!err && balance_row) resolve(balance_row.balance || 0);
           else reject(err);
         });

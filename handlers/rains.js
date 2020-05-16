@@ -85,7 +85,7 @@ module.exports = {
                 }
               });
             } else {
-              message.channel.send(`insuficient balance ${balanceData.balance / config.metrics.coinUnits} CCX`);
+              message.channel.send(`Insuficient balance!`);
             }
           }).catch(err => {
             message.channel.send(err);
