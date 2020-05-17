@@ -214,6 +214,10 @@ client.on("message", async message => {
       return message.reply('You need to specify at least one recipient.');
     }
 
+    if (message.author.id === message.mentions.users.first().id) {
+      return message.reply('You cannot tip yourself silly \:rofl:');
+    }
+
     // execute the blockchain commands
     return walletsData.sendPayment(message.author.id, message.mentions.users.first().id, parseFloat(args[0])).then(data => {
       message.author.send(`Success! ***TX hash***: ${data.transactionHash}, ***Secret key***: ${data.transactionSecretKey}`);
