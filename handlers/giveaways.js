@@ -89,7 +89,7 @@ module.exports = {
                 });
               });
             } else {
-              message.channel.send(`Insuficient balance!`);
+              message.channel.send(`Insufficient balance!`);
             }
           }).catch(err => {
             message.channel.send(err);

@@ -306,7 +306,7 @@ class WalletsData {
             resolve(txData);
           })().catch(e => reject(e));
         } else {
-          reject(`insuficient balance ${balanceData.balance / config.metrics.coinUnits} CCX`);
+          reject(`Insufficient balance ${balanceData.balance / config.metrics.coinUnits} CCX`);
         }
       }).catch(err => {
         reject(err);

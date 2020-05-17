@@ -78,14 +78,14 @@ module.exports = {
 
                 if (discordUser) {
                   walletsData.sendPayment(message.author.id, user.user_id, payPart).then(data => {
-                    message.channel.send(`\:money_with_wings: ${payPart} CCX rained on user <@${user.user_id}>`);
+                    message.channel.send(`\:money_with_wings: ${payPart.toFixed(2)} CCX rained on user <@${user.user_id}>`);
                   }).catch(err => {
                     message.channel.send(`\:x: Failed to rain on user <@${user.user_id}>`);
                   });
                 }
               });
             } else {
-              message.channel.send(`Insuficient balance!`);
+              message.channel.send(`Insufficient balance!`);
             }
           }).catch(err => {
             message.channel.send(err);

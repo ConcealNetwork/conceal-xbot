@@ -217,8 +217,10 @@ client.on("message", async message => {
     // execute the blockchain commands
     return walletsData.sendPayment(message.author.id, message.mentions.users.first().id, parseFloat(args[0])).then(data => {
       message.author.send(`Success! ***TX hash***: ${data.transactionHash}, ***Secret key***: ${data.transactionSecretKey}`);
+      message.channel.send(`\:money_with_wings: Success`);
     }).catch(err => {
       message.author.send(err);
+      message.channel.send(`\:x: Failed`);
     }).finally(message.reply('The tip details were send to you in DM'));
   }
 
