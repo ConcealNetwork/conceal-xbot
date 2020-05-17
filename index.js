@@ -21,7 +21,7 @@ const BlockchainData = require("./modules/blockchain.js");
 const HandlebarHelpers = require('just-handlebars-helpers');
 
 // open the access to the database if it fails we must stop
-this.db = new sqlite3.Database(path.join(appRoot.path, "tipbot.db"), sqlite3.OPEN_READWRITE, (err) => {
+let db = new sqlite3.Database(path.join(appRoot.path, "tipbot.db"), sqlite3.OPEN_READWRITE, (err) => {
   if (err) {
     console.error('Could not connect to database', err);
   }
@@ -33,10 +33,10 @@ this.db = new sqlite3.Database(path.join(appRoot.path, "tipbot.db"), sqlite3.OPE
 const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 
 // initialize data models
-const usersData = new UsersData(this.db);
-const walletsData = new WalletsData(this.db);
+const usersData = new UsersData(db);
+const walletsData = new WalletsData(db);
 const blockchainData = new BlockchainData();
-const giveawaysData = new GiveawaysData(this.db);
+const giveawaysData = new GiveawaysData(db);
 
 // register the handlebar helpers
 HandlebarHelpers.registerHelpers(Handlebars);

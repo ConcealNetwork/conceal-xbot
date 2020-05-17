@@ -29,7 +29,7 @@ module.exports = {
           if (err) throw err;
 
           var template = Handlebars.compile(source);
-          marketsEmbed = {
+          let marketsEmbed = {
             color: 0x0099ff,
             title: 'Conceal Exchanges',
             url: 'https://conceal.network',

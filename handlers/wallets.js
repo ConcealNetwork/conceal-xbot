@@ -46,7 +46,7 @@ module.exports = {
           message.author.send(response);
         }).catch(err => {
           message.author.send(`Error trying to register wallet: ${err}`);
-        }).finally(sendNotification('The registration information has been sent to you in DM'));
+        }).finally(() => { sendNotification('The registration information has been sent to you in DM') });
       }
     }
 
@@ -58,7 +58,7 @@ module.exports = {
           message.author.send(response);
         }).catch(err => {
           message.author.send(`Error trying to update wallet: ${err}`);
-        }).finally(sendNotification('The update information has been sent to you in DM'));
+        }).finally(() => { sendNotification('The update information has been sent to you in DM') });
       }
     }
 
@@ -67,7 +67,7 @@ module.exports = {
         message.author.send(`***Address***: ${data.address}, ***Payment Id***: ${data.payment_id}`);
       }).catch(err => {
         sendCommonError(`Error trying to get wallet info: ${err}`);
-      }).finally(sendNotification('The wallet information has been sent to you in DM'));
+      }).finally(() => { sendNotification('The wallet information has been sent to you in DM') });
     }
 
     if (args[0] == "deposit") {
@@ -75,7 +75,7 @@ module.exports = {
         message.author.send(`Please deposit your CCX to ***Address***: ${config.wallet.address}, ***Payment Id***: ${data.payment_id}. Its mandatory to include payment Id or your funds will be lost!`);
       }).catch(err => {
         sendCommonError(`Error trying to get deposit info: ${err}`);
-      }).finally(sendNotification('The deposit information has been sent to you in DM'));
+      }).finally(() => { sendNotification('The deposit information has been sent to you in DM') });
     }
 
     if (args[0] == "withdraw") {
@@ -103,7 +103,7 @@ module.exports = {
               message.author.send(`Success! ***TX hash***: ${data.transactionHash}, ***Secret key***: ${data.transactionSecretKey}`);
             }).catch(err => {
               sendCommonError(`Error trying to withdraw funds: ${err}`);
-            }).finally(sendNotification('The withdraw information has been sent to you in DM'));
+            }).finally(() => { sendNotification('The withdraw information has been sent to you in DM') });
           } else {
             message.author.send('Your balance is to low to send the selected amount');
             sendNotification('The withdraw information has been sent to you in DM');
@@ -120,7 +120,7 @@ module.exports = {
         message.author.send(`***Balance***: ${(data.balance / config.metrics.coinUnits).toLocaleString()} CCX, ***Payment Id***: ${data.payment_id}`);
       }).catch(err => {
         sendCommonError(`Error trying to get balance: ${err}`);
-      }).finally(sendNotification('The withdraw information has been sent to you in DM'));
+      }).finally(() => { sendNotification('The withdraw information has been sent to you in DM') });
     }
 
     if (args[0] === "paymentid") {
@@ -128,7 +128,7 @@ module.exports = {
         message.author.send(`***Payment Id***: ${data.payment_id}`);
       }).catch(err => {
         sendCommonError(`Error trying to get wallet info: ${err}`);
-      }).finally(sendNotification('The paymentid information has been sent to you in DM'));
+      }).finally(() => { sendNotification('The paymentid information has been sent to you in DM') });
     }
   }
 };

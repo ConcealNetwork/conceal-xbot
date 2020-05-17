@@ -12,7 +12,6 @@ class GiveawaysData {
   }
 
   _setSingleEvent = (data, onEventCallback) => {
-    let creationTS = moment(data.creation_ts);
     let eventTS = moment(data.creation_ts).add(data.timespan, 'seconds');
     let timeout = Math.max(0, eventTS.diff(moment(), 'milliseconds'));
 
