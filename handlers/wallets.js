@@ -120,7 +120,7 @@ module.exports = {
         message.author.send(`***Balance***: ${(data.balance / config.metrics.coinUnits).toLocaleString()} CCX, ***Payment Id***: ${data.payment_id}`);
       }).catch(err => {
         sendCommonError(`Error trying to get balance: ${err}`);
-      }).finally(() => { sendNotification('The withdraw information has been sent to you in DM') });
+      }).finally(() => { sendNotification('The balance information has been sent to you in DM') });
     }
 
     if (args[0] === "paymentid") {
