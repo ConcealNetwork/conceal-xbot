@@ -26,17 +26,17 @@ module.exports = {
     }
 
     if (args[0] === "all") {
-      let count = client.guilds.get(config.guild.id).members.filter(member => !member.user.bot).size;
+      let count = message.guild.members.filter(member => !member.user.bot).size;
       return message.reply(`There is currently ${count} users registered on the server.`);
     }
 
     if (args[0] === "online") {
-      let count = client.guilds.get(config.guild.id).members.filter(member => !member.user.bot && (member.presence.status === "online")).size;
+      let count = message.guild.members.filter(member => !member.user.bot && (member.presence.status === "online")).size;
       return message.reply(`There is currently ${count} users online on the server.`);
     }
 
     if (args[0] === "offline") {
-      let count = client.guilds.get(config.guild.id).members.filter(member => !member.user.bot && (member.presence.status === "offline")).size;
+      let count = message.guild.members.filter(member => !member.user.bot && (member.presence.status === "offline")).size;
       return message.reply(`There is currently ${count} users offline on the server.`);
     }
 
