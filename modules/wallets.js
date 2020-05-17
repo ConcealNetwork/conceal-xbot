@@ -272,7 +272,7 @@ class WalletsData {
       let doSendPayment = (address, paymentId) => {
         return new Promise((resolve, reject) => {
           const opts = {
-            transfers: [{ address: address, amount: amount * config.metrics.coinUnits }],
+            transfers: [{ address: address, amount: Math.trunc(amount * config.metrics.coinUnits) }],
             fee: this.fee,
             anonimity: 4,
             paymentId: paymentId
