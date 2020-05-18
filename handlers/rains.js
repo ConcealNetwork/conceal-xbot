@@ -26,6 +26,7 @@ module.exports = {
 
     if ((args[0] === "recent") || (args[0] === "alltime") || (args[0] === "period")) {
       let users = null;
+      let amount = 0;
       let count = 0;
 
       if (args.length < 2) {
@@ -35,18 +36,20 @@ module.exports = {
       if (args.length < 3) {
         count = 10;
       } else {
-        count = Math.min(parseInt(args[2].replace(/u/g, '')), 100);
+
+        try {
+          count = Math.min(parseInt(args[2].replace(/u/g, '')), 100);
+          if (!count || count <= 0) throw "Number of users cannot be 0 or negative";
+        } catch (err) {
+          return message.reply(err);
+        }
       }
 
-      // parse the amount and calculate the fee
-      let amount = parseFloat(args[1].replace(/CCX/g, ''));
-
-      if (!amount) {
-        return message.reply('You need to specify a valid amount');
-      }
-
-      if (!count) {
-        return message.reply('You need to specify valid number of users');
+      try {
+        amount = amount = parseFloat(args[1].replace(/CCX/g, ''));
+        if (!amount || amount <= 0) throw "Amount cannot be 0 or negative";
+      } catch (err) {
+        return message.reply(err);
       }
 
       (async () => {

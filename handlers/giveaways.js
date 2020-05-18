@@ -48,20 +48,22 @@ module.exports = {
       if (!args[2]) {
         return message.channel.send('Please specify a number of winners.');
       } else {
-        winners = parseInt(args[2].replace(/w/g, ''));
-
-        if (!winners) {
-          return message.reply('You need to specify a valid winners number!');
+        try {
+          winners = parseInt(args[2].replace(/w/g, ''));
+          if (!winners || winners <= 0) throw "Winners cannot be 0 or negative!";
+        } catch (err) {
+          return message.reply(err);
         }
       }
 
       if (!args[3]) {
         return message.channel.send('Please specify reward amount.');
       } else {
-        amount = parseFloat(args[3].replace(/CCX/g, ''));
-
-        if (!amount) {
-          return message.reply('You need to specify a valid amount!');
+        try {
+          amount = parseFloat(args[3].replace(/CCX/g, ''));
+          if (!amount || amount <= 0) throw "Amount cannot be 0 or negative!";
+        } catch (err) {
+          return message.reply(err);
         }
       }
 

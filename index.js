@@ -206,6 +206,8 @@ client.on("message", async message => {
    *  it fails. Also checks the balance first.                *
    ***********************************************************/
   if (command === "tip") {
+    let amount = 0;
+
     if (args.length < 2) {
       return message.reply('You need to specify an ammount and a recipient.');
     }
@@ -218,8 +220,15 @@ client.on("message", async message => {
       return message.reply('You cannot tip yourself silly \:rofl:');
     }
 
+    try {
+      amount = parseFloat(args[0]);
+      if (amount <= 0) throw "Amount cannot be 0 or negative";
+    } catch (err) {
+      return message.reply(err);
+    }
+
     // execute the blockchain commands
-    return walletsData.sendPayment(message.author.id, message.mentions.users.first().id, parseFloat(args[0])).then(data => {
+    return walletsData.sendPayment(message.author.id, message.mentions.users.first().id, amount).then(data => {
       message.author.send(`Success! ***TX hash***: ${data.transactionHash}, ***Secret key***: ${data.transactionSecretKey}`);
       message.channel.send(`\:money_with_wings: Success`);
     }).catch(err => {
@@ -276,15 +285,15 @@ client.on("message", async message => {
 
   if (command === "purge") {
     // This command removes all messages from all users in the channel, up to 100.
-    if (!message.author.roles.some(r => ["Administrator", "Moderator"].includes(r.name)))
+    if (!message.member.roles.some(r => ["admins", "mods"].includes(r.name)))
       return message.reply("Sorry, you don't have permissions to use this!");
 
     // get the delete count, as an actual number.
-    const deleteCount = parseInt(args[0], 10);
+    const deleteCount = parseInt(args[0], 10) + 1;
 
     // Ooooh nice, combined conditions. <3
-    if (!deleteCount || deleteCount < 2 || deleteCount > 100)
-      return message.reply("Please provide a number between 2 and 100 for the number of messages to delete");
+    if (!deleteCount || deleteCount < 1 || deleteCount > 100)
+      return message.reply("Please provide a number between 1 and 100 for the number of messages to delete");
 
     // So we get our messages, and delete them. Simple enough, right?
     const fetched = await message.channel.fetchMessages({ limit: deleteCount });
