@@ -188,8 +188,8 @@ module.exports = {
           const gaEmbed = giveawaysData.createEmbedMessage(finishedData.description, embedDescription, footerText);
           message.edit({ embed: gaEmbed });
         }
-      })().catch(err => console.error(err));
-    }).catch(err => console.error(err));
+      })().catch(err => console.error('giveawaysData.finishGiveaway async error', err));
+    }).catch(err => console.error('giveawaysData.finishGiveaway error', err));
   }
 }
 

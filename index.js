@@ -51,7 +51,7 @@ process.on('uncaughtException', err => {
 });
 
 client.on("ready", () => {
-  client.user.setAvatar('./avatar.png').then(user => console.log(`Avatar is set!`)).catch(err => { console.error(err) });
+  client.user.setAvatar('./avatar.png').then(user => console.log(`Avatar is set!`)).catch(err => { console.error('Set avatar error', err) });
 
   // This event will run if the bot starts, and logs in, successfully.
   console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
@@ -75,7 +75,7 @@ client.on("ready", () => {
         }
       });
     }).catch(err => {
-      console.error(err);
+      console.error('Giveaway finished error', err);
     });
   });
 });
