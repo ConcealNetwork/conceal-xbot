@@ -22,7 +22,7 @@ module.exports = {
 
     function sendNotification(content) {
       if (message.channel.type !== "dm") {
-        message.reply(content)
+        message.reply(content);
       }
     }
 
@@ -64,7 +64,7 @@ module.exports = {
 
     if (args[0] == "show") {
       walletsData.showWalletInfo(message.author.id).then(data => {
-        message.author.send(`***Address***: ${data.address}, ***Payment Id***: ${data.payment_id}`);
+        message.author.send(`***Address***: ${data.address}\n***Payment Id***: ${data.payment_id}`);
       }).catch(err => {
         sendCommonError(`Error trying to get wallet info: ${err}`);
       }).finally(() => { sendNotification('The wallet information has been sent to you in DM') });
@@ -72,7 +72,7 @@ module.exports = {
 
     if (args[0] == "deposit") {
       walletsData.showWalletInfo(message.author.id).then(data => {
-        message.author.send(`Please deposit your CCX to ***Address***: ${config.wallet.address}, ***Payment Id***: ${data.payment_id}. Its mandatory to include payment Id or your funds will be lost!`);
+        message.author.send(`Please deposit your CCX to ***Address***: ${config.wallet.address}\n***Payment Id***: ${data.payment_id}.\nIts mandatory to include payment Id or your funds will be lost!`);
       }).catch(err => {
         sendCommonError(`Error trying to get deposit info: ${err}`);
       }).finally(() => { sendNotification('The deposit information has been sent to you in DM') });
@@ -100,7 +100,7 @@ module.exports = {
           // use slightly more for the fee to avoid rounding errors
           if ((amount + (0.0011 * config.metrics.coinUnits)) <= data.balance) {
             walletsData.sendPayment(message.author.id, message.author.id, amount / config.metrics.coinUnits).then(data => {
-              message.author.send(`Success! ***TX hash***: ${data.transactionHash}, ***Secret key***: ${data.transactionSecretKey}`);
+              message.author.send(`Success!\n***TX hash***: ${data.transactionHash}\n***Secret key***: ${data.transactionSecretKey}`);
             }).catch(err => {
               sendCommonError(`Error trying to withdraw funds: ${err}`);
             }).finally(() => { sendNotification('The withdraw information has been sent to you in DM') });
@@ -117,7 +117,7 @@ module.exports = {
 
     if (args[0] == "balance") {
       walletsData.getBalance(message.author.id).then(data => {
-        message.author.send(`***Balance***: ${(data.balance / config.metrics.coinUnits).toLocaleString()} CCX, ***Payment Id***: ${data.payment_id}`);
+        message.author.send(`***Balance***: ${(data.balance / config.metrics.coinUnits).toLocaleString()} CCX\n***Payment Id***: ${data.payment_id}`);
       }).catch(err => {
         sendCommonError(`Error trying to get balance: ${err}`);
       }).finally(() => { sendNotification('The balance information has been sent to you in DM') });

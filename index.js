@@ -228,8 +228,8 @@ client.on("message", async message => {
     }
 
     // execute the blockchain commands
-    return walletsData.sendPayment(message.author.id, message.mentions.users.first().id, amount).then(data => {
-      message.author.send(`Success! ***TX hash***: ${data.transactionHash}, ***Secret key***: ${data.transactionSecretKey}`);
+    return walletsData.sendPayments(message.author.id, [{ userId: message.mentions.users.first().id, amount: amount }]).then(data => {
+      message.author.send(`Success! ***TX hash***: ${data.transactionHash}\n***Secret key***: ${data.transactionSecretKey}`);
       message.channel.send(`\:money_with_wings: Success`);
     }).catch(err => {
       message.author.send(err);

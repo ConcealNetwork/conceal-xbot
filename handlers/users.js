@@ -17,8 +17,11 @@ module.exports = {
       return message.channel.send('Uknows users command. Type ".users help" for available commands');
     }
 
-    if (args[0] === "help") {
+    if (message.channel.type == "dm") {
+      return message.channel.send("Users related command are not available in DM");
+    }
 
+    if (args[0] === "help") {
       fs.readFile('./templates/help_users.msg', 'utf8', function (err, source) {
         if (err) throw err;
         message.channel.send(source);

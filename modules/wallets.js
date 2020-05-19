@@ -178,7 +178,7 @@ class WalletsData {
   }
 
   /************************************************************
-   *  Sends the wallet info to the user.                      *
+   *  Get the wallet info by the user ID.                     *
    ***********************************************************/
   showWalletInfo = (userId) => {
     return new Promise((resolve, reject) => {
@@ -207,15 +207,6 @@ class WalletsData {
    *************************************************************/
   getBalance = (userId) => {
 
-    let doGetUserWalletData = (userId) => {
-      return new Promise((resolve, reject) => {
-        this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, user_row) => {
-          if (!err && user_row) resolve(user_row);
-          else reject(err);
-        });
-      });
-    }
-
     let doGetTransactionsSum = (paymentId) => {
       return new Promise((resolve, reject) => {
         this.db.get('SELECT SUM(amount) as "balance" FROM transactions WHERE payment_id = ?', [paymentId], (err, balance_row) => {
@@ -237,7 +228,7 @@ class WalletsData {
     return new Promise((resolve, reject) => {
       this._synchronizeTransactions(false).then(lastHeight => {
         (async () => {
-          let userData = await doGetUserWalletData(userId);
+          let userData = await this.showWalletInfo(userId);
           let txBalance = await doGetTransactionsSum(userData.payment_id);
           let gaBalance = await doGetGiveawaySum(userId);
           // send back the balance info and the user payment_id info
@@ -254,14 +245,14 @@ class WalletsData {
    *  Checks the available balance first to see if there is   *
    *  enough found to be able to send out the tip.            *
    ***********************************************************/
-  sendPayment = (fromUserId, toUserId, amount) => {
+  sendPayments = (fromUserId, payments) => {
     return new Promise((resolve, reject) => {
 
       // write transaction to the sqlite database
-      let doWriteTransaction = (paymentId, txData) => {
+      let doWriteTransaction = (sumAmount, paymentId, txData) => {
         return new Promise((resolve, reject) => {
           this.db.run('INSERT INTO transactions(block, payment_id, timestamp, amount, tx_hash) VALUES(0,?,0,?,?)',
-            [paymentId, -1 * ((amount * config.metrics.coinUnits) + this.fee), txData.transactionHash], function (err) {
+            [paymentId, -1 * (sumAmount + this.fee), txData.transactionHash], function (err) {
               if (!err) resolve(txData);
               else reject(err);
             });
@@ -269,10 +260,10 @@ class WalletsData {
       }
 
       // call the wallet RFC to send the transaction
-      let doSendPayment = (address, paymentId) => {
+      let doSendPayments = (transfers, paymentId) => {
         return new Promise((resolve, reject) => {
           const opts = {
-            transfers: [{ address: address, amount: Math.trunc(amount * config.metrics.coinUnits) }],
+            transfers: transfers,
             fee: this.fee,
             anonimity: 4,
             paymentId: paymentId
@@ -286,23 +277,27 @@ class WalletsData {
         });
       }
 
-      // get target user data from sqlite DB
-      let doGetTargetUserAddress = (userId) => {
-        return new Promise((resolve, reject) => {
-          this.db.get('SELECT * FROM wallets WHERE user_id = ?', [userId], (err, row) => {
-            if (!err && row) resolve(row.address);
-            else reject("failed to get target user info");
-          });
-        });
-      }
+      // calculate the sumAmount first
+      let sumAmount = payments.reduce((total, item) => total + (item.amount * config.metrics.coinUnits), 0);
 
       // get balance first and check if its enough
       this.getBalance(fromUserId).then(balanceData => {
-        if (balanceData.balance > ((amount * config.metrics.coinUnits) + this.fee)) {
+        if (balanceData.balance > (sumAmount + this.fee)) {
           (async () => {
-            let address = await doGetTargetUserAddress(toUserId);
-            let txData = await doSendPayment(address, balanceData.payment_id);
-            await doWriteTransaction(balanceData.payment_id, txData);
+            let transfers = [];
+
+            // construct a transfers payload
+            for (let i = 0; i < payments.length; i++) {
+              let walletInfo = await this.showWalletInfo(payments[i].userId);
+              transfers.push({
+                address: walletInfo.address,
+                amount: payments[i].amount * config.metrics.coinUnits
+              });
+            }
+
+            // send all the payments and if succesfull write the stub transaction
+            let txData = await doSendPayments(transfers, balanceData.payment_id);
+            await doWriteTransaction(sumAmount, balanceData.payment_id, txData);
             resolve(txData);
           })().catch(e => reject(e));
         } else {

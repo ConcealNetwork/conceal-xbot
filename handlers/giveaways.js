@@ -163,22 +163,20 @@ module.exports = {
         if (validUsers.length > 0) {
           let winners = getRandom(validUsers, Math.min(validUsers.length, finishedData.winners));
           let payPart = ((finishedData.amount / config.metrics.coinUnits) / winners.length) - 0.001;
-          let processed = [];
+          let payments = [];
 
           for (let i = 0; i < winners.length; i++) {
-            try {
-              await walletsData.sendPayment(finishedData.user_id, winners[i].id, payPart);
-              processed.push({ status: true, user: winners[i] });
-            } catch (err) {
-              processed.push({ status: false, user: winners[i] });
-            }
+            payments.push({ userId: winners[i].id, amount: payPart });
           }
+
+          // send payment to all the winners, then send a response
+          await walletsData.sendPayments(finishedData.user_id, payments);
 
           fs.readFile('./templates/giveaway_finished.msg', 'utf8', function (err, source) {
             if (err) throw err;
 
             let template = Handlebars.compile(source);
-            let embedDescription = template(processed);
+            let embedDescription = template(payments);
             let footerText = `${winners.length} winners paid. | Finished at:`;
             const gaEmbed = giveawaysData.createEmbedMessage(finishedData.description, embedDescription, footerText);
             message.edit({ embed: gaEmbed });
