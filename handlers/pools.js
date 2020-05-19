@@ -35,7 +35,7 @@ module.exports = {
           message.channel.send(template(data));
         });
       }).catch(err => {
-        message.channel.send(err);
+        message.channel.send(`Failed to get pools info: ${err}`);
       });
     }
 
@@ -50,7 +50,7 @@ module.exports = {
           message.channel.send(template(data));
         });
       }).catch(err => {
-        message.channel.send(err);
+        message.channel.send(`Failed to get pools list: ${err}`);
       });
     }
   }

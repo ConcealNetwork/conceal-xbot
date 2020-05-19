@@ -90,6 +90,8 @@ module.exports = {
                   newMsg.delete().catch(O_o => { });
                   message.channel.send(`Error creating giveaway: ${err}`);
                 });
+              }).catch(err => {
+                console.error('Failed sending giveaway message to channel', err);
               });
             } else {
               message.channel.send(`Insufficient balance!`);
@@ -100,7 +102,9 @@ module.exports = {
         } else {
           return message.reply('You need to register a wallet first to use giveaway features');
         }
-      })
+      }).catch(err => {
+        message.channel.send(`Failed to check for users wallet: ${err}`);
+      });
     }
 
     if (args[0] === "list") {
@@ -129,6 +133,8 @@ module.exports = {
           } else {
             giveawaysData.finishGiveaway(giveawayId).then(data => {
               message.channel.send('Giveaway was succesfully deleted.');
+            }).catch(err => {
+              console.error('Failed to finish giveaway', err);
             });
           }
         }).catch(err => {

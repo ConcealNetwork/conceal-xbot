@@ -50,7 +50,7 @@ module.exports = {
           message.channel.send({ embed: marketsEmbed });
         });
       }).catch(err => {
-        message.channel.send(err);
+        message.channel.send(`Failed to get exchanges: ${err}`);
       });
     }
   }

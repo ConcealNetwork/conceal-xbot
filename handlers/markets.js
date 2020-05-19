@@ -31,7 +31,7 @@ module.exports = {
           if (err) throw err;
 
           var template = Handlebars.compile(source);
-          marketsEmbed = {
+          let marketsEmbed = {
             color: 0x0099ff,
             title: 'Conceal | CCX',
             url: 'https://conceal.network',
@@ -57,13 +57,15 @@ module.exports = {
           message.channel.send({ embed: marketsEmbed });
         });
       }).catch(err => {
-        message.channel.send(err);
+        message.channel.send(`Failed to get markets data: ${err}`);
       });
     }
 
     if (args[0] == "pricechart") {
       markets.getPriceChart().then(filename => {
         message.channel.send('CCX price chart', { files: [filename] });
+      }).catch(err => {
+        message.channel.send(`Failed to get price chart: ${err}`);
       });
     }
   }

@@ -39,13 +39,13 @@ module.exports = {
             let supply = Numeral((blockData.alreadyGeneratedCoins - infoData.full_deposit_amount) / config.metrics.coinUnits);
             message.channel.send(`***Circulating supply is is***: ${supply.format('0,0')} CCX`);
           }).catch(err => {
-            message.channel.send(err);
+            message.channel.send(`Failed call getInfo: ${err}`);
           });
         }).catch(err => {
-          message.channel.send(err);
+          message.channel.send(`Failed call getBlockInfo: ${err}`);
         });
       }).catch(err => {
-        message.channel.send(err);
+        message.channel.send(`Failed call getLastHeaderInfo: ${err}`);
       });
     }
 
@@ -55,10 +55,10 @@ module.exports = {
           let supply = Numeral(blockData.alreadyGeneratedCoins / config.metrics.coinUnits);
           message.channel.send(`***Total supply is is***: ${supply.format('0,0')} CCX`);
         }).catch(err => {
-          message.channel.send(err);
+          message.channel.send(`Failed call getBlockInfo: ${err}`);
         });
       }).catch(err => {
-        message.channel.send(err);
+        message.channel.send(`Failed call getLastHeaderInfo: ${err}`);
       });
     }
 
@@ -67,7 +67,7 @@ module.exports = {
         let banked = Numeral(data.full_deposit_amount / config.metrics.coinUnits);
         message.channel.send(`***Total banked amount is***: ${banked.format('0,0')} CCX`);
       }).catch(err => {
-        message.channel.send(err);
+        message.channel.send(`Failed call getInfo: ${err}`);
       });
     }
 
@@ -75,7 +75,7 @@ module.exports = {
       blockchainInfo.getInfo().then(data => {
         message.channel.send(`***Blockchain height is***: ${data.height}`);
       }).catch(err => {
-        message.channel.send(err);
+        message.channel.send(`Failed call getInfo: ${err}`);
       });
     }
 
@@ -84,7 +84,7 @@ module.exports = {
         let reward = Numeral(data.reward / config.metrics.coinUnits);
         message.channel.send(`***Current reward is***: ${reward.format('0')} CCX`);
       }).catch(err => {
-        message.channel.send(err);
+        message.channel.send(`Failed call getLastHeaderInfo: ${err}`);
       });
     }
 
@@ -92,7 +92,7 @@ module.exports = {
       blockchainInfo.getInfo().then(data => {
         message.channel.send(`***Current hashrate is***: ${data.difficulty / config.metrics.blockTargetInterval}`);
       }).catch(err => {
-        message.channel.send(err);
+        message.channel.send(`Failed call getInfo: ${err}`);
       });
     }
 
@@ -104,9 +104,8 @@ module.exports = {
       blockchainInfo.getInfo().then(data => {
         message.channel.send(`***Current difficulty is***: ${data.difficulty}`);
       }).catch(err => {
-        message.channel.send(err);
+        message.channel.send(`Failed call getInfo: ${err}`);
       });
     }
-
   }
 };

@@ -81,6 +81,8 @@ class WalletsData {
           }).catch(err => {
             reject(err);
           });
+        }).catch(err => {
+          reject(err);
         });
       } else {
         resolve(currentHeight);
@@ -147,6 +149,8 @@ class WalletsData {
                 if (err) reject(err);
                 else resolve("Successfully registered wallet");
               });
+          }).catch(err => {
+            reject(err);
           });
         }
       });

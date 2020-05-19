@@ -71,6 +71,8 @@ client.on("ready", () => {
 
             // call the handler for finishing the giveaway
             giveaways.finishGiveaway(giveawaysData, walletsData, message, gaUsers.array());
+          }).catch(err => {
+            console.error('Failed to fetch reaction users', err);
           });
         }
       });
@@ -90,10 +92,11 @@ client.on('guildMemberAdd', member => {
   marketsData.getExchanges().then(data => {
     fs.readFile('./templates/welcome.msg', 'utf8', function (err, source) {
       if (err) throw err;
-
       var template = Handlebars.compile(source);
       member.send(template(data));
     });
+  }).catch(err => {
+    console.error('Failed to get exchangers', err);
   });
 });
 
