@@ -1,6 +1,7 @@
 const fs = require('fs');
 const Handlebars = require("handlebars");
 const pools = require("../modules/pools.js");
+const utils = require("../helpers/utils.js");
 
 let availableCommands = [
   "help",
@@ -19,7 +20,7 @@ module.exports = {
 
       fs.readFile('./templates/help_pools.msg', 'utf8', function (err, source) {
         if (err) throw err;
-        message.channel.send(source);
+        utils.sendHelpContent(message, source);
       });
     }
 

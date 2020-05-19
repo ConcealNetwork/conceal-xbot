@@ -258,7 +258,7 @@ client.on("message", async message => {
     function sendNextHelpPart(partNum) {
       fs.readFile(`./templates/help_general_${partNum}.msg`, 'utf8', function (err, source) {
         if (err) throw err;
-        message.channel.send(source);
+        message.author.send(source);
       });
 
       if (partNum < 2) {
@@ -266,6 +266,11 @@ client.on("message", async message => {
           sendNextHelpPart(partNum + 1)
         }, 200);
       }
+    }
+
+    // warn that help is sent id DM
+    if (message.channel.type !== "dm") {
+      message.reply('The help information has been sent to you in DM. Consider using DM with the bot for help commands.');
     }
 
     // send first part and return 

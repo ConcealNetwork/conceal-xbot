@@ -1,5 +1,6 @@
 const fs = require('fs');
 const config = require("../config.json");
+const utils = require("../helpers/utils.js");
 
 let availableCommands = [
   "help",
@@ -24,7 +25,7 @@ module.exports = {
     if (args[0] === "help") {
       fs.readFile('./templates/help_users.msg', 'utf8', function (err, source) {
         if (err) throw err;
-        message.channel.send(source);
+        utils.sendHelpContent(message, source);
       });
     }
 

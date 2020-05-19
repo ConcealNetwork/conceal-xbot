@@ -1,5 +1,6 @@
 const fs = require('fs');
 const Handlebars = require("handlebars");
+const utils = require("../helpers/utils.js");
 const markets = require("../modules/markets.js");
 
 let availableCommands = [
@@ -18,7 +19,7 @@ module.exports = {
 
       fs.readFile('./templates/help_exchanges.msg', 'utf8', function (err, source) {
         if (err) throw err;
-        message.channel.send(source);
+        utils.sendHelpContent(message, source);
       });
     }
 

@@ -1,5 +1,6 @@
 const fs = require('fs');
 const moment = require('moment');
+const utils = require("../helpers/utils.js");
 const Handlebars = require("handlebars");
 const config = require("../config.json");
 
@@ -21,7 +22,7 @@ module.exports = {
 
       fs.readFile('./templates/help_giveaways.msg', 'utf8', function (err, source) {
         if (err) throw err;
-        message.channel.send(source);
+        utils.sendHelpContent(message, source);
       });
     }
 
