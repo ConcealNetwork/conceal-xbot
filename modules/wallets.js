@@ -278,7 +278,7 @@ class WalletsData {
       }
 
       // calculate the sumAmount first
-      let sumAmount = payments.reduce((total, item) => total + (item.amount * config.metrics.coinUnits), 0);
+      let sumAmount = payments.reduce((total, item) => total + Math.trunc(item.amount * config.metrics.coinUnits), 0);
 
       // get balance first and check if its enough
       this.getBalance(fromUserId).then(balanceData => {
@@ -291,7 +291,7 @@ class WalletsData {
               let walletInfo = await this.showWalletInfo(payments[i].userId);
               transfers.push({
                 address: walletInfo.address,
-                amount: payments[i].amount * config.metrics.coinUnits
+                amount: Math.trunc(payments[i].amount * config.metrics.coinUnits)
               });
             }
 

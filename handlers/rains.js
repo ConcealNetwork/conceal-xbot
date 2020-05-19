@@ -91,8 +91,8 @@ module.exports = {
 
                 // send the payments to all the users at once and report
                 await walletsData.sendPayments(message.author.id, payments);
-                message.channel.send(`\:money_with_wings: ${payPart.toFixed(2)} CCX rained on users ${userIds.join()}`);
-              })().catch(e => message.channel.send(`Error while raining on users: ${err}`));
+                message.channel.send(`\:money_with_wings: ${payPart.toFixed(6)} CCX rained on users ${userIds.join()}`);
+              })().catch(err => message.channel.send(`Error while raining on users: ${err}`));
             } else {
               message.channel.send(`Insufficient balance!`);
             }
