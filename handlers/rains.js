@@ -90,7 +90,8 @@ module.exports = {
                 }
 
                 // send the payments to all the users at once and report
-                await walletsData.sendPayments(message.author.id, payments);
+                let txdata = await walletsData.sendPayments(message.author.id, payments);
+                message.author.send(`Success! ***TX hash***: ${txdata.transactionHash}\n***Secret key***: ${txdata.transactionSecretKey}`);
                 message.channel.send(`\:money_with_wings: ${payPart.toFixed(6)} CCX rained on users ${userIds.join()}`);
               })().catch(err => message.channel.send(`Error while raining on users: ${err}`));
             } else {

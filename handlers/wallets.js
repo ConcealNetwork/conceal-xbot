@@ -64,7 +64,7 @@ module.exports = {
 
     if (args[0] == "show") {
       walletsData.showWalletInfo(message.author.id).then(data => {
-        message.author.send(`***Address***: ${data.address}\n***Payment Id***: ${data.payment_id}`);
+        message.author.send(`***Address***: ${data.address}`);
       }).catch(err => {
         sendCommonError(`Error trying to get wallet info: ${err}`);
       }).finally(() => { sendNotification('The wallet information has been sent to you in DM') });
