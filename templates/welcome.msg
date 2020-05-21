@@ -1,8 +1,8 @@
 **Hey, {{this.username}}! Welcome to the Conceal Discord! :)**
 
-If you're new here and have some questions head over to the  **#faq** channel for an introduction to the project and answers to common questions.
+If you're new here need support, head over to the  **#support** channel and post your problem there. Team will help you.
 You can also head over to the **#annoucements** channel and see the latest news on where we are and what we are doing.
-If you have more questions, look for one the admins or devs currently online.
+If you have questions or just want info, look for one the admins or devs currently online.
 
 You can also use this bot to get more information.
 Use the command `.help` to get list of commands.
