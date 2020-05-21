@@ -1,8 +1,8 @@
 ```css
-Bellow is a list of all available commands.
+Below is a list of all available commands.
 ```
 ```css
-#info     
+#info
 
 .exchanges info -> Gives general info about the exchanges.
 

@@ -1,52 +1,52 @@
 ```css
-Bellow is a list of all available commands.
+Below is a list of all available commands.
 ```
 ```css
-#supply     
+#supply
 
 .blockchain supply -> Gives the current circulating supply of CCX.
 
 Example: .blockchain supply
 ```
 ```css
-#height     
+#height
 
 .blockchain height -> Gives the current blockchain height.
 
 Example: .blockchain height
 ```
 ```css
-#reward     
+#reward
 
 .blockchain reward -> Gives the current block reward.
 
 Example: .blockchain reward
 ```
 ```css
-#hashrate     
+#hashrate
 
 .blockchain hashrate -> Gives the current hashrate of the network.
 
 Example: .blockchain hashrate
 ```
 ```css
-#totalsupply     
+#totalsupply
 
 .blockchain totalsupply -> Gives the current total supply.
 
 Example: .blockchain totalsupply
 ```
 ```css
-#maxsupply     
+#maxsupply
 
 .blockchain maxsupply -> Gives the max supply of CCX.
 
 Example: .blockchain maxsupply
 ```
 ```css
-#difficulty     
+#difficulty
 
-.blockchain difficulty -> Fives the current difficulty of the network.
+.blockchain difficulty -> Gives the current difficulty of the network.
 
 Example: .blockchain difficulty
 ```

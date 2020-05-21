@@ -1,12 +1,12 @@
 ```css
 CCX Discord Bot
 
-The bot is organized into sections. So when you issue a command you need to use .<section> <command> to acces it.
-For instance if you want to get the blockchain height you should call
+The bot is organized into sections. When you issue a command you need to use .<section> <command> to access it.
+For instance, if you want to get the blockchain height you should call:
 
 .blockchain height
 
-Bellow is a list of all available commands.
+Below is a list of all available commands.
 ```
 ```css
 
@@ -37,7 +37,7 @@ Bellow is a list of all available commands.
 
   #giveaway
     .giveaway help -> Gives detailed info on giveaway commands.
-    .giveaway create -> Vreates a new giveaway based on parameters.
+    .giveaway create -> Creates a new giveaway based on parameters.
     .giveaway list -> Lists all active giveaways.
     .giveaway delete -> Deletes an active giveaway.
 ```

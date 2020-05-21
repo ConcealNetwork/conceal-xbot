@@ -2,11 +2,11 @@
 
 Conceal XBOT is a bot made specifically for Conceal public Discord server. While it has features that other projects could use its tied in some places to CCX infrastructure.
 
-The Bot is organized in multiple sections bassed on the content it serves. A lot of them requires the user to have a CCX wallet registered with the bot, so make sure you register one if you want to use its full potential. The command that the bot supports can be distributed in the following sections:
+The Bot is organized in multiple sections based on the content it serves. A lot of them require the user to have a CCX wallet registered with the bot, so make sure you register one if you want to use its full potential. The command that the bot supports can be distributed in the following sections:
 
 ## general
 
-This are general commands that do not fall into any specific category. Click on the command to see how to use it.
+These are general commands that do not fall into any specific category. Click on the command to see how to use it.
 
 | Command  | Description |
 | ------------- | ------------- |
@@ -17,17 +17,17 @@ This are general commands that do not fall into any specific category. Click on 
 
 ## markets
 
-This are commands that enable the user to see market data related to CCX. Click on the command to see how to use it.
+These are commands that enable the user to see market data related to CCX. Click on the command to see how to use it.
 
 | Command  | Description |
 | ------------- | ------------- |
-| .markets help  | Fives detailed info on markets commands. |
+| .markets help  | Gives detailed info on markets commands. |
 | .markets info  | Gives general info about the markets. |
 | .markets info  | Gives CCX price chart for last 7 days. |
 
 ## exchanges
 
-This are commands that enable the user to see exchanges info related to CCX. Click on the command to see how to use it.
+These are commands that enable the user to see exchanges info related to CCX. Click on the command to see how to use it.
 
 | Command  | Description |
 | ------------- | ------------- |
@@ -36,7 +36,7 @@ This are commands that enable the user to see exchanges info related to CCX. Cli
 
 ## pools
 
-This are commands that enable the user to see pools info. Click on the command to see how to use it.
+These are commands that enable the user to see pools info. Click on the command to see how to use it.
 
 | Command  | Description |
 | ------------- | ------------- |
@@ -46,7 +46,7 @@ This are commands that enable the user to see pools info. Click on the command t
 
 ## users
 
-This are commands that enable the user to all the info related to CCX Discord server users. Click on the command to see how to use it.
+These are commands that enable the user to all the info related to CCX Discord server users. Click on the command to see how to use it.
 
 | Command  | Description |
 | ------------- | ------------- |
@@ -59,7 +59,7 @@ This are commands that enable the user to all the info related to CCX Discord se
 
 ## blockchain
 
-This are commands that enable the user to see CCX blockchain related info. Click on the command to see how to use it.
+These are commands that enable the user to see CCX blockchain related info. Click on the command to see how to use it.
 Instead of **.blockchain** you can use **.chain** as a shorter version
 
 | Command  | Description |
@@ -75,7 +75,7 @@ Instead of **.blockchain** you can use **.chain** as a shorter version
 
 ## giveaway
 
-This are commands related to giveaways. You need to have a CCX wallet registered with the Bot in order to use them. Click on the command to see how to use it.
+These are commands related to giveaways. You need to have a CCX wallet registered with the Bot in order to use them. Click on the command to see how to use it.
 
 | Command  | Description |
 | ------------- | ------------- |
@@ -86,7 +86,7 @@ This are commands related to giveaways. You need to have a CCX wallet registered
 
 ## rain
 
-This are commands related to rains. You need to have a CCX wallet registered with the Bot in order to use them. Click on the command to see how to use it.
+These are commands related to rains. You need to have a CCX wallet registered with the Bot in order to use them. Click on the command to see how to use it.
 
 | Command  | Description |
 | ------------- | ------------- |
@@ -98,7 +98,7 @@ This are commands related to rains. You need to have a CCX wallet registered wit
 
 ## wallet
 
-This are commands related to your wallet. You need to have a CCX wallet registered with the Bot in order to use them. Click on the command to see how to use it.
+These are commands related to your wallet. You need to have a CCX wallet registered with the Bot in order to use them. Click on the command to see how to use it.
 
 | Command  | Description |
 | ------------- | ------------- |

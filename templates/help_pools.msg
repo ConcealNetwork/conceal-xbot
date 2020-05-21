@@ -1,15 +1,15 @@
 ```css
-Bellow is a list of all available commands.
+Below is a list of all available commands.
 ```
 ```css
-#list     
+#list
 
 .pools list -> Gives the list of all CCX pools.
 
 Example: .pools list
 ```
 ```css
-#info     
+#info
 
 .pools info -> Gives the info about all CCX pools.
 

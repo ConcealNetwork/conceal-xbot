@@ -6,7 +6,7 @@ CCX pools info
   Height: {{this.network.height}}
   Hashrate: {{this.pool.hashrate}}
   Miners: {{this.pool.miners}}
-  Payment Treshold: {{this.config.minPaymentThreshold}}
+  Payment Threshold: {{this.config.minPaymentThreshold}}
   Pool Free: {{this.config.poolFee}}
 ```
 {{/each}}

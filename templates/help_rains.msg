@@ -1,8 +1,8 @@
 ```css
-Bellow is a list of all available commands.
+Below is a list of all available commands.
 ```
 ```css
-#recent     
+#recent
 
 .rain recent -> Rains upon the users that were active recently.
 
@@ -12,11 +12,11 @@ Bellow is a list of all available commands.
 
   .rain recent <amount> <users>
 
-#Example: 
+#Example:
   .rain recent 10CCX 50u
 ```
 ```css
-#alltime     
+#alltime
 
 .rain alltime -> Rains upon the all time most active users.
 
@@ -26,11 +26,11 @@ Bellow is a list of all available commands.
 
   .rain alltime <amount> <users>
 
-#Example: 
+#Example:
   .rain alltime 10CCX 50u
 ```
 ```css
-#period     
+#period
 
 .rain period -> Rains upon the users that are most active in the last period.
 
@@ -40,14 +40,14 @@ Bellow is a list of all available commands.
 
   .rain period <amount> <users>
 
-#Example: 
+#Example:
   .rain period 10CCX 50u
 ```
 ```css
-#reset     
+#reset
 
 .rain reset -> Resets the period counters. Only admins can do it.
 
-#Example: 
+#Example:
   .rain reset
 ```

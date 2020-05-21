@@ -108,3 +108,5 @@ dist
 /sqlite3.exe
 /wallet
 /data.json
+
+.idea/
