@@ -67,22 +67,30 @@ class WalletsData {
    *  Works recursivly until we do not pass the current block *
    *  height. It returns the current block height as result.  *
    ***********************************************************/
-  _fetchNextBlockArray = (startIndex, currentHeight) => {
-    return new Promise(async resolve => {
+  _fetchNextBlockArray = (startIndex, currentHeight, errCount) => {
+    return new Promise((resolve, reject) => {
       if (startIndex < currentHeight) {
         const opts = {
           firstBlockIndex: startIndex,
-          blockCount: 1000,
+          blockCount: 10000,
         }
 
         this.CCX.getTransactions(opts).then(txdata => {
           this._SyncBlockArray(txdata).then(data => {
-            resolve(this._fetchNextBlockArray(Math.min(startIndex + 1000, currentHeight), currentHeight));
+            setTimeout(() => {
+              resolve(this._fetchNextBlockArray(Math.min(startIndex + 1000, currentHeight), currentHeight, 0));
+            }, 500);
           }).catch(err => {
             reject(err);
           });
         }).catch(err => {
-          reject(err);
+          if (errCount < 5) {
+            setTimeout(() => {
+              resolve(this._fetchNextBlockArray(Math.min(startIndex + 1000, currentHeight), currentHeight, errCount + 1));
+            }, 1000);
+          } else {
+            reject(err);
+          }
         });
       } else {
         resolve(currentHeight);
@@ -100,7 +108,7 @@ class WalletsData {
 
     return new Promise((resolve, reject) => {
       this.CCX.info().then(data => {
-        this._fetchNextBlockArray(this.dataFile.lastBlock, data.height).then(lastHeight => {
+        this._fetchNextBlockArray(this.dataFile.lastBlock, data.height, 0).then(lastHeight => {
           this.dataFile.lastBlock = lastHeight;
           jsonfile.writeFileSync(path.join(appRoot.path, "data.json"), this.dataFile, { spaces: 2 });
 

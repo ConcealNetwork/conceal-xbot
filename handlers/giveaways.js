@@ -169,7 +169,7 @@ module.exports = {
 
         if (validUsers.length > 0) {
           let winners = getRandom(validUsers, Math.min(validUsers.length, finishedData.winners));
-          let payPart = ((finishedData.amount / config.metrics.coinUnits) / winners.length) - 0.001;
+          let payPart = (((finishedData.amount / config.metrics.coinUnits) - 0.001) / winners.length);
           let payments = [];
 
           for (let i = 0; i < winners.length; i++) {

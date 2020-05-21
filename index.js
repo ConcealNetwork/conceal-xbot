@@ -20,8 +20,11 @@ const GiveawaysData = require("./modules/giveaways.js");
 const BlockchainData = require("./modules/blockchain.js");
 const HandlebarHelpers = require('just-handlebars-helpers');
 
+// Here we load the config.json file that contains our token and our prefix values. 
+const config = require("./config.json");
+
 // open the access to the database if it fails we must stop
-let db = new sqlite3.Database(path.join(appRoot.path, "tipbot.db"), sqlite3.OPEN_READWRITE, (err) => {
+let db = new sqlite3.Database(path.join(appRoot.path, config.db.filename), sqlite3.OPEN_READWRITE, (err) => {
   if (err) {
     console.error('Could not connect to database', err);
   }
@@ -40,9 +43,6 @@ const giveawaysData = new GiveawaysData(db);
 
 // register the handlebar helpers
 HandlebarHelpers.registerHelpers(Handlebars);
-
-// Here we load the config.json file that contains our token and our prefix values. 
-const config = require("./config.json");
 
 // handle all unhandler exceptions
 process.on('uncaughtException', err => {
@@ -209,6 +209,7 @@ client.on("message", async message => {
    *  it fails. Also checks the balance first.                *
    ***********************************************************/
   if (command === "tip") {
+    let payments = [];
     let amount = 0;
 
     if (args.length < 2) {
@@ -230,8 +231,15 @@ client.on("message", async message => {
       return message.reply(err);
     }
 
+    // calculate the pay part per every mentioned user
+    let payPart = ((amount - 0.001) / message.mentions.users.size);
+
+    message.mentions.users.forEach(user => {
+      payments.push({ userId: user.id, amount: payPart });
+    });
+
     // execute the blockchain commands
-    return walletsData.sendPayments(message.author.id, [{ userId: message.mentions.users.first().id, amount: amount }]).then(data => {
+    return walletsData.sendPayments(message.author.id, payments).then(data => {
       message.author.send(`Success! ***TX hash***: ${data.transactionHash}\n***Secret key***: ${data.transactionSecretKey}`);
       message.channel.send(`\:money_with_wings: Success`);
     }).catch(err => {

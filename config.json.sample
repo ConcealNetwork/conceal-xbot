@@ -12,5 +12,8 @@
     "address": "your_wallet_address",
     "rfcTimeout": 5,
     "port": 6061
-  }
+  },
+  "db": {
+    "filename": "ccxbot.db"
+  }  
 }

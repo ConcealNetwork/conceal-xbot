@@ -75,7 +75,7 @@ module.exports = {
         if (users.length > 0) {
           walletsData.getBalance(message.author.id).then(balanceData => {
             if (balanceData.balance > (amount * config.metrics.coinUnits)) {
-              let payPart = (amount / users.length) - 0.001;
+              let payPart = ((amount - 0.001) / users.length);
 
               (async () => {
                 let payments = [];

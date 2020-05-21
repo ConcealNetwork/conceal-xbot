@@ -118,7 +118,7 @@ module.exports = {
 
     if (args[0] == "balance") {
       walletsData.getBalance(message.author.id).then(data => {
-        message.author.send(`***Balance***: ${(data.balance / config.metrics.coinUnits).toLocaleString()} CCX\n***Payment Id***: ${data.payment_id}`);
+        message.author.send(`***Balance***: ${(data.balance / config.metrics.coinUnits).toLocaleString()} CCX`);
       }).catch(err => {
         sendCommonError(`Error trying to get balance: ${err}`);
       }).finally(() => { sendNotification('The balance information has been sent to you in DM') });
