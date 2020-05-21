@@ -92,8 +92,26 @@ client.on('guildMemberAdd', member => {
   marketsData.getExchanges().then(data => {
     fs.readFile('./templates/welcome.msg', 'utf8', function (err, source) {
       if (err) throw err;
-      var template = Handlebars.compile(source);
-      member.send(template(data));
+
+      let welcomeTpl = Handlebars.compile(source);
+      let welcomeEmbed = {
+        color: 0x0099ff,
+        title: "Welcome to Conceal",
+        url: 'https://discord.js.org',
+        author: {
+          name: 'Conceal Network',
+          icon_url: 'https://conceal.network/images/branding/logo.png',
+          url: 'https://discord.gg/YbpHVSd'
+        },
+        description: welcomeTpl({ username: member.displayName }),
+        timestamp: new Date(),
+        footer: {
+          text: "Conceal Network",
+          icon_url: 'https://conceal.network/images/branding/logo.png'
+        }
+      };
+
+      member.send({ embed: welcomeEmbed });
     });
   }).catch(err => {
     console.error('Failed to get exchangers', err);
