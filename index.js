@@ -62,23 +62,26 @@ client.on("ready", () => {
   // we are ready so we can initialize the giveaways
   giveawaysData.initialize(function (data) {
     let channel = client.channels.get(data.channel_id);
-    channel.fetchMessage(data.message_id).then(message => {
-      message.reactions.forEach(reaction => {
-        if (reaction.emoji.identifier == "%F0%9F%8E%89") {
-          reaction.fetchUsers().then(users => {
-            // exclude all bots from the list of users
-            let gaUsers = users.filter(user => !user.bot);
 
-            // call the handler for finishing the giveaway
-            giveaways.finishGiveaway(giveawaysData, walletsData, message, gaUsers.array());
-          }).catch(err => {
-            console.error('Failed to fetch reaction users', err);
-          });
-        }
+    if (channel) {
+      channel.fetchMessage(data.message_id).then(message => {
+        message.reactions.forEach(reaction => {
+          if (reaction.emoji.identifier == "%F0%9F%8E%89") {
+            reaction.fetchUsers().then(users => {
+              // exclude all bots from the list of users
+              let gaUsers = users.filter(user => !user.bot);
+
+              // call the handler for finishing the giveaway
+              giveaways.finishGiveaway(giveawaysData, walletsData, message, gaUsers.array());
+            }).catch(err => {
+              console.error('Failed to fetch reaction users', err);
+            });
+          }
+        });
+      }).catch(err => {
+        console.error('Giveaway finished error', err);
       });
-    }).catch(err => {
-      console.error('Giveaway finished error', err);
-    });
+    }
   });
 });
 

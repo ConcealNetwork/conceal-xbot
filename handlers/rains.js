@@ -7,7 +7,8 @@ let availableCommands = [
   "recent",
   "alltime",
   "period",
-  "reset"
+  "reset",
+  "beer"
 ];
 
 module.exports = {
@@ -116,6 +117,10 @@ module.exports = {
       }).catch(err => {
         message.channel.send(`Failed to reset period: ${err}`);
       });
+    }
+
+    if (args[0] === "beer") {
+      message.channel.send(`\:beer:\:beer:\:beer:\:beer:\:beer:\:beer:\:beer:\:beer:\:beer:\:beer:\n\:beer:\:beer:\:beer:\:beer:\:beer:\:beer:\:beer:\:beer:\:beer:\:beer:`);
     }
   }
 };
