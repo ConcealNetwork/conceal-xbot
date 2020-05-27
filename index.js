@@ -244,7 +244,7 @@ client.on("message", async message => {
 
     try {
       amount = parseFloat(args[0]);
-      if (amount <= 0) throw "Amount cannot be 0 or negative";
+      if (!amount || amount < config.restrictions.minTipAmount) throw `Amount cannot be less then ${config.restrictions.minTipAmount} CCX`;
     } catch (err) {
       return message.reply(err);
     }

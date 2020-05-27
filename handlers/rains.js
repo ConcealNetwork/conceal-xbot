@@ -48,7 +48,7 @@ module.exports = {
 
       try {
         amount = amount = parseFloat(args[1].replace(/CCX/g, ''));
-        if (!amount || amount <= 0) throw "Amount cannot be 0 or negative";
+        if (!amount || amount < config.restrictions.minRainAmount) throw `Amount cannot be less then ${config.restrictions.minRainAmount} CCX`;
       } catch (err) {
         return message.reply(err);
       }

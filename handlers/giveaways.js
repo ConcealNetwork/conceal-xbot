@@ -62,7 +62,7 @@ module.exports = {
       } else {
         try {
           amount = parseFloat(args[3].replace(/CCX/g, ''));
-          if (!amount || amount <= 0) throw "Amount cannot be 0 or negative!";
+          if (!amount || amount < config.restrictions.minGiveawayAmount) throw `Amount cannot be less then ${config.restrictions.minGiveawayAmount} CCX`;
         } catch (err) {
           return message.reply(err);
         }
@@ -186,13 +186,15 @@ module.exports = {
             let embedDescription = template(payments);
             let footerText = `${winners.length} winners paid. | Finished at:`;
             const gaEmbed = giveawaysData.createEmbedMessage(finishedData.description, embedDescription, footerText);
-            message.edit({ embed: gaEmbed });
+            message.channel.send({ embed: gaEmbed })
+            message.delete().catch(O_o => { });
           });
         } else {
           let embedDescription = 'There were no valid winners for the giveaway.';
           let footerText = `0 winners paid. | Finished at:`;
           const gaEmbed = giveawaysData.createEmbedMessage(finishedData.description, embedDescription, footerText);
-          message.edit({ embed: gaEmbed });
+          message.channel.send({ embed: gaEmbed })
+          message.delete().catch(O_o => { });
         }
       })().catch(err => console.error('giveawaysData.finishGiveaway async error', err));
     }).catch(err => console.error('giveawaysData.finishGiveaway error', err));

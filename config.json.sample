@@ -15,5 +15,10 @@
   },
   "db": {
     "filename": "ccxbot.db"
-  }  
+  },
+  "restrictions": {
+    "minTipAmount": 1,
+    "minRainAmount": 1,
+    "minGiveawayAmount": 1
+  }
 }
