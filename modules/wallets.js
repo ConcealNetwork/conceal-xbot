@@ -79,14 +79,14 @@ class WalletsData {
           this._SyncBlockArray(txdata).then(data => {
             setTimeout(() => {
               resolve(this._fetchNextBlockArray(Math.min(startIndex + 1000, currentHeight), currentHeight, 0));
-            }, 500);
+            }, 100);
           }).catch(err => {
             reject(err);
           });
         }).catch(err => {
           if (errCount < 5) {
             setTimeout(() => {
-              resolve(this._fetchNextBlockArray(Math.min(startIndex + 1000, currentHeight), currentHeight, errCount + 1));
+              resolve(this._fetchNextBlockArray(Math.min(startIndex, currentHeight), currentHeight, errCount + 1));
             }, 1000);
           } else {
             reject(err);
