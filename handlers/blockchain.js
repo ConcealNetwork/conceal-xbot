@@ -14,6 +14,7 @@ let availableCommands = [
   "hashrate",
   "maxsupply",
   "difficulty",
+  "supply",
   "diff"
 ];
 

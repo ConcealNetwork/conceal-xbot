@@ -321,20 +321,26 @@ client.on("message", async message => {
   }
 
   if (command === "purge") {
-    // This command removes all messages from all users in the channel, up to 100.
-    if (!message.member.roles.some(r => ["admins", "mods"].includes(r.name)))
-      return message.reply("Sorry, you don't have permissions to use this!");
+    if (message.channel.type == "dm") {
+      return message.channel.send("Purge command is not available in DM");
+    }
 
-    // get the delete count, as an actual number.
-    const deleteCount = parseInt(args[0], 10) + 1;
+    if (message.member && message.member.roles) {
+      // This command removes all messages from all users in the channel, up to 100.
+      if (!message.member.roles.some(r => ["admins", "mods"].includes(r.name)))
+        return message.reply("Sorry, you don't have permissions to use this!");
 
-    // Ooooh nice, combined conditions. <3
-    if (!deleteCount || deleteCount < 1 || deleteCount > 100)
-      return message.reply("Please provide a number between 1 and 100 for the number of messages to delete");
+      // get the delete count, as an actual number.
+      const deleteCount = parseInt(args[0], 10) + 1;
 
-    // So we get our messages, and delete them. Simple enough, right?
-    const fetched = await message.channel.fetchMessages({ limit: deleteCount });
-    return message.channel.bulkDelete(fetched).catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
+      // Ooooh nice, combined conditions. <3
+      if (!deleteCount || deleteCount < 1 || deleteCount > 100)
+        return message.reply("Please provide a number between 1 and 100 for the number of messages to delete");
+
+      // So we get our messages, and delete them. Simple enough, right?
+      const fetched = await message.channel.fetchMessages({ limit: deleteCount });
+      return message.channel.bulkDelete(fetched).catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
+    }
   }
 
   // if we came this far then no command was found
