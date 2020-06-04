@@ -78,7 +78,7 @@ class WalletsData {
         this.CCX.getTransactions(opts).then(txdata => {
           this._SyncBlockArray(txdata).then(data => {
             setTimeout(() => {
-              resolve(this._fetchNextBlockArray(Math.min(startIndex + 1000, currentHeight), currentHeight, 0));
+              resolve(this._fetchNextBlockArray(Math.min(startIndex + 10000, currentHeight), currentHeight, 0));
             }, 100);
           }).catch(err => {
             reject(err);

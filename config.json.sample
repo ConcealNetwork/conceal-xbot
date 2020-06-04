@@ -20,5 +20,8 @@
     "minTipAmount": 1,
     "minRainAmount": 1,
     "minGiveawayAmount": 1
+  },
+  "giveaways": {
+    "channel": "channel ID"
   }
 }

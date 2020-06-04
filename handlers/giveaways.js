@@ -81,11 +81,29 @@ module.exports = {
               const description = `React with \:tada: to enter. Prize is ${amount} CCX. \n Ends at ${moment().add(timespan, 'seconds').format('LLLL')}`;
               const footer = `${winners} winners | Created at:`;
               const giveawayEmbed = giveawaysData.createEmbedMessage(title, description, footer);
-              message.delete().catch(O_o => { });
+              let isSameChannel = false;
+              let channel = null;
 
-              message.channel.send({ embed: giveawayEmbed }).then(newMsg => {
+              if (config.giveaways && config.giveaways.channel) {
+                channel = message.guild.channels.get(config.giveaways.channel);
+              } else {
+                channel = message.channel;
+              }
+
+              // check if we are posting to same channel we are in
+              isSameChannel = channel.id == message.channel.id;
+
+              if (isSameChannel) {
+                message.delete().catch(O_o => { });
+              }
+
+              channel.send({ embed: giveawayEmbed }).then(newMsg => {
                 giveawaysData.createGiveaway(message.author.id, newMsg.channel.id, newMsg.id, timespan, winners, amount, title).then(data => {
                   newMsg.react('🎉');
+
+                  if (!isSameChannel) {
+                    message.channel.send(`The giveaway was created in <#${config.giveaways.channel}>`);
+                  }
                 }).catch(err => {
                   newMsg.delete().catch(O_o => { });
                   message.channel.send(`Error creating giveaway: ${err}`);
@@ -161,6 +179,13 @@ module.exports = {
     giveawaysData.finishGiveaway(message.id).then(finishedData => {
       (async () => {
         let validUsers = [];
+        let channel = null;
+
+        if (config.giveaways && config.giveaways.channel) {
+          channel = message.guild.channels.get(config.giveaways.channel);
+        } else {
+          channel = message.channel;
+        }
 
         for (let i = 0; i < users.length; i++) {
           let hasWallet = await walletsData.userHasWallet(users[i].id);
@@ -186,15 +211,15 @@ module.exports = {
             let embedDescription = template(payments);
             let footerText = `${winners.length} winners paid. | Finished at:`;
             const gaEmbed = giveawaysData.createEmbedMessage(finishedData.description, embedDescription, footerText);
-            message.channel.send({ embed: gaEmbed })
             message.delete().catch(O_o => { });
+            channel.send({ embed: gaEmbed });
           });
         } else {
           let embedDescription = 'There were no valid winners for the giveaway.';
           let footerText = `0 winners paid. | Finished at:`;
           const gaEmbed = giveawaysData.createEmbedMessage(finishedData.description, embedDescription, footerText);
-          message.channel.send({ embed: gaEmbed })
           message.delete().catch(O_o => { });
+          channel.send({ embed: gaEmbed });
         }
       })().catch(err => console.error('giveawaysData.finishGiveaway async error', err));
     }).catch(err => console.error('giveawaysData.finishGiveaway error', err));
