@@ -15,7 +15,7 @@ module.exports = {
   executeCommand: async function (giveawaysData, walletsData, client, message, command, args) {
     if (availableCommands.indexOf(args[0]) == -1) {
       // no valid command was found notify the user about it
-      return message.channel.send('Uknows giveaway command. Type ".giveaway help" for available commands');
+      return message.channel.send('Unknown giveaway command. Type ".giveaway help" for available commands');
     }
 
     if (args[0] === "help") {

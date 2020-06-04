@@ -7,14 +7,15 @@ let availableCommands = [
   "recent",
   "alltime",
   "period",
-  "reset"
+  "reset",
+  "beer"
 ];
 
 module.exports = {
   executeCommand: async function (usersData, walletsData, client, message, command, args) {
     if (availableCommands.indexOf(args[0]) == -1) {
       // no valid command was found notify the user about it
-      return message.channel.send('Uknows rain command. Type ".rain help" for available commands');
+      return message.channel.send('Unknown rain command. Type ".rain help" for available commands');
     }
 
     if (args[0] === "help") {

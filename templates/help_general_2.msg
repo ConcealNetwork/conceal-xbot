@@ -25,6 +25,7 @@
     .rain alltime -> Rains upon the all time most active users.
     .rain period -> Rains upon the users that are most active in the last period.
     .rain reset -> Resets the period counters.
+    .rain beer -> Rains some beer for hot days.
 ```
 ```css
 

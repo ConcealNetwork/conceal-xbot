@@ -13,7 +13,7 @@ module.exports = {
   executeCommand: function (message, command, args) {
     if (availableCommands.indexOf(args[0]) == -1) {
       // no valid command was found notify the user about it
-      return message.channel.send('Uknows pools command. Type ".pools help" for available commands');
+      return message.channel.send('Unknown pools command. Type ".pools help" for available commands');
     }
 
     if (args[0] === "help") {

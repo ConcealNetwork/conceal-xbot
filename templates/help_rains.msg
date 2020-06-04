@@ -51,3 +51,12 @@ Below is a list of all available commands.
 #Example:
   .rain reset
 ```
+```css
+#beer
+
+.rain beer -> Rains some beer for hot days.
+
+#Example:
+  .rain beer
+```
+
