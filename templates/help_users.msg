@@ -36,3 +36,11 @@ Example: .users kick <user>
 
 Example: .users ban <user>
 ```
+```css
+#list
+
+.users list alltime|period|tippers -> List top 10 users by the specified criteria.
+
+Example: .users list tippers
+```
+

@@ -133,6 +133,8 @@ module.exports = {
                 userNames.push(`\:nine: ${dUser.username}`);
               } else if (i == 9) {
                 userNames.push(`\:keycap_ten: ${dUser.username}`);
+              } else {
+                break;
               }
             }
 
@@ -142,19 +144,19 @@ module.exports = {
         }
 
         if (args[1] === "alltime") {
-          usersData.getAllTimeActiveUsers(10, []).then(users => {
+          usersData.getAllTimeActiveUsers(50, []).then(users => {
             printUsernames(users);
           }).catch(err => {
             return message.channel.send(`Error trying to get users: ${err}`);
           });
         } else if (args[1] === "period") {
-          usersData.getActiveUsersByPeriod(10, []).then(users => {
+          usersData.getActiveUsersByPeriod(50, []).then(users => {
             printUsernames(users);
           }).catch(err => {
             return message.channel.send(`Error trying to get users: ${err}`);
           });
         } else if (args[1] === "tippers") {
-          usersData.getAllTimeTippers(10).then(users => {
+          usersData.getAllTimeTippers(50).then(users => {
             printUsernames(users);
           }).catch(err => {
             return message.channel.send(`Error trying to get users: ${err}`);

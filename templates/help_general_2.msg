@@ -35,6 +35,7 @@
     .users offline -> Counts all offline users on the server.
     .users ban -> Bans a user from the server.
     .users kick -> Kicks a user from the server.
+    .users list alltime|period|tippers -> List top 10 users by the specified criteria.
 ```
 ```css
 
