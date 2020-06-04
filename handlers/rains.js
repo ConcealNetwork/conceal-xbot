@@ -7,8 +7,7 @@ let availableCommands = [
   "recent",
   "alltime",
   "period",
-  "reset",
-  "beer"
+  "reset"
 ];
 
 module.exports = {

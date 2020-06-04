@@ -94,6 +94,23 @@ class UsersData {
   }
 
   /************************************************************
+   *  Function that selects "N" most active users of all time *
+   *  from the server and checks that they have the wallet    *
+   *  registered.                                             *
+   ***********************************************************/
+  getAllTimeTippers = (count) => {
+    return new Promise((resolve, reject) => {
+      this.db.all("SELECT wallets.user_id, wallets.user_name, sum(transactions.amount) as 'tipsum' FROM transactions LEFT JOIN wallets ON wallets.payment_id = transactions.payment_id WHERE transactions.amount < 0 GROUP BY transactions.payment_id ORDER BY tipsum LIMIT ?;", [count], function (err, rows) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+  }
+
+  /************************************************************
    * Resets the period counters for all users in the databese *
    ***********************************************************/
   resetPeriodCounter = () => {

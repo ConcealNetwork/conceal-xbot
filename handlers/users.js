@@ -8,11 +8,12 @@ let availableCommands = [
   "online",
   "offline",
   "kick",
-  "ban"
+  "ban",
+  "list"
 ];
 
 module.exports = {
-  executeCommand: async function (client, message, command, args) {
+  executeCommand: async function (usersData, client, message, command, args) {
     if (availableCommands.indexOf(args[0]) == -1) {
       // no valid command was found notify the user about it
       return message.channel.send('Uknows users command. Type ".users help" for available commands');
@@ -99,6 +100,69 @@ module.exports = {
 
       await member.ban(reason).catch(error => message.reply(`Sorry ${message.author} I couldn't ban because of : ${error}`));
       return message.reply(`${member.user.tag} has been banned by ${message.author.tag} because: ${reason}`);
+    }
+
+    if (args[0] === "list") {
+
+
+      if ((args[1] === "alltime") || (args[1] === "period") || (args[1] === "tippers")) {
+
+        function printUsernames(users) {
+          (async () => {
+            let userNames = [];
+
+            for (let i = 0; i < users.length; i++) {
+              let dUser = client.users.get(users[i].user_id) || await client.fetchUser(users[i].user_id);
+              if (i == 0) {
+                userNames.push(`\:first_place_medal: ${dUser.username}`);
+              } else if (i == 1) {
+                userNames.push(`\:second_place_medal: ${dUser.username}`);
+              } else if (i == 2) {
+                userNames.push(`\:third_place_medal: ${dUser.username}`);
+              } else if (i == 3) {
+                userNames.push(`\:four: ${dUser.username}`);
+              } else if (i == 4) {
+                userNames.push(`\:five: ${dUser.username}`);
+              } else if (i == 5) {
+                userNames.push(`\:six: ${dUser.username}`);
+              } else if (i == 6) {
+                userNames.push(`\:seven: ${dUser.username}`);
+              } else if (i == 7) {
+                userNames.push(`\:eight: ${dUser.username}`);
+              } else if (i == 8) {
+                userNames.push(`\:nine: ${dUser.username}`);
+              } else if (i == 9) {
+                userNames.push(`\:keycap_ten: ${dUser.username}`);
+              }
+            }
+
+            // print all the usernames, one per row
+            return message.channel.send(userNames.join('\n'));
+          })().catch(err => message.channel.send(`Error trying to get users: ${err}`));
+        }
+
+        if (args[1] === "alltime") {
+          usersData.getAllTimeActiveUsers(10, []).then(users => {
+            printUsernames(users);
+          }).catch(err => {
+            return message.channel.send(`Error trying to get users: ${err}`);
+          });
+        } else if (args[1] === "period") {
+          usersData.getActiveUsersByPeriod(10, []).then(users => {
+            printUsernames(users);
+          }).catch(err => {
+            return message.channel.send(`Error trying to get users: ${err}`);
+          });
+        } else if (args[1] === "tippers") {
+          usersData.getAllTimeTippers(10).then(users => {
+            printUsernames(users);
+          }).catch(err => {
+            return message.channel.send(`Error trying to get users: ${err}`);
+          });
+        }
+      } else {
+        return message.channel.send('Uknows list command. Type ".users help" for available commands');
+      }
     }
   }
 };

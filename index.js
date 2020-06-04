@@ -221,7 +221,7 @@ client.on("message", async message => {
     }
 
     // execute the blockchain commands
-    return users.executeCommand(client, message, command, args);
+    return users.executeCommand(usersData, client, message, command, args);
   }
 
   /************************************************************
