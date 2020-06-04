@@ -78,7 +78,7 @@ module.exports = {
         if (hasWallet) {
           walletsData.getBalance(message.author.id).then(balanceData => {
             if (balanceData.balance > (amount * config.metrics.coinUnits)) {
-              const description = `React with \:tada: to enter. Prize is ${amount} CCX. \n Ends at ${moment().add(timespan, 'seconds').format('LLLL')}`;
+              const description = `React with \:tada: to enter. Prize is ${amount} CCX. \n Ends at ${moment.utc().add(timespan, 'seconds').format('LLLL')} UTC`;
               const footer = `${winners} winners | Created at:`;
               const giveawayEmbed = giveawaysData.createEmbedMessage(title, description, footer);
               let isSameChannel = false;

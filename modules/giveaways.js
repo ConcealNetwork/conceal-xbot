@@ -46,7 +46,7 @@ class GiveawaysData {
         url: 'https://discord.gg/YbpHVSd'
       },
       description: description,
-      timestamp: new Date(),
+      timestamp: moment.utc().format('LLLL'),
       footer: {
         text: footer,
         icon_url: 'https://conceal.network/images/branding/logo.png'
