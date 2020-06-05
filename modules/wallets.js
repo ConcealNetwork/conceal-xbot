@@ -10,6 +10,7 @@ const fs = require('fs');
 class WalletsData {
   constructor(database) {
     this.CCX = new CCXApi("http://127.0.0.1", config.wallet.port, config.daemon.port, (config.wallet.rfcTimeout || 5) * 1000);
+    this.isSyncincTransactions = false;
     this.db = database;
 
     // load the data file
@@ -21,8 +22,17 @@ class WalletsData {
 
     // set the standard fee for tipping
     this.fee = 0.001 * config.metrics.coinUnits;
-    // periodically sync transactions
-    this._synchronizeTransactions(true);
+    // do initial sync transactions action
+    this._synchronizeTransactions().catch(err => {
+      console.log(`Failed to synchronize transactions: ${err}`);
+    });
+
+    setInterval(() => {
+      // periodically sync transactions
+      this._synchronizeTransactions().catch(err => {
+        console.log(`Failed to synchronize transactions: ${err}`);
+      });
+    }, config.wallet.syncInterval * 1000);
   }
 
   _isValidAddress = (str, len) => {
@@ -103,28 +113,28 @@ class WalletsData {
    *  with the blockchain data. It periodically checks for    *
    *  new transaction and looks at payment_id for matching.   *
    ***********************************************************/
-  _synchronizeTransactions = (periodic) => {
-    let synchronizeTransactions = this._synchronizeTransactions;
-
+  _synchronizeTransactions = () => {
     return new Promise((resolve, reject) => {
-      this.CCX.info().then(data => {
-        this._fetchNextBlockArray(this.dataFile.lastBlock, data.height, 0).then(lastHeight => {
-          this.dataFile.lastBlock = lastHeight;
-          jsonfile.writeFileSync(path.join(appRoot.path, "data.json"), this.dataFile, { spaces: 2 });
+      if (!this.isSyncincTransactions) {
+        this.isSyncincTransactions = true;
 
-          if (periodic) {
-            setTimeout(function () {
-              resolve(synchronizeTransactions(periodic));
-            }, 300000);
-          } else {
+        this.CCX.info().then(data => {
+          this._fetchNextBlockArray(this.dataFile.lastBlock, data.height, 0).then(lastHeight => {
+            this.dataFile.lastBlock = lastHeight;
+            jsonfile.writeFileSync(path.join(appRoot.path, "data.json"), this.dataFile, { spaces: 2 });
+            this.isSyncincTransactions = false;
             resolve(lastHeight);
-          }
+          }).catch(err => {
+            this.isSyncincTransactions = false;
+            reject(err);
+          });
         }).catch(err => {
+          this.isSyncincTransactions = false;
           reject(err);
         });
-      }).catch(err => {
-        reject(err);
-      });
+      } else {
+        reject('Synchronization is already in progress, exiting...');
+      }
     });
   }
 
@@ -238,17 +248,13 @@ class WalletsData {
     }
 
     return new Promise((resolve, reject) => {
-      this._synchronizeTransactions(false).then(lastHeight => {
-        (async () => {
-          let userData = await this.showWalletInfo(userId);
-          let txBalance = await doGetTransactionsSum(userData.payment_id);
-          let gaBalance = await doGetGiveawaySum(userId);
-          // send back the balance info and the user payment_id info
-          resolve({ balance: txBalance - gaBalance, payment_id: userData.payment_id });
-        })().catch(e => reject("Failed to find info for the user"));
-      }).catch(err => {
-        reject(err);
-      });
+      (async () => {
+        let userData = await this.showWalletInfo(userId);
+        let txBalance = await doGetTransactionsSum(userData.payment_id);
+        let gaBalance = await doGetGiveawaySum(userId);
+        // send back the balance info and the user payment_id info
+        resolve({ balance: txBalance - gaBalance, payment_id: userData.payment_id });
+      })().catch(e => reject("Failed to find info for the user"));
     });
   }
 

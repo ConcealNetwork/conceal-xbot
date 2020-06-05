@@ -10,6 +10,7 @@
   },
   "wallet": {
     "address": "your_wallet_address",
+    "syncInterval": 60,
     "rfcTimeout": 5,
     "port": 6061
   },
