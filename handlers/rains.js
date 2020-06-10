@@ -94,7 +94,18 @@ module.exports = {
                 // send the payments to all the users at once and report
                 let txdata = await walletsData.sendPayments(message.author.id, payments);
                 message.author.send(`Success! ***TX hash***: ${txdata.transactionHash}\n***Secret key***: ${txdata.transactionSecretKey}`);
-                message.channel.send(`\:money_with_wings: ${payPart.toFixed(6)} CCX rained on users ${userIds.join()}`);
+                let chunks = Math.floor(userIds.length / 30);
+                var remainder = userIds.length % 30;
+
+                if (remainder > 0) {
+                  chunks++;
+                }
+
+                // send in chunks to avoid limits
+                for (let i = 0; i < chunks; i++) {
+                  let chunkUsers = userIds.slice(i * 30, (i * 30) + 30);
+                  message.channel.send(`\:money_with_wings: ${payPart.toFixed(6)} CCX rained on users ${chunkUsers.join()}`);
+                }
               })().catch(err => message.channel.send(`Error while raining on users: ${err}`));
             } else {
               message.channel.send(`Insufficient balance!`);
