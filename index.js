@@ -41,6 +41,10 @@ const walletsData = new WalletsData(db);
 const blockchainData = new BlockchainData();
 const giveawaysData = new GiveawaysData(db);
 
+if (config.debug) {
+  console.log("initialized data models...");
+}
+
 // register the handlebar helpers
 HandlebarHelpers.registerHelpers(Handlebars);
 
@@ -51,6 +55,11 @@ process.on('uncaughtException', err => {
 });
 
 client.on("ready", () => {
+  if (config.debug) {
+    console.log("on client ready called...");
+  }
+
+  // set the avatar for the bot user
   client.user.setAvatar('./avatar.png').then(user => console.log(`Avatar is set!`)).catch(err => { console.error('Set avatar error', err) });
 
   // This event will run if the bot starts, and logs in, successfully.
@@ -67,9 +76,9 @@ client.on("ready", () => {
       channel.fetchMessage(data.message_id).then(message => {
         message.reactions.forEach(reaction => {
           if (reaction.emoji.identifier == "%F0%9F%8E%89") {
-            reaction.fetchUsers().then(users => {
+            reaction.fetchUsers().then(usersList => {
               // exclude all bots from the list of users
-              let gaUsers = users.filter(user => !user.bot);
+              let gaUsers = usersList.filter(user => !user.bot);
 
               // call the handler for finishing the giveaway
               giveaways.finishGiveaway(giveawaysData, walletsData, message, gaUsers.array());
@@ -134,6 +143,9 @@ client.on('messageReactionAdd', (reaction, user) => {
 
 client.on("message", async message => {
   // This event will run on every single message received, from any channel or DM.
+  if (config.debug) {
+    console.log(message.content);
+  }
 
   // It's good practice to ignore other bots. This also makes your bot ignore itself
   // and not get into a spam loop (we call that "botception").
@@ -344,7 +356,11 @@ client.on("message", async message => {
   }
 
   // if we came this far then no command was found
-  return message.reply('Unknow command. Please type ".help" for more info on how to use the bot');
+  return message.reply('Unknown command. Please type ".help" for more info on how to use the bot');
 });
+
+if (config.debug) {
+  console.log("calling client.login...");
+}
 
 client.login(config.token);

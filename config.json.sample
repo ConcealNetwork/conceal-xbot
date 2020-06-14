@@ -1,4 +1,5 @@
 {
+  "debug": false,
   "token": "here_you_put_your_token",
   "prefix": ".",
   "daemon": {

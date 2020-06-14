@@ -145,11 +145,11 @@ module.exports = {
       } else {
         let giveawayId = parseInt(args[1]);
 
-        giveawaysData.getGiveawayByRowId(giveawayId).then(data => {
-          if (data.user_id !== message.author.id) {
+        giveawaysData.getGiveawayByRowId(giveawayId).then(giveawayData => {
+          if (giveawayData.user_id !== message.author.id) {
             message.channel.send('You cannot delete giveaways from other users.');
           } else {
-            giveawaysData.finishGiveaway(giveawayId).then(data => {
+            giveawaysData.finishGiveaway(giveawayId).then(finishedData => {
               message.channel.send('Giveaway was succesfully deleted.');
             }).catch(err => {
               console.error('Failed to finish giveaway', err);
