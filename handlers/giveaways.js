@@ -161,7 +161,7 @@ module.exports = {
       }
     }
   },
-  finishGiveaway: function (giveawaysData, walletsData, message, users) {
+  finishGiveaway: function (giveawaysData, walletsData, settingsData, message, users) {
     let getRandom = (arr, n) => {
       var result = new Array(n),
         len = arr.length,
@@ -198,7 +198,9 @@ module.exports = {
           let payments = [];
 
           for (let i = 0; i < winners.length; i++) {
-            payments.push({ userId: winners[i].id, amount: payPart });
+            let isMuted = true;
+            try { isMuted = await settingsData.getMutedState(winners[i].id); } catch (err) { console.log(err); }
+            payments.push({ userId: winners[i].id, userName: winners[i].username, amount: payPart, muted: isMuted });
           }
 
           // send payment to all the winners, then send a response

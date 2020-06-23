@@ -12,7 +12,7 @@ let availableCommands = [
 ];
 
 module.exports = {
-  executeCommand: async function (usersData, walletsData, client, message, command, args) {
+  executeCommand: async function (usersData, walletsData, settingsData, client, message, command, args) {
     if (availableCommands.indexOf(args[0]) == -1) {
       // no valid command was found notify the user about it
       return message.channel.send('Unknown rain command. Type ".rain help" for available commands');
@@ -87,7 +87,18 @@ module.exports = {
 
                   if (discordUser) {
                     payments.push({ userId: users[i].user_id, amount: payPart });
-                    userIds.push(`<@${payments[i].userId}>`);
+                    try {
+                      let isMuted = await settingsData.getMutedState(payments[i].userId);
+
+                      if (isMuted) {
+                        userIds.push(discordUser.username);
+                      } else {
+                        userIds.push(`<@${payments[i].userId}>`);
+                      }
+                    } catch (err) {
+                      // if we failed treat it as muted  
+                      userIds.push(discordUser.name);
+                    }
                   }
                 }
 
@@ -106,16 +117,21 @@ module.exports = {
                   let chunkUsers = userIds.slice(i * 30, (i * 30) + 30);
                   message.channel.send(`\:money_with_wings: ${payPart.toFixed(6)} CCX rained on users ${chunkUsers.join()}`);
                 }
-              })().catch(err => message.channel.send(`Error while raining on users: ${err}`));
+              })().catch(err => {
+                message.channel.send(`Error while raining on users: ${err}`);
+                console.error(`Error while raining on users: ${err}`);
+              });
             } else {
               message.channel.send(`Insufficient balance!`);
             }
           }).catch(err => {
             message.channel.send(err);
+            console.error(err);
           });
         }
       })().catch(err => {
         message.channel.send(`Failed to rain on users: ${err}`);
+        console.error(`Failed to rain on users: ${err}`);
       });
     }
 

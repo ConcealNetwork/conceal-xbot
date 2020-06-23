@@ -12,10 +12,12 @@ const UsersData = require("./modules/users.js");
 const markets = require("./handlers/markets.js");
 const marketsData = require("./modules/markets.js");
 const wallets = require("./handlers/wallets.js");
+const settings = require("./handlers/settings.js");
 const exchanges = require("./handlers/exchanges.js");
 const giveaways = require("./handlers/giveaways.js");
 const blockchain = require("./handlers/blockchain.js");
 const WalletsData = require("./modules/wallets.js");
+const SettingsData = require("./modules/settings.js");
 const GiveawaysData = require("./modules/giveaways.js");
 const BlockchainData = require("./modules/blockchain.js");
 const HandlebarHelpers = require('just-handlebars-helpers');
@@ -38,6 +40,7 @@ const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION']
 // initialize data models
 const usersData = new UsersData(db);
 const walletsData = new WalletsData(db);
+const settingsData = new SettingsData(db);
 const blockchainData = new BlockchainData();
 const giveawaysData = new GiveawaysData(db);
 
@@ -81,7 +84,7 @@ client.on("ready", () => {
               let gaUsers = usersList.filter(user => !user.bot);
 
               // call the handler for finishing the giveaway
-              giveaways.finishGiveaway(giveawaysData, walletsData, message, gaUsers.array());
+              giveaways.finishGiveaway(giveawaysData, walletsData, settingsData, message, gaUsers.array());
             }).catch(err => {
               console.error('Failed to fetch reaction users', err);
             });
@@ -143,9 +146,6 @@ client.on('messageReactionAdd', (reaction, user) => {
 
 client.on("message", async message => {
   // This event will run on every single message received, from any channel or DM.
-  if (config.debug) {
-    console.log(message.content);
-  }
 
   // It's good practice to ignore other bots. This also makes your bot ignore itself
   // and not get into a spam loop (we call that "botception").
@@ -165,6 +165,11 @@ client.on("message", async message => {
   // Also good practice to ignore any message that does not start with our prefix, 
   // which is set in the configuration file.
   if (message.content.indexOf(config.prefix) !== 0) return;
+
+  // log every command
+  if (config.debug) {
+    console.log(message.content);
+  }
 
   // Here we separate our "command" name, and our "arguments" for the command. 
   // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
@@ -236,6 +241,16 @@ client.on("message", async message => {
     return users.executeCommand(usersData, client, message, command, args);
   }
 
+  if (command === "settings") {
+    if (args.length == 0) {
+      return message.reply(`You need to specify a settings command! Type: ***${config.prefix}settings help*** for list of commands`);
+    }
+
+    // execute the blockchain commands
+    return settings.executeCommand(settingsData, message, command, args);
+  }
+
+
   /************************************************************
    *  Tip command. Take ammount specified and tip the target  *
    *  user. User needs to have a registered wallet otherwise  *
@@ -292,7 +307,7 @@ client.on("message", async message => {
     }
 
     // execute the rain commands
-    return rains.executeCommand(usersData, walletsData, client, message, command, args);
+    return rains.executeCommand(usersData, walletsData, settingsData, client, message, command, args);
   }
 
   /************************************************************

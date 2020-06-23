@@ -23,9 +23,11 @@ class WalletsData {
     // set the standard fee for tipping
     this.fee = 0.001 * config.metrics.coinUnits;
     // do initial sync transactions action
-    this._synchronizeTransactions().catch(err => {
-      console.log(`Failed to synchronize transactions: ${err}`);
-    });
+    setTimeout(() => {
+      this._synchronizeTransactions().catch(err => {
+        console.log(`Failed to synchronize transactions: ${err}`);
+      });
+    }, 10000);
 
     setInterval(() => {
       // periodically sync transactions

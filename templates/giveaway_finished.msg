@@ -1,7 +1,11 @@
 Giveaway is finished! Winners:
 
 {{#each .}}
+{{#if this.muted}}
+{{this.userName}}
+{{else}}
 <@{{this.userId}}>
+{{/if}}
 {{#if @last}}
 
 Congratulations.
