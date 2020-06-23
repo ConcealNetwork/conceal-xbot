@@ -3,6 +3,7 @@ const utils = require("../helpers/utils.js");
 const config = require("../config.json");
 
 let availableCommands = [
+  "help",
   "mute"
 ];
 
