@@ -87,17 +87,11 @@ module.exports = {
 
                   if (discordUser) {
                     payments.push({ userId: users[i].user_id, amount: payPart });
-                    try {
-                      let isMuted = await settingsData.getMutedState(payments[i].userId);
 
-                      if (isMuted) {
-                        userIds.push(discordUser.username);
-                      } else {
-                        userIds.push(`<@${payments[i].userId}>`);
-                      }
-                    } catch (err) {
-                      // if we failed treat it as muted  
+                    if (users[i].muted === 1) {
                       userIds.push(discordUser.username);
+                    } else {
+                      userIds.push(`<@${payments[i].userId}>`);
                     }
                   }
                 }

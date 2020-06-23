@@ -37,13 +37,17 @@ class UsersData {
         excludeAsString = exclude.join(',');
       }
 
-      this.db.all('SELECT user_activity.user_id from user_activity where user_activity.user_id in (select wallets.user_id from wallets where wallets.user_id NOT IN (?)) ORDER BY TIMESTAMP DESC LIMIT ?;', [excludeAsString, count], function (err, rows) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows);
-        }
-      });
+      this.db.all(`SELECT user_activity.user_id, COALESCE(settings.muted, 0) as muted from user_activity 
+                   LEFT JOIN settings on settings.user_id = user_activity.user_id
+                   where user_activity.user_id in (select wallets.user_id from wallets where wallets.user_id NOT IN (?)) 
+                   ORDER BY TIMESTAMP DESC LIMIT ?;`,
+        [excludeAsString, count], function (err, rows) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(rows);
+          }
+        });
     });
   }
 
@@ -60,13 +64,17 @@ class UsersData {
         excludeAsString = exclude.join(',');
       }
 
-      this.db.all('SELECT user_activity.user_id from user_activity where user_activity.user_id in (select wallets.user_id from wallets where wallets.user_id NOT IN (?)) ORDER BY MSG_ALLTIME DESC LIMIT ?;', [excludeAsString, count], function (err, rows) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows);
-        }
-      });
+      this.db.all(`SELECT user_activity.user_id, COALESCE(settings.muted, 0) as muted from user_activity 
+                   LEFT JOIN settings on settings.user_id = user_activity.user_id
+                   where user_activity.user_id in (select wallets.user_id from wallets where wallets.user_id NOT IN (?)) 
+                   ORDER BY MSG_ALLTIME DESC LIMIT ?;`,
+        [excludeAsString, count], function (err, rows) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(rows);
+          }
+        });
     });
   }
 
@@ -83,13 +91,17 @@ class UsersData {
         excludeAsString = exclude.join(',');
       }
 
-      this.db.all('SELECT user_activity.user_id from user_activity where user_activity.user_id in (select wallets.user_id from wallets where wallets.user_id NOT IN (?)) ORDER BY MSG_PERIOD DESC LIMIT ?;', [excludeAsString, count], function (err, rows) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows);
-        }
-      });
+      this.db.all(`SELECT user_activity.user_id, COALESCE(settings.muted, 0) as muted from user_activity 
+                   LEFT JOIN settings on settings.user_id = user_activity.user_id
+                   where user_activity.user_id in (select wallets.user_id from wallets where wallets.user_id NOT IN (?)) 
+                   ORDER BY MSG_PERIOD DESC LIMIT ?;`,
+        [excludeAsString, count], function (err, rows) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(rows);
+          }
+        });
     });
   }
 
