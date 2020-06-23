@@ -97,7 +97,7 @@ module.exports = {
                       }
                     } catch (err) {
                       // if we failed treat it as muted  
-                      userIds.push(discordUser.name);
+                      userIds.push(discordUser.username);
                     }
                   }
                 }

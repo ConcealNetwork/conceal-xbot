@@ -41,4 +41,10 @@ Below is a list of all available commands.
     .giveaway list -> Lists all active giveaways.
     .giveaway delete -> Deletes an active giveaway.
 ```
+```css
+
+  #settings
+    .settings help -> Gives detailed info on settings commands.
+    .settings mute -> Mutes or unmutes the current users events.
+```
 
