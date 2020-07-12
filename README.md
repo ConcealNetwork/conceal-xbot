@@ -51,7 +51,7 @@ These are commands that enable the user to all the info related to CCX Discord s
 | Command  | Description |
 | ------------- | ------------- |
 | .users help  | Gives detailed info on users commands. |
-| .users all  | Counts all users on the server.. |
+| .users all  | Counts all users on the server. |
 | .users online  | Counts all online users on the server. |
 | .users offline  | Counts all offline users on the server. |
 | .users ban  | Bans a user from the server. |
@@ -90,11 +90,11 @@ These are commands related to rains. You need to have a CCX wallet registered wi
 
 | Command  | Description |
 | ------------- | ------------- |
-| [.rain help](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#rains) | Gives detailed info on giveaway commands. |
-| [.rain recent](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#rain-by-recent-activity) | Creates a new giveaway based on parameters. |
-| [.rain alltime](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#rain-by-alltime-activity) | Lists all active giveaways. |
-| [.rain period](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#rain-by-period-activity) | Deletes an active giveaway. |
-| [.rain reset](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#reseting-the-period) | Deletes an active giveaway. |
+| [.rain help](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#rains) | Gives detailed info on rain commands. |
+| [.rain recent](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#rain-by-recent-activity) | Rains upon the users that were active recently. |
+| [.rain alltime](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#rain-by-alltime-activity) | Rains upon the all time most active users. |
+| [.rain period](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#rain-by-period-activity) | Rains upon the users that are most active in the last period. |
+| [.rain reset](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/rains.md#reseting-the-period) | Resets the current recent period to 0. |
 
 ## wallet
 
@@ -105,7 +105,7 @@ These are commands related to your wallet. You need to have a CCX wallet registe
 | [.wallet help](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#wallet) | Gives detailed info on wallet commands. |
 | [.wallet register](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#register-a-wallet) | Registers a new wallet for the user. You need to specify a valid CCX address. |
 | [.wallet update](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#update-your-wallet) | Updates the current user wallet with new CCX address. |
-| [.wallet show](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#show-your-wallet-info) | Deletes an active giveaway. |
+| [.wallet show](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#show-your-wallet-info) | Gives the current wallet details for the user to DM. |
 | [.wallet deposit](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#showing-how-to-deposit) | Gives the user info about how to deposit to his/her wallet. |
 | [.wallet withdraw](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#withdraw-your-funds) | Allows you to withdraw your funds back to your wallet. |
 | [.wallet balance](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#showing-your-wallet-balance) | Shows the current user wallet balance. |
