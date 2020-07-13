@@ -12,6 +12,7 @@
     "app-root-path": "^3.0.0",
     "conceal-api": "^0.7.5",
     "discord.js": "^11.5.1",
+    "execa": "^4.0.3",
     "handlebars": "^4.7.6",
     "jsonfile": "^6.0.1",
     "just-handlebars-helpers": "^1.0.17",

@@ -7,6 +7,7 @@ let availableCommands = [
   "recent",
   "alltime",
   "period",
+  "random",
   "reset",
   "beer"
 ];
@@ -70,6 +71,9 @@ module.exports = {
             break;
           case 'period':
             users = await usersData.getActiveUsersByPeriod(count, [message.author.id]);
+            break;
+          case 'random':
+            users = await usersData.getRandomUsers(count, [message.author.id]);
             break;
         }
 

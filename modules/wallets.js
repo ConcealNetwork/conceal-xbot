@@ -4,6 +4,7 @@ const sqlite3 = require('sqlite3');
 const jsonfile = require('jsonfile');
 const CCXApi = require("conceal-api");
 const crypto = require("crypto");
+const execa = require('execa');
 const path = require('path');
 const fs = require('fs');
 
@@ -35,6 +36,21 @@ class WalletsData {
         console.log(`Failed to synchronize transactions: ${err}`);
       });
     }, config.wallet.syncInterval * 1000);
+
+    if (config.wallet.optimize) {
+      setInterval(() => {
+        // periodically optimize the wallet
+        (async () => {
+          try {
+            const { stdout } = await execa(config.wallet.optimize.execPath, ['--walletd-port=6061']);
+            console.log(stdout);
+          } catch (error) {
+            console.error(error);
+          }
+          //=> 'unicorns'
+        })();
+      }, config.wallet.optimize.interval * 3600 * 1000);
+    }
   }
 
   _isValidAddress = (str, len) => {
