@@ -13,7 +13,11 @@
     "address": "your_wallet_address",
     "syncInterval": 60,
     "rfcTimeout": 5,
-    "port": 6061
+    "port": 6061,
+    "optimize": {
+      "interval": 24,
+      "execPath": "c:\\Projects\\conceal-xbot\\wallet\\optimizer.exe"
+    }
   },
   "db": {
     "filename": "ccxbot.db"
