@@ -27,7 +27,7 @@ module.exports = {
       });
     }
 
-    if ((args[0] === "recent") || (args[0] === "alltime") || (args[0] === "period")) {
+    if ((args[0] === "recent") || (args[0] === "alltime") || (args[0] === "period") || (args[0] === "random")) {
       let users = null;
       let amount = 0;
       let count = 0;
