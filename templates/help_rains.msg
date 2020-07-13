@@ -44,6 +44,20 @@ Below is a list of all available commands.
   .rain period 10CCX 50u
 ```
 ```css
+#random
+
+.rain random -> Rains upon the selected number of random users.
+
+#parameters:
+  #amount: how much will be distributed among users.
+  #users: how many user we want to rain upon.
+
+  .rain random <amount> <users>
+
+#Example:
+  .rain random 10CCX 50u
+```
+```css
 #reset
 
 .rain reset -> Resets the period counters. Only admins can do it.
