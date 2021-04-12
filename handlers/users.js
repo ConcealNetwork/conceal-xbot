@@ -31,7 +31,7 @@ module.exports = {
     }
 
     if (args[0] === "all") {
-      message.guild.fetchMembers().then(data => {
+      message.guild.members.fetchMembers().then(data => {
         let count = data.members.filter(member => !member.user.bot).size;
         return message.reply(`There is currently ${count} users registered on the server.`);
       }).catch(err => {
@@ -40,7 +40,7 @@ module.exports = {
     }
 
     if (args[0] === "online") {
-      message.guild.fetchMembers().then(data => {
+      message.guild.members.fetchMembers().then(data => {
         let count = data.members.filter(member => !member.user.bot && (member.presence.status === "online")).size;
         return message.reply(`There is currently ${count} users online on the server.`);
       }).catch(err => {
@@ -49,7 +49,7 @@ module.exports = {
     }
 
     if (args[0] === "offline") {
-      message.guild.fetchMembers().then(data => {
+      message.guild.members.fetchMembers().then(data => {
         let count = data.members.filter(member => !member.user.bot && (member.presence.status !== "online")).size;
         return message.reply(`There is currently ${count} users offline on the server.`);
       }).catch(err => {
@@ -67,7 +67,7 @@ module.exports = {
       // Let's first check if we have a member and if we can kick them!
       // message.mentions.members is a collection of people that have been mentioned, as GuildMembers.
       // We can also support getting the member by ID, which would be args[0]
-      let member = message.mentions.members.first() || message.guild.members.get(args[1]);
+      let member = message.mentions.members.first() || message.guild.members.cache.get(args[1]);
       if (!member)
         return message.reply("Please mention a valid member of this server");
       if (!member.kickable)
@@ -112,7 +112,7 @@ module.exports = {
             let userNames = [];
 
             for (let i = 0; i < users.length; i++) {
-              let dUser = client.users.get(users[i].user_id) || await client.fetchUser(users[i].user_id);
+              let dUser = client.users.cache.get(users[i].user_id) || await client.users.fetch(users[i].user_id);
               if (i == 0) {
                 userNames.push(`\:first_place_medal: ${dUser.username}`);
               } else if (i == 1) {

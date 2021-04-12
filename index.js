@@ -66,14 +66,14 @@ client.on("ready", () => {
   client.user.setAvatar('./avatar.png').then(user => console.log(`Avatar is set!`)).catch(err => { console.error('Set avatar error', err) });
 
   // This event will run if the bot starts, and logs in, successfully.
-  console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
+  console.log(`Bot has started, with ${client.users.cache.size} users, in ${client.channels.cache.size} channels of ${client.guilds.cache.size} guilds.`);
   // Example of changing the bot's playing game to something useful. `client.user` is what the
   // docs refer to as the "ClientUser".
   client.user.setActivity(`Serving ${client.guilds.size} servers`);
 
   // we are ready so we can initialize the giveaways
   giveawaysData.initialize(function (data) {
-    let channel = client.channels.get(data.channel_id);
+    let channel = client.channels.cache.get(data.channel_id);
 
     if (channel) {
       channel.fetchMessage(data.message_id).then(message => {

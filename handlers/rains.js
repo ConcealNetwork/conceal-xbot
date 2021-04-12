@@ -87,7 +87,7 @@ module.exports = {
                 let userIds = [];
 
                 for (let i = 0; i < users.length; i++) {
-                  let discordUser = client.users.get(users[i].user_id) || await client.fetchUser(users[i].user_id);
+                  let discordUser = client.users.cache.get(users[i].user_id) || await client.users.fetch(users[i].user_id);
 
                   if (discordUser) {
                     payments.push({ userId: users[i].user_id, amount: payPart });
