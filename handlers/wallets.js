@@ -100,7 +100,12 @@ module.exports = {
 
           // use slightly more for the fee to avoid rounding errors
           if ((amount + (0.0011 * config.metrics.coinUnits)) <= data.balance) {
-            walletsData.sendPayment(message.author.id, message.author.id, amount / config.metrics.coinUnits).then(data => {
+            let payments = [{ 
+              userId: message.author.id, 
+              amount: amount / config.metrics.coinUnits 
+            }];
+
+            walletsData.sendPayments(message.author.id, payments).then(data => {
               message.author.send(`Success!\n***TX hash***: ${data.transactionHash}\n***Secret key***: ${data.transactionSecretKey}`);
             }).catch(err => {
               sendCommonError(`Error trying to withdraw funds: ${err}`);
