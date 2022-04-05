@@ -85,7 +85,7 @@ module.exports = {
               let channel = null;
 
               if (config.giveaways && config.giveaways.channel) {
-                channel = message.guild.channels.get(config.giveaways.channel);
+                channel = client.channels.cache.get(config.giveaways.channel);
               } else {
                 channel = message.channel;
               }
