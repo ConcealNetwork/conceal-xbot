@@ -317,7 +317,7 @@ class WalletsData {
           const opts = {
             transfers: transfers,
             fee: this.fee,
-            anonimity: 4,
+            anonimity: config.wallet.mixins,
             paymentId: paymentId
           }
 
