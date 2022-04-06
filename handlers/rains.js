@@ -87,33 +87,44 @@ module.exports = {
                 let userIds = [];
 
                 for (let i = 0; i < users.length; i++) {
-                  let discordUser = client.users.cache.get(users[i].user_id) || await client.users.fetch(users[i].user_id);
+                  let guildMember = null;
 
-                  if (discordUser) {
+                  try {
+                    guildMember = await message.guild.members.fetch(users[i].user_id);
+                  } catch(err) {
+                    // unknow user
+                    discordUser = null;
+                  }
+
+                  if (guildMember) {
                     payments.push({ userId: users[i].user_id, amount: payPart });
 
                     if (users[i].muted === 1) {
-                      userIds.push(discordUser.username);
+                      userIds.push(guildMember.user.username);
                     } else {
-                      userIds.push(`<@${payments[i].userId}>`);
+                      userIds.push(`<@${users[i].user_id}>`);
                     }
                   }
                 }
 
-                // send the payments to all the users at once and report
-                let txdata = await walletsData.sendPayments(message.author.id, payments);
-                message.author.send(`Success! ***TX hash***: ${txdata.transactionHash}\n***Secret key***: ${txdata.transactionSecretKey}`);
-                let chunks = Math.floor(userIds.length / 30);
-                var remainder = userIds.length % 30;
+                if (payments.length > 0) {
+                  // send the payments to all the users at once and report
+                  let txdata = await walletsData.sendPayments(message.author.id, payments);
+                  message.author.send(`Success! ***TX hash***: ${txdata.transactionHash}\n***Secret key***: ${txdata.transactionSecretKey}`);
+                  let chunks = Math.floor(userIds.length / 30);
+                  var remainder = userIds.length % 30;
 
-                if (remainder > 0) {
-                  chunks++;
-                }
+                  if (remainder > 0) {
+                    chunks++;
+                  }
 
-                // send in chunks to avoid limits
-                for (let i = 0; i < chunks; i++) {
-                  let chunkUsers = userIds.slice(i * 30, (i * 30) + 30);
-                  message.channel.send(`\:money_with_wings: ${payPart.toFixed(6)} CCX rained on users ${chunkUsers.join()}`);
+                  // send in chunks to avoid limits
+                  for (let i = 0; i < chunks; i++) {
+                    let chunkUsers = userIds.slice(i * 30, (i * 30) + 30);
+                    message.channel.send(`\:money_with_wings: ${payPart.toFixed(6)} CCX rained on users ${chunkUsers.join()}`);
+                  }
+                } else {
+                  message.channel.send(`No users were found that would fit the criteria`);
                 }
               })().catch(err => {
                 message.channel.send(`Error while raining on users: ${err}`);
