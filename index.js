@@ -73,18 +73,18 @@ client.on("ready", () => {
 
   // we are ready so we can initialize the giveaways
   giveawaysData.initialize(function (data) {
-    let channel = client.channels.cache.get(data.channel_id);
+    let channel = client.channels.cache.get(config.giveaways.channel);
 
     if (channel) {
-      channel.fetchMessage(data.message_id).then(message => {
-        message.reactions.forEach(reaction => {
+      channel.messages.fetch(data.message_id).then(message => {
+        message.reactions.cache.forEach(reaction => {
           if (reaction.emoji.identifier == "%F0%9F%8E%89") {
-            reaction.fetchUsers().then(usersList => {
+            reaction.users.fetch().then(usersList => {
               // exclude all bots from the list of users
               let gaUsers = usersList.filter(user => !user.bot);
 
               // call the handler for finishing the giveaway
-              giveaways.finishGiveaway(giveawaysData, walletsData, settingsData, message, gaUsers.array());
+              giveaways.finishGiveaway(giveawaysData, walletsData, settingsData, client, message, gaUsers.array());
             }).catch(err => {
               console.error('Failed to fetch reaction users', err);
             });

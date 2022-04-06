@@ -86,7 +86,7 @@ module.exports = {
     if (args[0] === "ban") {
       // Most of this command is identical to kick, except that here we'll only let admins do it.
       // In the real world mods could ban too, but this is just an example, right? ;)
-      if (!message.member.roles.some(r => ["admins"].includes(r.name)))
+      if (!message.member.roles.cache.some(r => ["admins"].includes(r.name)))
         return message.reply("Sorry, you don't have permissions to use this!");
 
       let member = message.mentions.members.first();

@@ -146,7 +146,7 @@ module.exports = {
         let giveawayId = parseInt(args[1]);
 
         giveawaysData.getGiveawayByRowId(giveawayId).then(giveawayData => {
-          if (giveawayData.user_id !== message.author.id) {
+          if ((giveawayData.user_id !== message.author.id) && (!message.member.roles.cache.some(r => ["admins", "mods"].includes(r.name)))) {
             message.channel.send('You cannot delete giveaways from other users.');
           } else {
             giveawaysData.finishGiveaway(giveawayId).then(finishedData => {
@@ -161,7 +161,7 @@ module.exports = {
       }
     }
   },
-  finishGiveaway: function (giveawaysData, walletsData, settingsData, message, users) {
+  finishGiveaway: function (giveawaysData, walletsData, settingsData, client, message, users) {
     let getRandom = (arr, n) => {
       var result = new Array(n),
         len = arr.length,
@@ -182,7 +182,7 @@ module.exports = {
         let channel = null;
 
         if (config.giveaways && config.giveaways.channel) {
-          channel = message.guild.channels.get(config.giveaways.channel);
+          channel = client.channels.cache.get(config.giveaways.channel);
         } else {
           channel = message.channel;
         }
