@@ -1,10 +1,10 @@
+const { spawn } = require('node:child_process'); 
 const appRoot = require('app-root-path');
 const config = require("../config.json");
 const sqlite3 = require('sqlite3');
 const jsonfile = require('jsonfile');
 const CCXApi = require("conceal-api");
 const crypto = require("crypto");
-const execa = require('execa');
 const path = require('path');
 const fs = require('fs');
 
@@ -49,8 +49,7 @@ class WalletsData {
         // periodically optimize the wallet
         (async () => {
           try {
-            const { stdout } = await execa(config.wallet.optimize.execPath, ['--walletd-port=6061']);
-            console.log(stdout);
+            let optimizer = spawn(config.wallet.optimize.execPath, ['--walletd-port=6061']);  
           } catch (error) {
             console.error(error);
           }
