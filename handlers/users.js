@@ -31,30 +31,32 @@ module.exports = {
     }
 
     if (args[0] === "all") {
-      message.guild.members.fetchMembers().then(data => {
-        let count = data.members.filter(member => !member.user.bot).size;
-        return message.reply(`There is currently ${count} users registered on the server.`);
-      }).catch(err => {
-        return message.channel.send(`Error trying to get user count: ${err}`);
-      });
+      let count = message.guild.members.cache.filter(member => !member.user.bot).size;
+      return message.reply(`There is currently ${count} users registered on the server.`);
     }
 
     if (args[0] === "online") {
-      message.guild.members.fetchMembers().then(data => {
-        let count = data.members.filter(member => !member.user.bot && (member.presence.status === "online")).size;
-        return message.reply(`There is currently ${count} users online on the server.`);
-      }).catch(err => {
-        return message.channel.send(`Error trying to get user count: ${err}`);
-      });
+      let count = message.guild.members.cache.filter(member => {
+        if (member.presence) {
+          return !member.user.bot && (member.presence.status === "online")
+        } else {
+          return false;
+        }
+      }).size;
+      
+      return message.reply(`There is currently ${count} users online on the server.`);
     }
 
     if (args[0] === "offline") {
-      message.guild.members.fetchMembers().then(data => {
-        let count = data.members.filter(member => !member.user.bot && (member.presence.status !== "online")).size;
-        return message.reply(`There is currently ${count} users offline on the server.`);
-      }).catch(err => {
-        return message.channel.send(`Error trying to get user count: ${err}`);
-      });
+      let count = message.guild.members.cache.filter(member => {
+        if (member.presence) {
+          return !member.user.bot && (member.presence.status !== "online")
+        } else {
+          return true;
+        }
+      }).size;
+
+      return message.reply(`There is currently ${count} users offline on the server.`);
     }
 
     if (args[0] === "kick") {
@@ -103,8 +105,6 @@ module.exports = {
     }
 
     if (args[0] === "list") {
-
-
       if ((args[1] === "alltime") || (args[1] === "period") || (args[1] === "tippers")) {
 
         function printUsernames(users) {
