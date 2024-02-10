@@ -10,8 +10,8 @@
   "license": "MIT",
   "dependencies": {
     "app-root-path": "^3.0.0",
-    "conceal-api": "^0.7.5",
-    "discord.js": "^12.5.3",
+    "conceal-api": "^0.8.8",
+    "discord.js": "^14.14.1",
     "execa": "^4.1.0",
     "handlebars": "^4.7.7",
     "jsonfile": "^6.1.0",
@@ -21,6 +21,6 @@
     "request": "^2.88.2",
     "shortid": "^2.2.16",
     "spelling": "^2.0.2",
-    "sqlite3": "^4.2.0"
+    "sqlite3": "^5.1.7"
   }
 }

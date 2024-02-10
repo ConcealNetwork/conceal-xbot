@@ -35,7 +35,12 @@ let db = new sqlite3.Database(path.join(appRoot.path, config.db.filename), sqlit
 // This is your client. Some people call it `bot`, some people call it `self`, 
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
 // this is what we're refering to. Your client.
-const client = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
+const client = new Discord.Client({ 
+  partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
+  intents: Object.keys(Discord.GatewayIntentBits).map((a)=>{
+    return Discord.GatewayIntentBits[a]
+  })
+});
 
 // initialize data models
 const usersData = new UsersData(db);
@@ -144,7 +149,7 @@ client.on('messageReactionAdd', (reaction, user) => {
 });
 
 
-client.on("message", async message => {
+client.on("messageCreate", async message => {
   // This event will run on every single message received, from any channel or DM.
 
   // It's good practice to ignore other bots. This also makes your bot ignore itself

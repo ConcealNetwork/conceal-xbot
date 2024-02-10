@@ -6,11 +6,50 @@ let availableCommands = [
   "help",
   "recent",
   "alltime",
+  "channel",
   "period",
   "random",
   "reset",
   "beer"
 ];
+
+function getAllChannelUsers(client, count, channelId, authorId) {  
+  return new Promise((resolve, reject) => {
+    let pureChannelId = channelId.substring(
+      channelId.indexOf("<") + 1, 
+      channelId.lastIndexOf(">")
+    );
+
+    // get the channel object from the id of the requested channel
+    let channel = client.channels.cache.get(pureChannelId.replace('#',''));
+    let addCounter = 0;
+    let allCounter = 0;
+    let users = [];
+
+    if (channel.members.size > 0) {
+      channel.members.each(member => {
+        if (authorId != member.user.id ) {
+          let user = {
+            user_id: member.user.id 
+          };
+    
+          // add user to target list
+          users.push(user);
+          addCounter++;
+        }
+
+        // inc counter
+        allCounter++;
+  
+        if ((addCounter >= count) || (allCounter >= channel.members.size)) {
+          resolve(users);
+        }
+      });  
+    } else {
+      resolve(users);
+    }
+  });
+}
 
 module.exports = {
   executeCommand: async function (usersData, walletsData, settingsData, client, message, command, args) {
@@ -27,7 +66,7 @@ module.exports = {
       });
     }
 
-    if ((args[0] === "recent") || (args[0] === "alltime") || (args[0] === "period") || (args[0] === "random")) {
+    if ((args[0] === "recent") || (args[0] === "alltime") || (args[0] === "period") || (args[0] === "random") || (args[0] === "channel")) {
       let users = null;
       let amount = 0;
       let count = 0;
@@ -36,16 +75,29 @@ module.exports = {
         return message.reply('You need to specify an ammount to rain');
       }
 
-      if (args.length < 3) {
-        count = 10;
-      } else {
+      // initialize vars
+      let countIndex = 2;
+      let defCount = 100;
+      let argCount = 3;
 
+      if (args[0] === "channel") {
+        countIndex = 3;
+        argCount = 4;
+      }
+
+      if (args.length < argCount) {
+        count = 10;
+      } else {        
         try {
-          count = Math.min(parseInt(args[2].replace(/u/g, '')), 100);
+          count = Math.min(parseInt(args[countIndex].replace(/u/g, '')), defCount);
           if (!count || count <= 0) throw "Number of users cannot be 0 or negative";
         } catch (err) {
           return message.reply(err);
         }
+      }
+
+      if ((args[0] === "channel") && (args.length < 3)) {
+        return message.reply('You need to specify a valid channel');
       }
 
       try {
@@ -75,6 +127,9 @@ module.exports = {
           case 'random':
             users = await usersData.getRandomUsers(count, [message.author.id]);
             break;
+          case 'channel':
+            users = await getAllChannelUsers(client, count, args[2], message.author.id);
+            break;
         }
 
         if (users.length > 0) {
@@ -93,7 +148,7 @@ module.exports = {
                     guildMember = await message.guild.members.fetch(users[i].user_id);
                   } catch(err) {
                     // unknow user
-                    discordUser = null;
+                    guildMember = null;
                   }
 
                   if (guildMember) {

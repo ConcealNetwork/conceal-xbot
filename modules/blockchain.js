@@ -2,8 +2,14 @@ const config = require("../config.json");
 const CCXApi = require("conceal-api");
 
 class BlockchainData {
-  constructor() {
-    this.CCX = new CCXApi("http://127.0.0.1", config.wallet.port, config.daemon.port, (config.wallet.rfcTimeout || 5) * 1000);
+  constructor() {    
+    this.CCX = new CCXApi({
+      daemonHost: "http://127.0.0.1",
+      walletHost: "http://127.0.0.1",
+      walletRpcPort: config.wallet.port, 
+      daemonRpcPort: config.daemon.port, 
+      timeout: (config.wallet.rfcTimeout || 5) * 1000
+    });
   }
 
   getInfo = () => {
