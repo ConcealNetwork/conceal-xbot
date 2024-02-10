@@ -13,7 +13,7 @@ let availableCommands = [
   "beer"
 ];
 
-function getAllChannelUsers(client, count, channelId, authorId) {  
+function getAllChannelUsers(client, usersData, count, channelId, authorId) {  
   return new Promise((resolve, reject) => {
     let pureChannelId = channelId.substring(
       channelId.indexOf("<") + 1, 
@@ -22,27 +22,24 @@ function getAllChannelUsers(client, count, channelId, authorId) {
 
     // get the channel object from the id of the requested channel
     let channel = client.channels.cache.get(pureChannelId.replace('#',''));
-    let addCounter = 0;
-    let allCounter = 0;
+    let counter = 0;
     let users = [];
 
     if (channel.members.size > 0) {
-      channel.members.each(member => {
+      channel.members.every(member => {
         if (authorId != member.user.id ) {
-          let user = {
-            user_id: member.user.id 
-          };
-    
           // add user to target list
-          users.push(user);
-          addCounter++;
+          users.push(`'${member.user.id}'`);
         }
 
         // inc counter
-        allCounter++;
+        counter++;
   
-        if ((addCounter >= count) || (allCounter >= channel.members.size)) {
-          resolve(users);
+        if (counter >= channel.members.size) {
+          resolve(usersData.getUsersWithWallet(users, count));
+          return false;
+        } else {
+          return true;
         }
       });  
     } else {
@@ -128,7 +125,7 @@ module.exports = {
             users = await usersData.getRandomUsers(count, [message.author.id]);
             break;
           case 'channel':
-            users = await getAllChannelUsers(client, count, args[2], message.author.id);
+            users = await getAllChannelUsers(client, usersData, count, args[2], message.author.id);
             break;
         }
 

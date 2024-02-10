@@ -78,6 +78,28 @@ class UsersData {
   }
 
   /************************************************************
+   *  Function that uses provided users on the server         *
+   *  and checks that they have the wallet registered.        *
+   ***********************************************************/
+  getUsersWithWallet = (users, count) => {
+    return new Promise((resolve, reject) => {
+      let includeAsString = users.join(',');
+
+      this.db.all(`SELECT user_activity.user_id, COALESCE(settings.muted, 0) as muted from user_activity 
+                   LEFT JOIN settings on settings.user_id = user_activity.user_id
+                   where user_activity.user_id in (select wallets.user_id from wallets where wallets.user_id IN (${includeAsString})) 
+                   ORDER BY RANDOM() LIMIT ?;`,
+        [count], function (err, rows) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(rows);
+          }
+        });
+    });
+  }
+
+  /************************************************************
    *  Function that selects "N" most active users of all time *
    *  from the server and checks that they have the wallet    *
    *  registered.                                             *

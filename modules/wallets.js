@@ -269,7 +269,6 @@ class WalletsData {
    *  and all giveaways and sums it all together to get balance *
    *************************************************************/
   getBalance = (userId) => {
-
     let doGetTransactionsSum = (paymentId) => {
       return new Promise((resolve, reject) => {
         this.db.get('SELECT SUM(amount) as "balance" FROM transactions WHERE payment_id = ?', [paymentId], (err, balance_row) => {
