@@ -58,6 +58,22 @@ Below is a list of all available commands.
   .rain random 10CCX 50u
 ```
 ```css
+```css
+#channel
+
+.rain channel -> Rains upon the users of specified channel.
+
+#parameters:
+  #amount: how much will be distributed among users.
+  #channel: then channel you want to rain upon.
+  #users: may users we want to rain upon (if ommited it raind either upon all users or 100 max selected at random).
+
+  .rain channel <amount> <channel> <users>
+
+#Example:
+  .rain channel 10CCX #general 50u
+```
+```css
 #reset
 
 .rain reset -> Resets the period counters. Only admins can do it.
