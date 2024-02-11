@@ -58,7 +58,6 @@ Below is a list of all available commands.
   .rain random 10CCX 50u
 ```
 ```css
-```css
 #channel
 
 .rain channel -> Rains upon the users of specified channel.
