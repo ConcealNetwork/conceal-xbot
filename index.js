@@ -325,7 +325,7 @@ client.on("messageCreate", async message => {
         message.author.send(source);
       });
 
-      if (partNum < 2) {
+      if (partNum < 3) {
         setTimeout(() => {
           sendNextHelpPart(partNum + 1)
         }, 200);
