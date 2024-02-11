@@ -47,7 +47,8 @@ module.exports = {
             },
           };
 
-          message.channel.send({ embed: marketsEmbed });
+          // send the embed back to the channel as message
+          message.channel.send({ embeds: [marketsEmbed] });
         });
       }).catch(err => {
         message.channel.send(`Failed to get exchanges: ${err}`);

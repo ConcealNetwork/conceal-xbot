@@ -54,7 +54,7 @@ module.exports = {
           };
 
           // send resply back to the channel
-          message.channel.send({ embed: marketsEmbed });
+          message.channel.send({ embeds: [marketsEmbed] });
         });
       }).catch(err => {
         message.channel.send(`Failed to get markets data: ${err}`);

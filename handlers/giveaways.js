@@ -97,7 +97,7 @@ module.exports = {
                 message.delete().catch(O_o => { });
               }
 
-              channel.send({ embed: giveawayEmbed }).then(newMsg => {
+              channel.send({ embeds: [giveawayEmbed] }).then(newMsg => {
                 giveawaysData.createGiveaway(message.author.id, newMsg.channel.id, newMsg.id, timespan, winners, amount, title).then(data => {
                   newMsg.react('🎉');
 
@@ -214,14 +214,14 @@ module.exports = {
             let footerText = `${winners.length} winners paid. | Finished at:`;
             const gaEmbed = giveawaysData.createEmbedMessage(finishedData.description, embedDescription, footerText);
             message.delete().catch(O_o => { });
-            channel.send({ embed: gaEmbed });
+            channel.send({ embeds: [gaEmbed] });
           });
         } else {
           let embedDescription = 'There were no valid winners for the giveaway.';
           let footerText = `0 winners paid. | Finished at:`;
           const gaEmbed = giveawaysData.createEmbedMessage(finishedData.description, embedDescription, footerText);
           message.delete().catch(O_o => { });
-          channel.send({ embed: gaEmbed });
+          channel.send({ embeds: [gaEmbed] });
         }
       })().catch(err => console.error('giveawaysData.finishGiveaway async error', err));
     }).catch(err => console.error('giveawaysData.finishGiveaway error', err));
