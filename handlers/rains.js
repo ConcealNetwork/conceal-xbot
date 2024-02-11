@@ -13,6 +13,16 @@ let availableCommands = [
   "beer"
 ];
 
+function checkUserRoleIsExcluded(member, exclusions) {
+  for (let i = 0; i < exclusions.length; i++) {
+    if (member.roles.cache.has(exclusions[i])) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 function getAllChannelUsers(client, usersData, count, channelId, authorId) {  
   return new Promise((resolve, reject) => {
     let pureChannelId = channelId.substring(
@@ -26,8 +36,8 @@ function getAllChannelUsers(client, usersData, count, channelId, authorId) {
     let users = [];
 
     if (channel.members.size > 0) {
-      channel.members.every(member => {
-        if (authorId != member.user.id ) {
+      channel.members.every(member => {    
+        if ((authorId != member.user.id ) && (!member.user.bot) && (!checkUserRoleIsExcluded(member, config.rain.exclusions.channel))) {
           // add user to target list
           users.push(`'${member.user.id}'`);
         }
@@ -83,7 +93,7 @@ module.exports = {
       }
 
       if (args.length < argCount) {
-        count = 10;
+        count = (args[0] === "channel") ? 100 : 10;
       } else {        
         try {
           count = Math.min(parseInt(args[countIndex].replace(/u/g, '')), defCount);
