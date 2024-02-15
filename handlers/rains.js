@@ -10,6 +10,7 @@ let availableCommands = [
   "period",
   "random",
   "reset",
+  "role",
   "beer"
 ];
 
@@ -58,6 +59,40 @@ function getAllChannelUsers(client, usersData, count, channelId, authorId) {
   });
 }
 
+function getAllRoleUsers(roles, usersData, count, roleId, authorId) {  
+  return new Promise((resolve, reject) => {
+    let pureRoleId = roleId.substring(
+      roleId.indexOf("<") + 1, 
+      roleId.lastIndexOf(">")
+    );
+
+    let userRole = roles.cache.get(pureRoleId.replace('@&',''));
+    let counter = 0;
+    let users = [];
+
+    if (userRole.members.size > 0) {
+      userRole.members.every(member => {    
+        if ((authorId != member.user.id ) && (!member.user.bot)) {
+          // add user to target list
+          users.push(`'${member.user.id}'`);
+        }
+
+        // inc counter
+        counter++;
+  
+        if (counter >= userRole.members.size) {
+          resolve(usersData.getUsersWithWallet(users, count));
+          return false;
+        } else {
+          return true;
+        }
+      });  
+    } else {
+      resolve(users);
+    }
+  });
+}
+
 module.exports = {
   executeCommand: async function (usersData, walletsData, settingsData, client, message, command, args) {
     if (availableCommands.indexOf(args[0]) == -1) {
@@ -73,7 +108,7 @@ module.exports = {
       });
     }
 
-    if ((args[0] === "recent") || (args[0] === "alltime") || (args[0] === "period") || (args[0] === "random") || (args[0] === "channel")) {
+    if ((args[0] === "recent") || (args[0] === "alltime") || (args[0] === "period") || (args[0] === "random") || (args[0] === "channel") || (args[0] === "role")) {
       let users = null;
       let amount = 0;
       let count = 0;
@@ -87,13 +122,13 @@ module.exports = {
       let defCount = 100;
       let argCount = 3;
 
-      if (args[0] === "channel") {
+      if ((args[0] === "channel") || (args[0] === "role")) {
         countIndex = 3;
         argCount = 4;
       }
 
       if (args.length < argCount) {
-        count = (args[0] === "channel") ? 100 : 10;
+        count = ((args[0] === "channel") || (args[0] === "role"))  ? 100 : 10;
       } else {        
         try {
           count = Math.min(parseInt(args[countIndex].replace(/u/g, '')), defCount);
@@ -136,6 +171,9 @@ module.exports = {
             break;
           case 'channel':
             users = await getAllChannelUsers(client, usersData, count, args[2], message.author.id);
+            break;
+          case 'role':
+            users = await getAllRoleUsers(message.guild.roles, usersData, count, args[2], message.author.id);
             break;
         }
 

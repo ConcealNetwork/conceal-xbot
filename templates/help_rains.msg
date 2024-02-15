@@ -64,13 +64,28 @@ Below is a list of all available commands.
 
 #parameters:
   #amount: how much will be distributed among users.
-  #channel: then channel you want to rain upon.
+  #channel: the channel users you want to rain upon.
   #users: may users we want to rain upon (if ommited it raind either upon all users or 100 max selected at random).
 
   .rain channel <amount> <channel> <users>
 
 #Example:
   .rain channel 10CCX #general 50u
+```
+```css
+#role
+
+.rain role -> Rains upon the users of specified role.
+
+#parameters:
+  #amount: how much will be distributed among users.
+  #role: the role users you want to rain upon.
+  #users: may users we want to rain upon (if ommited it raind either upon all users or 100 max selected at random).
+
+  .rain role <amount> <role> <users>
+
+#Example:
+  .rain role 10CCX @crew 50u
 ```
 ```css
 #reset
