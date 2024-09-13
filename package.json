@@ -11,7 +11,7 @@
   "dependencies": {
     "app-root-path": "^3.0.0",
     "conceal-api": "^0.8.8",
-    "discord.js": "^14.15.3",
+    "discord.js": "^14.16.2",
     "handlebars": "^4.7.7",
     "jsonfile": "^6.1.0",
     "just-handlebars-helpers": "^1.0.18",
