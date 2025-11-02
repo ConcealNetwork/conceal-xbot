@@ -1,106 +1,105 @@
 ```css
-Below is a list of all available commands.
+List of all available commands.
 ```
 ```css
 #recent
 
-.rain recent -> Rains upon the users that were active recently.
+Rains upon recent active users.
 
 #parameters:
-  #amount: how much will be distributed among users.
+  #amount: amount distributed among users.
   #users: how many user we want to rain upon.
 
   .rain recent <amount> <users>
 
-#Example:
+#Ex:
   .rain recent 10CCX 50u
 ```
 ```css
 #alltime
 
-.rain alltime -> Rains upon the all time most active users.
+Rains upon the all time most active users.
 
 #parameters:
-  #amount: how much will be distributed among users.
+  #amount: amount distributed among users.
   #users: how many user we want to rain upon.
 
   .rain alltime <amount> <users>
 
-#Example:
+#Ex:
   .rain alltime 10CCX 50u
 ```
 ```css
 #period
 
-.rain period -> Rains upon the users that are most active in the last period.
+Rains upon users most active in the last period.
 
 #parameters:
-  #amount: how much will be distributed among users.
+  #amount: amount distributed among users.
   #users: how many user we want to rain upon.
 
   .rain period <amount> <users>
 
-#Example:
+#Ex:
   .rain period 10CCX 50u
 ```
 ```css
 #random
 
-.rain random -> Rains upon the selected number of random users.
+Rains upon random n users.
 
 #parameters:
-  #amount: how much will be distributed among users.
-  #users: how many user we want to rain upon.
+  #amount: amount distributed among users.
+  #n: how many user we want to rain upon.
 
-  .rain random <amount> <users>
+  .rain random <amount> <n>
 
-#Example:
+#Ex:
   .rain random 10CCX 50u
 ```
 ```css
 #channel
 
-.rain channel -> Rains upon the users of specified channel.
+Rains upon the users of specified channel.
 
 #parameters:
-  #amount: how much will be distributed among users.
+  #amount: amount distributed among users.
   #channel: the channel users you want to rain upon.
-  #users: may users we want to rain upon (if ommited it raind either upon all users or 100 max selected at random).
+  #users: users we want to rain upon (if ommited it will rain upon all users up to 100max random).
 
   .rain channel <amount> <channel> <users>
 
-#Example:
+#Ex:
   .rain channel 10CCX #general 50u
 ```
 ```css
 #role
 
-.rain role -> Rains upon the users of specified role.
+Rains upon the users of specified role.
 
 #parameters:
-  #amount: how much will be distributed among users.
+  #amount: amount distributed among users.
   #role: the role users you want to rain upon.
-  #users: may users we want to rain upon (if ommited it raind either upon all users or 100 max selected at random).
+  #users: users we want to rain upon (if ommited it will rain upon all users up to 100max random).
 
   .rain role <amount> <role> <users>
 
-#Example:
+#Ex:
   .rain role 10CCX @crew 50u
 ```
 ```css
 #reset
 
-.rain reset -> Resets the period counters. Only admins can do it.
+Resets the period counters. Admins feature.
 
-#Example:
+#Ex:
   .rain reset
 ```
 ```css
 #beer
 
-.rain beer -> Rains some beer for hot days.
+Rains some beer for hot days.
 
-#Example:
+#Ex:
   .rain beer
 ```
-
