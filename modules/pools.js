@@ -1,34 +1,21 @@
-const request = require("request");
+const axios = require("axios");
+const https = require('https');
 
 module.exports = {
   getPoolsList: function () {
-    return new Promise((resolve, reject) => {
-      var packetData = {
-        uri: "https://explorer.conceal.network/services/pools/list",
-        strictSSL: false,
-        method: "GET",
-        json: true
-      };
-
-      request(packetData, function (err, res, data) {
-        if (!err) resolve(data);
-        else reject(err);
-      });
-    });
+    return axios.get("https://explorer.conceal.network/services/pools/list", {
+      httpsAgent: new https.Agent({
+        rejectUnauthorized: false
+      })
+    }).then(response => response.data)
+      .catch(err => Promise.reject(err));
   },
   getPoolsInfo: function () {
-    return new Promise((resolve, reject) => {
-      var packetData = {
-        uri: "https://explorer.conceal.network/services/pools/data",
-        strictSSL: false,
-        method: "GET",
-        json: true
-      };
-
-      request(packetData, function (err, res, data) {
-        if (!err) resolve(data);
-        else reject(err);
-      });
-    });
+    return axios.get("https://explorer.conceal.network/services/pools/data", {
+      httpsAgent: new https.Agent({
+        rejectUnauthorized: false
+      })
+    }).then(response => response.data)
+      .catch(err => Promise.reject(err));
   }
 };
