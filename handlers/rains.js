@@ -102,7 +102,7 @@ module.exports = {
 
     if (args[0] === "help") {
 
-      fs.readFile('./templates/help_rains.msg', 'utf8', function (err, source) {
+      fs.readFile('./templates/help_rain.msg', 'utf8', function (err, source) {
         if (err) throw err;
         utils.sendHelpContent(message, source);
       });
