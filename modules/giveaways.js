@@ -1,4 +1,4 @@
-const config = require("../config.json");
+const config = require('../config.json');
 const sqlite3 = require('sqlite3');
 const shortid = require('shortid');
 const moment = require('moment');
@@ -18,23 +18,23 @@ class GiveawaysData {
     setTimeout(() => {
       onEventCallback(data);
     }, timeout);
-  }
+  };
 
   /*********************************************************** *
-  *  Initializes the currently active giveaways and add events *
-  *************************************************************/
+   *  Initializes the currently active giveaways and add events *
+   *************************************************************/
   initialize = (onEventCallback) => {
     let setSingleEvent = this._setSingleEvent;
     this.onGiveawayEvent = onEventCallback;
 
-    this.db.each("SELECT * from giveaways where is_active = 1", function (err, row) {
+    this.db.each('SELECT * from giveaways where is_active = 1', function (err, row) {
       setSingleEvent(row, onEventCallback);
     });
-  }
+  };
 
   /************************************************************
-  *  creates an embed for the discord message for giveaway    *
-  ************************************************************/
+   *  creates an embed for the discord message for giveaway    *
+   ************************************************************/
   createEmbedMessage = (title, description, footer) => {
     return {
       color: 0x0099ff,
@@ -43,52 +43,52 @@ class GiveawaysData {
       author: {
         name: 'Conceal Network',
         icon_url: 'https://conceal.network/images/branding/logo.png',
-        url: 'https://discord.gg/YbpHVSd'
+        url: 'https://discord.gg/YbpHVSd',
       },
       description: description,
       timestamp: moment.utc().format('LLLL'),
       footer: {
         text: footer,
-        icon_url: 'https://conceal.network/images/branding/logo.png'
-      }
+        icon_url: 'https://conceal.network/images/branding/logo.png',
+      },
     };
-  }
+  };
 
   /************************************************************
    *  Gets a giveaway by row id where it is in the DB         *
    ***********************************************************/
   getGiveawayByRowId = (rowId) => {
     return new Promise((resolve, reject) => {
-      this.db.get("SELECT * from giveaways where id = ?", [rowId], function (err, row) {
+      this.db.get('SELECT * from giveaways where id = ?', [rowId], function (err, row) {
         if (!err && row) resolve(row);
-        else reject("Failed to get Giveaway");
+        else reject('Failed to get Giveaway');
       });
     });
-  }
+  };
 
   /************************************************************
    *  Gets a giveaway by message id to which it is attached   *
    ***********************************************************/
   getGiveawayByMessageId = (messageId) => {
     return new Promise((resolve, reject) => {
-      this.db.get("SELECT * from giveaways where message_id = ?", [messageId], function (err, row) {
+      this.db.get('SELECT * from giveaways where message_id = ?', [messageId], function (err, row) {
         if (!err && row) resolve(row);
-        else reject("Failed to get giveaway");
+        else reject('Failed to get giveaway');
       });
     });
-  }
+  };
 
   /************************************************************
    *  Lists all active giveaways from all users               *
    ***********************************************************/
   listGiveaways = () => {
     return new Promise((resolve, reject) => {
-      this.db.all("SELECT * from giveaways where is_active = 1", function (err, rows) {
+      this.db.all('SELECT * from giveaways where is_active = 1', function (err, rows) {
         if (!err && rows) resolve(rows);
-        else reject("Failed to list giveaways");
+        else reject('Failed to list giveaways');
       });
     });
-  }
+  };
 
   /************************************************************
    *  Finishes the giveaway. Basically it just sets the flag  *
@@ -98,17 +98,23 @@ class GiveawaysData {
     return new Promise((resolve, reject) => {
       let getGiveawayByMessageId = this.getGiveawayByMessageId;
 
-      this.db.run('UPDATE giveaways SET is_active = 0 WHERE  message_id = ?', [messageId], function (err) {
-        if (!err) {
-          getGiveawayByMessageId(messageId).then(data => {
-            resolve(data);
-          }).catch(err => reject(err));
-        } else {
-          reject(err);
+      this.db.run(
+        'UPDATE giveaways SET is_active = 0 WHERE  message_id = ?',
+        [messageId],
+        function (err) {
+          if (!err) {
+            getGiveawayByMessageId(messageId)
+              .then((data) => {
+                resolve(data);
+              })
+              .catch((err) => reject(err));
+          } else {
+            reject(err);
+          }
         }
-      });
+      );
     });
-  }
+  };
 
   /************************************************************
    *  Creates a new giveaway based on parameters. Sets an     *
@@ -116,25 +122,39 @@ class GiveawaysData {
    ***********************************************************/
   createGiveaway = (userId, channelId, messageId, timespan, winners, amount, description) => {
     return new Promise((resolve, reject) => {
-      let timestamp = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+      let timestamp = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
       let getGiveawayByMessageId = this.getGiveawayByMessageId;
       let onGiveawayEvent = this.onGiveawayEvent;
       let setSingleEvent = this._setSingleEvent;
 
-      this.db.run(`INSERT INTO giveaways(user_id, channel_id, message_id, creation_ts, description, timespan, amount, winners, is_active) 
+      this.db.run(
+        `INSERT INTO giveaways(user_id, channel_id, message_id, creation_ts, description, timespan, amount, winners, is_active) 
                                VALUES(?,?,?,?,?,?,?,?,1)`,
-        [userId, channelId, messageId, timestamp, description, timespan, amount * config.metrics.coinUnits, winners], function (err) {
+        [
+          userId,
+          channelId,
+          messageId,
+          timestamp,
+          description,
+          timespan,
+          amount * config.metrics.coinUnits,
+          winners,
+        ],
+        function (err) {
           if (err) {
             reject(err);
           } else {
-            getGiveawayByMessageId(messageId).then(row => {
-              setSingleEvent(row, onGiveawayEvent);
-              resolve(row);
-            }).catch(err => reject(err));
+            getGiveawayByMessageId(messageId)
+              .then((row) => {
+                setSingleEvent(row, onGiveawayEvent);
+                resolve(row);
+              })
+              .catch((err) => reject(err));
           }
-        });
+        }
+      );
     });
-  }
+  };
 }
 
 module.exports = GiveawaysData;
