@@ -67,7 +67,7 @@ module.exports = {
         .then((filename) => {
           message.channel.send({
             content: 'CCX price chart',
-            files: [{ attachment: filename, name: 'pricechart.png' }]
+            files: [{ attachment: filename, name: 'pricechart.png' }],
           });
         })
         .catch((err) => {
