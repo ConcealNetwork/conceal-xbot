@@ -35,5 +35,8 @@
     "exclusions": {
       "channel": ["channel 1 id", "channel 2 id"]
     }
-  }  
+  },
+  "social": {
+    "channel": "twitter channel ID"
+  }
 }

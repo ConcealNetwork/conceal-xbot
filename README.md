@@ -111,4 +111,13 @@ These are commands related to your wallet. You need to have a CCX wallet registe
 | [.wallet balance](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#showing-your-wallet-balance) | Shows the current user wallet balance. |
 | [.wallet paymentid](https://github.com/ConcealNetwork/conceal-xbot/blob/master/docs/wallet.md#generating-a-payment-id) | Generates a paymentId. |
 
+## social
+
+These commands allow you to access social media links related to Conceal Network. Click on the command to see how to use it.
+
+| Command | Description |
+|---------|-------------|
+| .social help | Shows detailed info on social commands. |
+| .social latest | Displays the latest 3 tweets from the Conceal Network Twitter account. |
+| .social tweet <id> | Provides the URL for a specific tweet by ID. |
 
