@@ -5,11 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "biome lint check .",
-    "lint:fix": "biome lint --write .",
-    "format": "biome format --check .",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format .",
     "format:fix": "biome format --write ."
-
   },
   "author": "Taegus",
   "license": "MIT",

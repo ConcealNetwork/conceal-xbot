@@ -3,10 +3,10 @@ const Handlebars = require('handlebars');
 const pools = require('../modules/pools.js');
 const utils = require('../helpers/utils.js');
 
-let availableCommands = ['help', 'info', 'list'];
+const availableCommands = ['help', 'info', 'list'];
 
 module.exports = {
-  executeCommand: function (message, command, args) {
+  executeCommand: (message, command, args) => {
     if (availableCommands.indexOf(args[0]) == -1) {
       // no valid command was found notify the user about it
       return message.channel.send(
@@ -15,7 +15,7 @@ module.exports = {
     }
 
     if (args[0] === 'help') {
-      fs.readFile('./templates/help_pools.msg', 'utf8', function (err, source) {
+      fs.readFile('./templates/help_pools.msg', 'utf8', (err, source) => {
         if (err) throw err;
         utils.sendHelpContent(message, source);
       });
@@ -26,7 +26,7 @@ module.exports = {
       pools
         .getPoolsInfo()
         .then((data) => {
-          fs.readFile('./templates/pools_info.msg', 'utf8', function (err, source) {
+          fs.readFile('./templates/pools_info.msg', 'utf8', (err, source) => {
             if (err) throw err;
 
             var template = Handlebars.compile(source);
@@ -44,7 +44,7 @@ module.exports = {
       pools
         .getPoolsList()
         .then((data) => {
-          fs.readFile('./templates/pools_list.msg', 'utf8', function (err, source) {
+          fs.readFile('./templates/pools_list.msg', 'utf8', (err, source) => {
             if (err) throw err;
 
             var template = Handlebars.compile(source);

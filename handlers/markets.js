@@ -65,7 +65,10 @@ module.exports = {
       markets
         .getPriceChart()
         .then((filename) => {
-          message.channel.send('CCX price chart', { files: [filename] });
+          message.channel.send({
+            content: 'CCX price chart',
+            files: [{ attachment: filename, name: 'pricechart.png' }],
+          });
         })
         .catch((err) => {
           message.channel.send(`Failed to get price chart: ${err}`);
