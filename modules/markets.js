@@ -27,6 +27,16 @@ module.exports = {
       .then((response) => response.data)
       .catch((err) => Promise.reject(err));
   },
+  getExchangesVolume: function () {
+    return axios
+      .get('https://api.coingecko.com/api/v3/coins/conceal/tickers', {
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: false,
+        }),
+      })
+      .then((response) => response.data.tickers)
+      .catch((err) => Promise.reject(err));
+  },
   getPriceChart: function () {
     return new Promise((resolve, reject) => {
       let url = 'https://explorer.conceal.network/services/charts/price.png';

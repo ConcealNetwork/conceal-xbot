@@ -3,7 +3,7 @@ const Handlebars = require('handlebars');
 const utils = require('../helpers/utils.js');
 const markets = require('../modules/markets.js');
 
-let availableCommands = ['help', 'info'];
+let availableCommands = ['help', 'info', 'volume'];
 
 module.exports = {
   executeCommand: function (message, command, args) {
@@ -53,6 +53,41 @@ module.exports = {
         })
         .catch((err) => {
           message.channel.send(`Failed to get exchanges: ${err}`);
+        });
+    }
+
+    if (args[0] == 'volume') {
+      // get the volume data for the exchanges
+      markets
+        .getExchangesVolume()
+        .then((data) => {
+          fs.readFile('./templates/exchanges_volume.msg', 'utf8', function (err, source) {
+            if (err) throw err;
+
+            var template = Handlebars.compile(source);
+            let volumeEmbed = {
+              color: 0x0099ff,
+              title: 'Conceal Exchanges Volume',
+              url: 'https://conceal.network',
+              author: {
+                name: 'Conceal Network',
+                icon_url: 'https://conceal.network/images/branding/logo.png',
+                url: 'https://discord.gg/YbpHVSd',
+              },
+              fields: JSON.parse(template(data)),
+              timestamp: new Date(),
+              footer: {
+                text: 'Privacy by default',
+                icon_url: 'https://conceal.network/images/branding/logo.png',
+              },
+            };
+
+            // send the embed back to the channel as message
+            message.channel.send({ embeds: [volumeEmbed] });
+          });
+        })
+        .catch((err) => {
+          message.channel.send(`Failed to get exchanges volume: ${err}`);
         });
     }
   },

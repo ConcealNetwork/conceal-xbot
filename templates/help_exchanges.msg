@@ -7,4 +7,10 @@ Below is a list of all available commands.
 .exchanges info -> Gives general info about the exchanges.
 
 Example: .exchanges info
+
+#volume
+
+.exchanges volume -> Shows the 24h trading volume for exchanges.
+
+Example: .exchanges volume
 ```
