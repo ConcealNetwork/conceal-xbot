@@ -1,0 +1,29 @@
+{
+    "nvidia": [
+      { "name": "GTX1660S", "hashrate": 1.15, "power": 62, "cc": "+150", "mc": "-300", "pl": "70w" },
+      { "name": "GTX1660Ti", "hashrate": 1.16, "power": 58, "cc": "+150", "mc": "-300", "pl": "70w" },
+      { "name": "RTX2060", "hashrate": 1.39, "power": 150, "cc": "unk", "mc": "unk", "pl": "150w" },
+      { "name": "RTX3060", "hashrate": 1.99, "power": 75, "cc": "1300", "mc": "-1004", "pl": "100w" },
+      { "name": "RTX3070", "hashrate": 3.0, "power": 120, "cc": "+148", "mc": "lmc 980", "pl": "120w" },
+      { "name": "RTX3080", "hashrate": 3.69, "power": 178, "cc": "+100", "mc": "-502", "pl": "180w" },
+      { "name": "RTX3090", "hashrate": 5.3, "power": 222, "cc": "+150", "mc": "-502", "pl": "225w" },
+      { "name": "RTX4060", "hashrate": 2.67, "power": 112, "cc": "unk", "mc": "unk", "pl": "115w" },
+      { "name": "RTX4060Ti", "hashrate": 3.62, "power": 120, "cc": "+300", "mc": "810", "pl": "120w" },
+      { "name": "RTX4070S", "hashrate": 4.13, "power": 142, "cc": "+24", "mc": "lmc 980", "pl": "145w" },
+      { "name": "RTX4070Ti", "hashrate": 4.6, "power": 180, "cc": "+150", "mc": "lmc 880", "pl": "200w" },
+      { "name": "RTX4090", "hashrate": 13.59, "power": 438, "cc": "+100", "mc": "5001", "pl": "440w" }
+    ],
+    "amd": [
+      { "name": "RX570", "hashrate": 0.63, "power": 40, "cc": "1050", "mc": "300", "pl": "N/A" },
+      { "name": "RX580", "hashrate": 0.82, "power": 60, "cc": "1050", "mc": "300", "pl": "N/A" },
+      { "name": "RX6400", "hashrate": 0.7, "power": 30, "cc": "1800", "mc": "mclk 1", "pl": "38w" },
+      { "name": "RX6500XT", "hashrate": 0.98, "power": 45, "cc": "1880", "mc": "mclk 1", "pl": "50w" },
+      { "name": "RX6600", "hashrate": 1.7, "power": 90, "cc": "1880", "mc": "mclk 1", "pl": "94w" },
+      { "name": "RX6600XT", "hashrate": 1.82, "power": 95, "cc": "1920", "mc": "mclk 1", "pl": "95w" },
+      { "name": "RX6700XT", "hashrate": 2.49, "power": 115, "cc": "1900", "mc": "1050", "pl": "120w" },
+      { "name": "RX6800", "hashrate": 3.45, "power": 175, "cc": "1948", "mc": "mclk 1", "pl": "175w" },
+      { "name": "RX6800XT", "hashrate": 4.0, "power": 180, "cc": "2200", "mc": "unk", "pl": "180w" },
+      { "name": "RX6900XT", "hashrate": 3.71, "power": 146, "cc": "1997", "mc": "unk", "pl": "150w" },
+      { "name": "RX7800XT", "hashrate": 4.26, "power": 156, "cc": "2088", "mc": "mclk 1", "pl": "180w" }
+    ]
+  }

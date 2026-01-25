@@ -10,6 +10,7 @@ const users = require('./handlers/users.js');
 const rains = require('./handlers/rains.js');
 const links = require('./handlers/links.js');
 const social = require('./handlers/social.js');
+const mining = require('./handlers/mining.js');
 const UsersData = require('./modules/users.js');
 const markets = require('./handlers/markets.js');
 const marketsData = require('./modules/markets.js');
@@ -244,6 +245,11 @@ client.on('messageCreate', async (message) => {
   if (command === 'social') {
     // execute the social commands
     return social.executeCommand(message, command, args);
+  }
+
+  if (command === 'mining') {
+    // execute the mining commands
+    return mining.executeCommand(message, command, args);
   }
 
   if (command === 'blockchain' || command === 'chain') {
