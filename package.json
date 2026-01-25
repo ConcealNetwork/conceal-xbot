@@ -1,6 +1,6 @@
 {
   "name": "conceal-xbot",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Conceal new generation Discord Bot",
   "main": "index.js",
   "scripts": {

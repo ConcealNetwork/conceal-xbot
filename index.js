@@ -8,6 +8,8 @@ const Handlebars = require('handlebars');
 const pools = require('./handlers/pools.js');
 const users = require('./handlers/users.js');
 const rains = require('./handlers/rains.js');
+const links = require('./handlers/links.js');
+const social = require('./handlers/social.js');
 const UsersData = require('./modules/users.js');
 const markets = require('./handlers/markets.js');
 const marketsData = require('./modules/markets.js');
@@ -44,6 +46,7 @@ const client = new Discord.Client({
   intents: Object.keys(Discord.GatewayIntentBits).map((a) => {
     return Discord.GatewayIntentBits[a];
   }),
+  partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
 });
 
 // initialize data models
@@ -233,6 +236,16 @@ client.on('messageCreate', async (message) => {
     return markets.executeCommand(message, command, args);
   }
 
+  if (command === 'links') {
+    // execute the links commands
+    return links.executeCommand(message, command, args);
+  }
+
+  if (command === 'social') {
+    // execute the social commands
+    return social.executeCommand(message, command, args);
+  }
+
   if (command === 'blockchain' || command === 'chain') {
     if (args.length == 0) {
       return message.reply(
@@ -401,6 +414,17 @@ client.on('messageCreate', async (message) => {
 
     // send first part and return
     sendNextHelpPart(1);
+    return true;
+  }
+
+  /************************************************************
+   *  Links help command. Prints the links help out.      *
+   ***********************************************************/
+  if (command === 'help_links') {
+    fs.readFile('./templates/help_links.msg', 'utf8', function (err, source) {
+      if (err) throw err;
+      message.author.send(source);
+    });
     return true;
   }
 
