@@ -23,6 +23,20 @@ Below is a list of all available commands.
 ```
 ```css
 
+  #social
+    .social help -> Gives detailed info on social commands.
+    .social latest -> Displays the latest tweets from Conceal Network.
+    .social tweet <id> -> Provides the URL for a specific tweet.
+```
+```css
+
+  #links
+    .links help -> Gives detailed info on links commands.
+    .links -> Gives all available links.
+    .links <name> -> Gives the specific link.
+```
+```css
+
   #blockchain
     .blockchain help -> Gives detailed info on blockchain commands.
     .blockchain supply -> Gives the current circulating supply of CCX.
@@ -32,6 +46,8 @@ Below is a list of all available commands.
     .blockchain totalsupply -> Gives the current total supply.
     .blockchain maxsupply -> Gives the max supply of CCX.
     .blockchain difficulty -> Gives the current difficulty of the network.
+    .blockchain nodecount -> Gives the current node count of the network.
+    .blockchain smartnodecount -> Gives the current smart node count of the network.
 ```
 ```css
 

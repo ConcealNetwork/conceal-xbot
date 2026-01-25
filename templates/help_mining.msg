@@ -4,15 +4,17 @@ These commands provide information and calculations related to CCX mining.
 
 **Note:** Mining commands are only available in designated mining channels.
 
-| Command | Description |
-|---------|-------------|
-| .mining help | Shows this help message. |
-| .mining difficulty | Shows the current network difficulty. |
-| .mining oc | Lists available platforms (nvidia, amd). |
-| .mining oc <platform> | Shows overclocking settings for all GPUs in the platform. |
-| .mining oc <platform> <gpu> | Shows overclocking settings for a specific GPU. |
-| .mining list <platform> | Lists available GPUs for the platform. |
-| .mining rig <qty0> <gpu0> <qty1> <gpu1> ... | Calculates total hashrate and expected daily reward for a rig (up to 6 GPUs). |
+```
+| Command                                     | Description                                               |
+| ------------------------------------------- | --------------------------------------------------------- |
+| .mining help                                | Shows this help message.                                  |
+| .mining difficulty                          | Shows the current network difficulty.                     |
+| .mining oc                                  | Lists available platforms (nvidia, amd).                  |
+| .mining oc <platform>                       | Shows overclocking settings for all GPUs in the platform. |
+| .mining oc <platform> <gpu>                 | Shows overclocking settings for a specific GPU.           |
+| .mining list <platform>                     | Lists available GPUs for the platform.                    |
+| .mining rig <qty0> <gpu0> <qty1> <gpu1> ... | Calculates total hashrate and expected daily reward       |
+```
 
 **Examples:**
 - `.mining oc amd`
