@@ -1,5 +1,6 @@
 const fs = require('fs');
 const Numeral = require('numeral');
+const axios = require('axios');
 const config = require('../config.json');
 const utils = require('../helpers/utils.js');
 const BlockchainData = require('../modules/blockchain.js');
@@ -64,13 +65,15 @@ function executeCommand(message, command, args) {
 
   // Handle .mining difficulty
   if (args.length > 0 && args[0] === 'difficulty') {
-    blockchain.getInfo().then(data => {
-      const difficulty = Numeral(data.difficulty).format('0.00a');
-      message.reply(`Current network difficulty: ${difficulty}`);
-    }).catch(err => {
-      console.error(err);
-      message.reply('Error fetching blockchain data.');
-    });
+    axios.get('https://explorer.conceal.network/q/difficulty/')
+      .then(response => {
+        const difficulty = Numeral(parseFloat(response.data)).format('0.00a');
+        message.reply(`Current network difficulty: ${difficulty}`);
+      })
+      .catch(err => {
+        console.error(err);
+        message.reply('Error fetching difficulty data.');
+      });
     return;
   }
 
@@ -129,10 +132,13 @@ function executeCommand(message, command, args) {
     // Calculate total power consumption (excluding N/A)
     const totalPower = calculation.calculateTotalPower(rig);
 
-    // Get blockchain info
-    blockchain.getInfo().then(data => {
-      const networkHash = data.hashrate; // Network hashrate in H/s
-      const blockReward = data.reward;
+    // Fetch network hashrate and block reward from explorer endpoints
+    Promise.all([
+      axios.get('https://explorer.conceal.network/q/hashrate/'),
+      axios.get('https://explorer.conceal.network/q/reward/')
+    ]).then(([hashrateResponse, rewardResponse]) => {
+      const networkHash = parseFloat(hashrateResponse.data); // Network hashrate in H/s
+      const blockReward = parseFloat(rewardResponse.data); // Block reward in CCX
       // totalHash is in kH/s, pass it directly to calculateExpectedReward
       const expectedReward = calculation.calculateExpectedReward(totalHash, networkHash, blockReward);
       const formattedHash = Numeral(totalHash).format('0.00');
