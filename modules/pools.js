@@ -6,7 +6,7 @@ module.exports = {
     axios
       .get('https://explorer.conceal.network/services/pools/list', {
         httpsAgent: new https.Agent({
-          rejectUnauthorized: false,
+          rejectUnauthorized: true,
         }),
       })
       .then((response) => response.data)
@@ -15,7 +15,7 @@ module.exports = {
     axios
       .get('https://explorer.conceal.network/services/pools/data', {
         httpsAgent: new https.Agent({
-          rejectUnauthorized: false,
+          rejectUnauthorized: true,
         }),
       })
       .then((response) => response.data)
