@@ -121,3 +121,15 @@ These commands allow you to access social media links related to Conceal Network
 | .social latest | Displays the latest 3 tweets from the Conceal Network Twitter account. |
 | .social tweet <id> | Provides the URL for a specific tweet by ID. |
 
+## mining
+
+These commands provide information and calculations related to CCX mining. These commands are only available in designated mining channels. Click on the command to see how to use it.
+
+| Command | Description |
+|---------|-------------|
+| .mining help | Shows detailed info on mining commands. |
+| .mining difficulty | Shows the current network difficulty. |
+| .mining oc <platform> | Shows overclocking settings for GPUs. |
+| .mining list <platform> | Lists available GPUs for mining. |
+| .mining rig <qty> <gpu> ... | Calculates hashrate and expected reward for a rig. |
+

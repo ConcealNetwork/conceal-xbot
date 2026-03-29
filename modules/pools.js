@@ -1,25 +1,23 @@
 const axios = require('axios');
-const https = require('https');
+const https = require('node:https');
 
 module.exports = {
-  getPoolsList: function () {
-    return axios
+  getPoolsList: () =>
+    axios
       .get('https://explorer.conceal.network/services/pools/list', {
         httpsAgent: new https.Agent({
           rejectUnauthorized: false,
         }),
       })
       .then((response) => response.data)
-      .catch((err) => Promise.reject(err));
-  },
-  getPoolsInfo: function () {
-    return axios
+      .catch((err) => Promise.reject(err)),
+  getPoolsInfo: () =>
+    axios
       .get('https://explorer.conceal.network/services/pools/data', {
         httpsAgent: new https.Agent({
           rejectUnauthorized: false,
         }),
       })
       .then((response) => response.data)
-      .catch((err) => Promise.reject(err));
-  },
+      .catch((err) => Promise.reject(err)),
 };

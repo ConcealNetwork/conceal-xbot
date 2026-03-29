@@ -1,5 +1,6 @@
 const config = require('../config.json');
 const CCXApi = require('conceal-api');
+const axios = require('axios');
 
 class BlockchainData {
   constructor() {
@@ -41,6 +42,30 @@ class BlockchainData {
       this.CCX.lastBlockHeader()
         .then((data) => {
           resolve(data.block_header);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  };
+
+  getNodeCount = () => {
+    return new Promise((resolve, reject) => {
+      axios.get('https://explorer.conceal.network/q/nodecount/')
+        .then((response) => {
+          resolve(parseInt(response.data, 10));
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  };
+
+  getSmartNodeCount = () => {
+    return new Promise((resolve, reject) => {
+      axios.get('https://explorer.conceal.network/q/smartnodecount/')
+        .then((response) => {
+          resolve(parseInt(response.data, 10));
         })
         .catch((err) => {
           reject(err);

@@ -16,6 +16,8 @@ let availableCommands = [
   'difficulty',
   'supply',
   'diff',
+  'nodecount',
+  'smartnodecount',
 ];
 
 module.exports = {
@@ -144,6 +146,28 @@ module.exports = {
         })
         .catch((err) => {
           message.channel.send(`Failed call getInfo: ${err}`);
+        });
+    }
+
+    if (args[0] === 'nodecount') {
+      blockchainInfo
+        .getNodeCount()
+        .then((data) => {
+          message.channel.send(`***Current node count is***: ${data}`);
+        })
+        .catch((err) => {
+          message.channel.send(`Failed call getNodeCount: ${err}`);
+        });
+    }
+
+    if (args[0] === 'smartnodecount') {
+      blockchainInfo
+        .getSmartNodeCount()
+        .then((data) => {
+          message.channel.send(`***Current smart node count is***: ${data}`);
+        })
+        .catch((err) => {
+          message.channel.send(`Failed call getSmartNodeCount: ${err}`);
         });
     }
   },

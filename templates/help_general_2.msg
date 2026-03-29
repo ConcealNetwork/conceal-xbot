@@ -7,6 +7,15 @@
 ```
 ```css
 
+  #mining
+    .mining help -> Gives detailed info on mining commands.
+    .mining difficulty -> Shows the current network difficulty.
+    .mining oc <platform> -> Shows overclocking settings for GPUs.
+    .mining list <platform> -> Lists available GPUs for mining.
+    .mining rig <qty> <gpu> ... -> Calculates hashrate and expected reward for a rig.
+```
+```css
+
   #wallet
     .wallet help -> Gives detailed info on wallet commands.
     .wallet register -> Registers a new wallet for the user. You need to specify a valid CCX address.
