@@ -2,8 +2,8 @@ const config = require('../config.json');
 const sqlite3 = require('sqlite3');
 const shortid = require('shortid');
 const moment = require('moment');
-const path = require('path');
-const fs = require('fs');
+const path = require('node:path');
+const fs = require('node:fs');
 
 class GiveawaysData {
   constructor(database) {
@@ -12,8 +12,8 @@ class GiveawaysData {
   }
 
   _setSingleEvent = (data, onEventCallback) => {
-    let eventTS = moment(data.creation_ts).add(data.timespan, 'seconds');
-    let timeout = Math.max(0, eventTS.diff(moment(), 'milliseconds'));
+    const eventTS = moment(data.creation_ts).add(data.timespan, 'seconds');
+    const timeout = Math.max(0, eventTS.diff(moment(), 'milliseconds'));
 
     setTimeout(() => {
       onEventCallback(data);
@@ -24,10 +24,10 @@ class GiveawaysData {
    *  Initializes the currently active giveaways and add events *
    *************************************************************/
   initialize = (onEventCallback) => {
-    let setSingleEvent = this._setSingleEvent;
+    const setSingleEvent = this._setSingleEvent;
     this.onGiveawayEvent = onEventCallback;
 
-    this.db.each('SELECT * from giveaways where is_active = 1', function (err, row) {
+    this.db.each('SELECT * from giveaways where is_active = 1', (err, row) => {
       setSingleEvent(row, onEventCallback);
     });
   };
@@ -59,7 +59,7 @@ class GiveawaysData {
    ***********************************************************/
   getGiveawayByRowId = (rowId) => {
     return new Promise((resolve, reject) => {
-      this.db.get('SELECT * from giveaways where id = ?', [rowId], function (err, row) {
+      this.db.get('SELECT * from giveaways where id = ?', [rowId], (err, row) => {
         if (!err && row) resolve(row);
         else reject('Failed to get Giveaway');
       });
@@ -71,7 +71,7 @@ class GiveawaysData {
    ***********************************************************/
   getGiveawayByMessageId = (messageId) => {
     return new Promise((resolve, reject) => {
-      this.db.get('SELECT * from giveaways where message_id = ?', [messageId], function (err, row) {
+      this.db.get('SELECT * from giveaways where message_id = ?', [messageId], (err, row) => {
         if (!err && row) resolve(row);
         else reject('Failed to get giveaway');
       });
@@ -83,7 +83,7 @@ class GiveawaysData {
    ***********************************************************/
   listGiveaways = () => {
     return new Promise((resolve, reject) => {
-      this.db.all('SELECT * from giveaways where is_active = 1', function (err, rows) {
+      this.db.all('SELECT * from giveaways where is_active = 1', (err, rows) => {
         if (!err && rows) resolve(rows);
         else reject('Failed to list giveaways');
       });
@@ -96,12 +96,12 @@ class GiveawaysData {
    ***********************************************************/
   finishGiveaway = (messageId) => {
     return new Promise((resolve, reject) => {
-      let getGiveawayByMessageId = this.getGiveawayByMessageId;
+      const getGiveawayByMessageId = this.getGiveawayByMessageId;
 
       this.db.run(
         'UPDATE giveaways SET is_active = 0 WHERE  message_id = ?',
         [messageId],
-        function (err) {
+        (err) => {
           if (!err) {
             getGiveawayByMessageId(messageId)
               .then((data) => {
@@ -122,10 +122,10 @@ class GiveawaysData {
    ***********************************************************/
   createGiveaway = (userId, channelId, messageId, timespan, winners, amount, description) => {
     return new Promise((resolve, reject) => {
-      let timestamp = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
-      let getGiveawayByMessageId = this.getGiveawayByMessageId;
-      let onGiveawayEvent = this.onGiveawayEvent;
-      let setSingleEvent = this._setSingleEvent;
+      const timestamp = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+      const getGiveawayByMessageId = this.getGiveawayByMessageId;
+      const onGiveawayEvent = this.onGiveawayEvent;
+      const setSingleEvent = this._setSingleEvent;
 
       this.db.run(
         `INSERT INTO giveaways(user_id, channel_id, message_id, creation_ts, description, timespan, amount, winners, is_active) 
@@ -140,7 +140,7 @@ class GiveawaysData {
           amount * config.metrics.coinUnits,
           winners,
         ],
-        function (err) {
+        (err) => {
           if (err) {
             reject(err);
           } else {

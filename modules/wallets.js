@@ -4,9 +4,9 @@ const config = require('../config.json');
 const sqlite3 = require('sqlite3');
 const jsonfile = require('jsonfile');
 const CCXApi = require('conceal-api');
-const crypto = require('crypto');
-const path = require('path');
-const fs = require('fs');
+const crypto = require('node:crypto');
+const path = require('node:path');
+const fs = require('node:fs');
 
 class WalletsData {
   constructor(database) {
