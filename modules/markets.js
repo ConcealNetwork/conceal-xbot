@@ -8,7 +8,7 @@ module.exports = {
     axios
       .get('https://explorer.conceal.network/services/exchanges/list', {
         httpsAgent: new https.Agent({
-          rejectUnauthorized: false,
+          rejectUnauthorized: true,
         }),
       })
       .then((response) => response.data)
@@ -19,7 +19,7 @@ module.exports = {
         'https://api.coingecko.com/api/v3/simple/price?ids=conceal&vs_currencies=eth%2Cbtc%2Cusd%2Ceur&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true',
         {
           httpsAgent: new https.Agent({
-            rejectUnauthorized: false,
+            rejectUnauthorized: true,
           }),
         }
       )
@@ -29,7 +29,7 @@ module.exports = {
     axios
       .get('https://api.coingecko.com/api/v3/coins/conceal/tickers', {
         httpsAgent: new https.Agent({
-          rejectUnauthorized: false,
+          rejectUnauthorized: true,
         }),
       })
       .then((response) => response.data.tickers)
@@ -44,7 +44,7 @@ module.exports = {
         url: url,
         responseType: 'stream',
         httpsAgent: new https.Agent({
-          rejectUnauthorized: false,
+          rejectUnauthorized: true,
         }),
       })
         .then((response) => {
