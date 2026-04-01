@@ -16,7 +16,7 @@
     "app-root-path": "^3.0.0",
     "axios": "1.14.0",
     "conceal-api": "^0.8.8",
-    "discord.js": "^14.25.1",
+    "discord.js": "^14.26.0",
     "handlebars": "^4.7.9",
     "jsonfile": "^6.2.0",
     "just-handlebars-helpers": "^1.0.18",
